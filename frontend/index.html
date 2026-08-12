@@ -1004,7 +1004,7 @@ CyberWatch AI
 </h1>
 
 <p>
-Local AI Cyber Threat Intelligence
+Cloud AI Cyber Threat Intelligence
 </p>
 
 </div>
@@ -3345,6 +3345,85 @@ async function analyzeArticle(
             );
 
 
+        // Fallback severity when AI is unavailable, rate-limited,
+        // or returns an unknown severity.
+        if (
+            !analysis.severity
+            ||
+            analysis.severity
+                .toLowerCase()
+                .includes("unknown")
+        ) {
+
+            const fallbackText = (
+                (article.title || "")
+                +
+                " "
+                +
+                (article.description || "")
+            ).toLowerCase();
+
+            const cvssValue =
+                article.cvss_score !== null
+                &&
+                article.cvss_score !== undefined
+                ? Number(article.cvss_score)
+                : null;
+
+            if (
+                cvssValue !== null
+                &&
+                !Number.isNaN(cvssValue)
+            ) {
+                if (cvssValue >= 9) {
+                    analysis.severity = "Critical";
+                }
+                else if (cvssValue >= 7) {
+                    analysis.severity = "High";
+                }
+                else if (cvssValue >= 4) {
+                    analysis.severity = "Medium";
+                }
+                else {
+                    analysis.severity = "Low";
+                }
+            }
+            else if (
+                fallbackText.includes("remote code execution")
+                || fallbackText.includes("arbitrary code execution")
+                || fallbackText.includes("authentication bypass")
+                || fallbackText.includes("critical vulnerability")
+                || fallbackText.includes("maximum severity")
+            ) {
+                analysis.severity = "Critical";
+            }
+            else if (
+                fallbackText.includes("zero-day")
+                || fallbackText.includes("zero day")
+                || fallbackText.includes("actively exploited")
+                || fallbackText.includes("ransomware")
+                || fallbackText.includes("privilege escalation")
+                || fallbackText.includes("credential theft")
+                || fallbackText.includes("data breach")
+                || fallbackText.includes("malware")
+            ) {
+                analysis.severity = "High";
+            }
+            else if (
+                fallbackText.includes("vulnerability")
+                || fallbackText.includes("security flaw")
+                || fallbackText.includes("denial of service")
+                || fallbackText.includes("ddos")
+                || fallbackText.includes("information disclosure")
+            ) {
+                analysis.severity = "Medium";
+            }
+            else {
+                analysis.severity = "Low";
+            }
+        }
+
+
         const card =
             box.closest(
                 ".threat-card"
@@ -4146,22 +4225,31 @@ function calculateRiskScore(
     watchlistHit
 ) {
 
-    let score = 18;
-
-
+    let score = 20;
     const reasons = [];
 
+    const severity = (
+        analysis.severity || ""
+    ).toLowerCase();
 
-    const severity =
-        analysis.severity
-            .toLowerCase();
+    const attack = (
+        analysis.attackType || ""
+    ).toLowerCase();
+
+    const text = (
+        (article.title || "")
+        +
+        " "
+        +
+        (article.description || "")
+    ).toLowerCase();
 
 
-    if (
-        severity.includes(
-            "critical"
-        )
-    ) {
+    // -------------------------
+    // 1. AI SEVERITY
+    // -------------------------
+
+    if (severity.includes("critical")) {
 
         score = 88;
 
@@ -4170,11 +4258,7 @@ function calculateRiskScore(
         );
     }
 
-    else if (
-        severity.includes(
-            "high"
-        )
-    ) {
+    else if (severity.includes("high")) {
 
         score = 72;
 
@@ -4183,11 +4267,7 @@ function calculateRiskScore(
         );
     }
 
-    else if (
-        severity.includes(
-            "medium"
-        )
-    ) {
+    else if (severity.includes("medium")) {
 
         score = 52;
 
@@ -4196,11 +4276,7 @@ function calculateRiskScore(
         );
     }
 
-    else if (
-        severity.includes(
-            "low"
-        )
-    ) {
+    else if (severity.includes("low")) {
 
         score = 28;
 
@@ -4210,38 +4286,29 @@ function calculateRiskScore(
     }
 
 
+    // -------------------------
+    // 2. OFFICIAL CVSS
+    // -------------------------
+
     if (
-        article.cvss_score
-        !==
-        null
+        article.cvss_score !== null
         &&
-        article.cvss_score
-        !==
-        undefined
+        article.cvss_score !== undefined
     ) {
 
         const cvss =
-            Number(
-                article.cvss_score
-            );
+            Number(article.cvss_score);
 
+        if (!Number.isNaN(cvss)) {
 
-        if (
-            !Number.isNaN(
-                cvss
-            )
-        ) {
+            let cvssRisk =
+                Math.round(cvss * 10);
 
             score =
                 Math.max(
                     score,
-                    Math.round(
-                        cvss
-                        *
-                        10
-                    )
+                    cvssRisk
                 );
-
 
             reasons.push(
                 "Official CVSS score: "
@@ -4252,12 +4319,19 @@ function calculateRiskScore(
     }
 
 
-    if (
-        article.known_exploited
-    ) {
+    // -------------------------
+    // 3. KNOWN EXPLOITED
+    // -------------------------
+
+    if (article.known_exploited) {
+
+        score =
+            Math.max(
+                score,
+                82
+            );
 
         score += 8;
-
 
         reasons.push(
             "Known exploited vulnerability"
@@ -4265,23 +4339,167 @@ function calculateRiskScore(
     }
 
 
-    const attack =
-        analysis.attackType
-            .toLowerCase();
+    // -------------------------
+    // 4. FALLBACK ANALYSIS
+    // -------------------------
+    // Used when Groq fails or returns Unknown
 
 
     if (
-        attack.includes(
-            "ransomware"
-        )
+        severity === ""
         ||
-        attack.includes(
-            "zero-day"
-        )
+        severity.includes("unknown")
+    ) {
+
+        // Critical indicators
+
+        if (
+            text.includes("cvss 10")
+            ||
+            text.includes("cvss: 10")
+            ||
+            text.includes("cvss score: 10")
+            ||
+            text.includes("maximum severity")
+            ||
+            text.includes("critical vulnerability")
+            ||
+            text.includes("remote code execution")
+            ||
+            text.includes("arbitrary code execution")
+            ||
+            text.includes("authentication bypass")
+        ) {
+
+            score =
+                Math.max(
+                    score,
+                    88
+                );
+
+            reasons.push(
+                "Critical indicators detected from article"
+            );
+        }
+
+
+        // High indicators
+
+        else if (
+            text.includes("zero-day")
+            ||
+            text.includes("zero day")
+            ||
+            text.includes("actively exploited")
+            ||
+            text.includes("ransomware")
+            ||
+            text.includes("privilege escalation")
+            ||
+            text.includes("credential theft")
+            ||
+            text.includes("data breach")
+            ||
+            text.includes("malware")
+            ||
+            text.includes("botnet")
+        ) {
+
+            score =
+                Math.max(
+                    score,
+                    72
+                );
+
+            reasons.push(
+                "High-risk indicators detected from article"
+            );
+        }
+
+
+        // Medium indicators
+
+        else if (
+            text.includes("vulnerability")
+            ||
+            text.includes("security flaw")
+            ||
+            text.includes("denial of service")
+            ||
+            text.includes("ddos")
+            ||
+            text.includes("access control")
+            ||
+            text.includes("information disclosure")
+        ) {
+
+            score =
+                Math.max(
+                    score,
+                    52
+                );
+
+            reasons.push(
+                "Moderate security indicators detected"
+            );
+        }
+    }
+
+
+    // -------------------------
+    // 5. CVSS TEXT FALLBACK
+    // -------------------------
+
+    const cvssMatch =
+        text.match(
+            /cvss(?:\s+score)?(?:\s*:)?\s*(10(?:\.0)?|[0-9](?:\.[0-9])?)/
+        );
+
+    if (cvssMatch) {
+
+        const cvssFromText =
+            Number(
+                cvssMatch[1]
+            );
+
+        if (
+            !Number.isNaN(
+                cvssFromText
+            )
+        ) {
+
+            score =
+                Math.max(
+                    score,
+                    Math.round(
+                        cvssFromText
+                        *
+                        10
+                    )
+                );
+
+            reasons.push(
+                "CVSS detected in article: "
+                +
+                cvssFromText
+            );
+        }
+    }
+
+
+    // -------------------------
+    // 6. ATTACK TYPE
+    // -------------------------
+
+    if (
+        attack.includes("ransomware")
+        ||
+        attack.includes("zero-day")
+        ||
+        attack.includes("zero day")
     ) {
 
         score += 7;
-
 
         reasons.push(
             "High-impact attack type"
@@ -4289,12 +4507,31 @@ function calculateRiskScore(
     }
 
 
-    if (
-        cves.length > 0
+    // Fallback attack detection
+
+    else if (
+        text.includes("ransomware")
+        ||
+        text.includes("zero-day")
+        ||
+        text.includes("zero day")
     ) {
 
-        score += 4;
+        score += 7;
 
+        reasons.push(
+            "High-impact attack indicators detected"
+        );
+    }
+
+
+    // -------------------------
+    // 7. CVE
+    // -------------------------
+
+    if (cves.length > 0) {
+
+        score += 4;
 
         reasons.push(
             "CVE detected"
@@ -4302,16 +4539,17 @@ function calculateRiskScore(
     }
 
 
+    // -------------------------
+    // 8. AI CONFIDENCE
+    // -------------------------
+
     if (
-        analysis.confidence
+        (analysis.confidence || "")
         .toLowerCase()
-        .includes(
-            "high"
-        )
+        .includes("high")
     ) {
 
         score += 3;
-
 
         reasons.push(
             "High-confidence AI analysis"
@@ -4319,12 +4557,13 @@ function calculateRiskScore(
     }
 
 
-    if (
-        watchlistHit
-    ) {
+    // -------------------------
+    // 9. WATCHLIST
+    // -------------------------
+
+    if (watchlistHit) {
 
         score += 3;
-
 
         reasons.push(
             "Matches Priority Watchlist"
@@ -4332,20 +4571,22 @@ function calculateRiskScore(
     }
 
 
-    if (
-        score > 100
-    ) {
+    // -------------------------
+    // 10. LIMIT
+    // -------------------------
 
+    if (score > 100) {
         score = 100;
+    }
+
+    if (score < 0) {
+        score = 0;
     }
 
 
     return {
-        score:
-            score,
-
-        reasons:
-            reasons
+        score: score,
+        reasons: reasons
     };
 }
 
