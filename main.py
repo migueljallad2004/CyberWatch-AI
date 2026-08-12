@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,16 +8,16 @@ from dotenv import load_dotenv
 from ai import analyze_article, answer_threat_question
 
 from datetime import datetime, timezone, timedelta
-from email.message import EmailMessage
-
 import feedparser
+import resend
 import requests
-import smtplib
 import os
 import re
 
 
 load_dotenv()
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+resend.api_key = RESEND_API_KEY
 
 
 app = FastAPI(
@@ -37,10 +38,6 @@ app.add_middleware(
 
 
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
-
-
 NEWS_API_URL = "https://newsapi.org/v2/everything"
 
 THE_HACKER_NEWS_RSS = (
@@ -112,9 +109,7 @@ def api_status():
             "NVD"
         ],
         "email_enabled": bool(
-            EMAIL_ADDRESS
-            and
-            EMAIL_APP_PASSWORD
+            RESEND_API_KEY
         ),
         "groq_enabled": bool(
             os.getenv("GROQ_API_KEY")
@@ -1571,58 +1566,55 @@ ANSWER:
         }
 
 
-def send_email(
-    recipient,
-    subject,
-    content
+def send_email_with_resend(
+    recipient: str,
+    subject: str,
+    content: str
 ):
 
-    if not EMAIL_ADDRESS:
+    if not RESEND_API_KEY:
 
         raise Exception(
-            "EMAIL_ADDRESS was not loaded."
+            "RESEND_API_KEY is missing."
         )
 
 
-    if not EMAIL_APP_PASSWORD:
+    try:
+
+        response = resend.Emails.send({
+            "from":
+                "CyberWatch AI <onboarding@resend.dev>",
+
+            "to":
+                [recipient],
+
+            "subject":
+                subject,
+
+            "text":
+                content
+        })
+
+
+        print(
+            "RESEND EMAIL SUCCESS:",
+            response
+        )
+
+
+        return response
+
+
+    except Exception as error:
+
+        print(
+            "RESEND EMAIL ERROR:",
+            error
+        )
+
 
         raise Exception(
-            "EMAIL_APP_PASSWORD was not loaded."
-        )
-
-
-    message = EmailMessage()
-
-
-    message["From"] = (
-        f"CyberWatch AI <{EMAIL_ADDRESS}>"
-    )
-
-
-    message["To"] = recipient
-
-
-    message["Subject"] = subject
-
-
-    message.set_content(
-        content
-    )
-
-
-    with smtplib.SMTP_SSL(
-        "smtp.gmail.com",
-        465
-    ) as server:
-
-        server.login(
-            EMAIL_ADDRESS,
-            EMAIL_APP_PASSWORD
-        )
-
-
-        server.send_message(
-            message
+            str(error)
         )
 
 
@@ -1633,10 +1625,55 @@ def send_email_report(
 
     try:
 
-        send_email(
-            report.recipient,
-            report.subject,
+        recipient = (
+            report.recipient
+            .strip()
+        )
+
+        subject = (
+            report.subject
+            .strip()
+        )
+
+        content = (
             report.content
+            .strip()
+        )
+
+
+        if not recipient:
+
+            return {
+                "status":
+                    "error",
+
+                "message":
+                    "Recipient email is required."
+            }
+
+
+        if not subject:
+
+            subject = (
+                "CyberWatch AI Threat Report"
+            )
+
+
+        if not content:
+
+            return {
+                "status":
+                    "error",
+
+                "message":
+                    "Email report is empty."
+            }
+
+
+        send_email_with_resend(
+            recipient,
+            subject,
+            content
         )
 
 
