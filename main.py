@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel, EmailStr
 from dotenv import load_dotenv
 
@@ -12,6 +13,8 @@ import resend
 import requests
 import os
 import re
+import base64
+import secrets
 
 
 load_dotenv()
@@ -19,14 +22,52 @@ load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+APP_USERNAME = os.getenv("APP_USERNAME")
+APP_PASSWORD = os.getenv("APP_PASSWORD")
+FROM_EMAIL = os.getenv(
+    "FROM_EMAIL",
+    "CyberWatch AI <onboarding@resend.dev>"
+)
 
 resend.api_key = RESEND_API_KEY
+
+
+security = HTTPBasic()
+
+
+def require_auth(
+    credentials: HTTPBasicCredentials = Depends(security)
+):
+    if not APP_USERNAME or not APP_PASSWORD:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Private access is not configured."
+        )
+
+    username_ok = secrets.compare_digest(
+        credentials.username,
+        APP_USERNAME
+    )
+    password_ok = secrets.compare_digest(
+        credentials.password,
+        APP_PASSWORD
+    )
+
+    if not (username_ok and password_ok):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password.",
+            headers={"WWW-Authenticate": "Basic"}
+        )
+
+    return credentials.username
 
 
 app = FastAPI(
     title="CyberWatch AI",
     description="Multi-source AI Cyber Threat Intelligence",
-    version="6.0"
+    version="6.1",
+    dependencies=[Depends(require_auth)]
 )
 
 
@@ -76,9 +117,11 @@ SUPPORTED_SOURCES = [
 
 
 class EmailReport(BaseModel):
-    recipient: EmailStr
-    subject: str
+    recipients: list[EmailStr]
+    subject: str = "CyberWatch AI Threat Report"
+    message: str = ""
     content: str
+    attach_report: bool = True
 
 
 class AskRequest(BaseModel):
@@ -1719,58 +1762,62 @@ def ask_ai(
 
 
 def send_email_with_resend(
-    recipient,
+    recipients,
     subject,
-    content
+    message,
+    content,
+    attach_report
 ):
 
     if not RESEND_API_KEY:
-
         raise Exception(
             "RESEND_API_KEY is missing."
         )
 
+    email_body = (
+        message.strip()
+        or
+        "A CyberWatch AI threat report is included below."
+    )
+
+    payload = {
+        "from": FROM_EMAIL,
+        "to": recipients,
+        "subject": subject
+    }
+
+    if attach_report:
+        payload["text"] = email_body
+        payload["attachments"] = [
+            {
+                "content": base64.b64encode(
+                    content.encode("utf-8")
+                ).decode("ascii"),
+                "filename": "cyberwatch-threat-report.txt"
+            }
+        ]
+    else:
+        payload["text"] = (
+            email_body
+            + "\n\n"
+            + content
+        ).strip()
 
     try:
-
-        response = resend.Emails.send({
-
-            "from":
-                (
-                    "CyberWatch AI "
-                    "<onboarding@resend.dev>"
-                ),
-
-            "to":
-                [
-                    recipient
-                ],
-
-            "subject":
-                subject,
-
-            "text":
-                content
-
-        })
-
+        response = resend.Emails.send(payload)
 
         print(
             "RESEND EMAIL SUCCESS:",
             response
         )
 
-
         return response
 
-
     except Exception as error:
-
         print(
             "RESEND EMAIL ERROR:",
             error
         )
-
 
         raise Exception(
             str(error)
@@ -1783,90 +1830,54 @@ def send_email_report(
 ):
 
     try:
+        recipients = list(dict.fromkeys(
+            str(item).strip()
+            for item in report.recipients
+            if str(item).strip()
+        ))
 
-        recipient = (
-            str(
-                report.recipient
-            )
-            .strip()
-        )
+        subject = report.subject.strip()
+        message = report.message.strip()
+        content = report.content.strip()
 
-
-        subject = (
-            report.subject
-            .strip()
-        )
-
-
-        content = (
-            report.content
-            .strip()
-        )
-
-
-        if not recipient:
-
+        if not recipients:
             return {
-
-                "status":
-                    "error",
-
-                "message":
-                    "Recipient email is required."
-
+                "status": "error",
+                "message": "At least one recipient is required."
             }
 
+        if len(recipients) > 50:
+            return {
+                "status": "error",
+                "message": "A maximum of 50 recipients is allowed."
+            }
 
         if not subject:
-
-            subject = (
-                "CyberWatch AI Threat Report"
-            )
-
+            subject = "CyberWatch AI Threat Report"
 
         if not content:
-
             return {
-
-                "status":
-                    "error",
-
-                "message":
-                    "Email report is empty."
-
+                "status": "error",
+                "message": "Email report is empty."
             }
 
-
         send_email_with_resend(
-
-            recipient,
-
+            recipients,
             subject,
-
-            content
-
+            message,
+            content,
+            report.attach_report
         )
 
-
         return {
-
-            "status":
-                "ok",
-
-            "message":
-                "Email sent successfully."
-
+            "status": "ok",
+            "message": "Email sent successfully.",
+            "recipients": len(recipients)
         }
-
 
     except Exception as error:
-
         return {
-
-            "status":
-                "error",
-
-            "message":
-                str(error)
-
+            "status": "error",
+            "message": str(error)
         }
+
