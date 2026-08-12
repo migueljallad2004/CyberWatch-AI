@@ -724,6 +724,11 @@ header { background: linear-gradient(115deg, #0b1f3a 0%, #123c69 62%, #0e7490 10
 .email-success { color: #047857; }
 .email-error { color: #b91c1c; }
 @media(max-width: 800px) { .email-form-grid { grid-template-columns: 1fr; } }
+
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.logout-button { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 10px 15px; cursor: pointer; font-weight: 700; transition: .2s ease; }
+.logout-button:hover { background: rgba(255,255,255,.22); transform: translateY(-1px); }
+@media(max-width: 800px) { .header-actions { width: 100%; justify-content: space-between; } }
 </style>
 </head>
 
@@ -745,8 +750,11 @@ Cloud AI Cyber Threat Intelligence
 </div>
 
 
-<div class="system-status">
-● SYSTEM LIVE
+<div class="header-actions">
+<div class="system-status">● SYSTEM LIVE</div>
+<button class="logout-button" onclick="logoutUser()" title="Sign out">
+<span aria-hidden="true">↪</span> Sign out
+</button>
 </div>
 
 </header>
@@ -1975,6 +1983,35 @@ function renderSourceTags() {
 /* SCAN */
 
 
+function normalizeArticle(article) {
+    const value = (article && typeof article === "object")
+        ? article
+        : {};
+
+    return {
+        ...value,
+        title: String(value.title || "Untitled threat"),
+        description: String(value.description || ""),
+        source: String(value.source || "Unknown"),
+        source_group: String(value.source_group || value.source || "Unknown"),
+        published_at: value.published_at || null,
+        url: String(value.url || ""),
+        cve: value.cve ? String(value.cve) : null
+    };
+}
+
+
+async function authenticatedFetch(url, options) {
+    const response = await fetch(url, options);
+
+    if (response.status === 401) {
+        window.location.href = "/login";
+        throw new Error("Your session expired. Please sign in again.");
+    }
+
+    return response;
+}
+
 async function scanThreats() {
 
     const button =
@@ -2033,10 +2070,25 @@ async function scanThreats() {
         );
 
 
-    const toDate =
+    let toDate =
         new Date(
             toValue + "T23:59:59"
         );
+
+
+    const currentTime =
+        new Date();
+
+
+    if (
+        toDate
+        >
+        currentTime
+    ) {
+
+        toDate =
+            currentTime;
+    }
 
 
     if (
@@ -2211,7 +2263,7 @@ async function scanThreats() {
 
 
         const response =
-            await fetch(
+            await authenticatedFetch(
                 "/news?"
                 +
                 params.toString()
@@ -2256,8 +2308,10 @@ async function scanThreats() {
 
 
         const articles =
-            data.articles
-            ||
+            Array.isArray(data.articles)
+            ?
+            data.articles.map(normalizeArticle)
+            :
             [];
 
 
@@ -2337,7 +2391,8 @@ async function scanThreats() {
     ) {
 
         status.innerText =
-            "Scan failed.";
+            "Scan failed: " +
+            (error.message || "Unexpected error.");
 
 
         results.innerHTML =
@@ -2956,7 +3011,7 @@ async function analyzeArticle(
 
 
         const response =
-            await fetch(
+            await authenticatedFetch(
                 "/analyze?"
                 +
                 params.toString()
@@ -5264,9 +5319,7 @@ async function askThreatAI(
     try {
 
         const response =
-            await fetch(
-
-                "/ask",
+            await authenticatedFetch("/ask",
 
                 {
 
@@ -5342,6 +5395,15 @@ async function askThreatAI(
 }
 
 
+async function logoutUser() {
+    try {
+        await fetch("/api/logout", { method: "POST" });
+    } finally {
+        window.location.href = "/login";
+    }
+}
+
+
 /* EMAIL */
 
 function isValidEmail(value) {
@@ -5388,7 +5450,7 @@ async function sendEmail(form, fallbackSubject, content) {
         true
     );
 
-    const response = await fetch("/send-email", {
+    const response = await authenticatedFetch("/send-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
