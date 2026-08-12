@@ -1,0 +1,5679 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>CyberWatch AI</title>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #08111f;
+    color: white;
+}
+
+
+header {
+    background: #0d1726;
+    border-bottom: 1px solid #1f2d3d;
+    padding: 22px 40px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.brand h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+
+.brand p {
+    margin: 6px 0 0;
+    color: #94a3b8;
+}
+
+
+.system-status {
+    background: #123524;
+    color: #7ef7b3;
+
+    padding: 10px 14px;
+
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+
+.container {
+    width: 92%;
+    max-width: 1250px;
+
+    margin: 30px auto;
+}
+
+
+.stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 25px;
+}
+
+
+.stat-card,
+.panel,
+.threat-card {
+    background: #111d2e;
+
+    border: 1px solid #233349;
+
+    border-radius: 14px;
+}
+
+
+.stat-card {
+    padding: 20px;
+}
+
+
+.stat-card h3 {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+
+.stat-card p {
+    margin: 10px 0 0;
+
+    font-size: 28px;
+
+    font-weight: bold;
+}
+
+
+.panel {
+    padding: 25px;
+
+    margin-bottom: 25px;
+}
+
+
+.panel h2 {
+    margin-top: 0;
+}
+
+
+.panel-description {
+    color: #b9c5d4;
+
+    line-height: 1.6;
+}
+
+
+.date-grid {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 18px;
+
+    margin-top: 25px;
+}
+
+
+.field-label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #cbd5e1;
+
+    font-weight: bold;
+}
+
+
+.date-input,
+.text-input,
+.email-input,
+.source-select,
+.ask-input {
+    width: 100%;
+
+    background: #0d1726;
+
+    border: 1px solid #334155;
+
+    color: white;
+
+    border-radius: 9px;
+
+    padding: 13px;
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+
+.date-input:focus,
+.text-input:focus,
+.email-input:focus,
+.source-select:focus,
+.ask-input:focus {
+    border-color: #3b82f6;
+}
+
+
+.selection-section {
+    margin-top: 26px;
+}
+
+
+.selection-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 11px;
+}
+
+
+.selection-header strong {
+    color: #cbd5e1;
+
+    font-size: 17px;
+}
+
+
+.quick-buttons {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-bottom: 12px;
+}
+
+
+.quick-button {
+    background: #162235;
+
+    color: #cbd5e1;
+
+    border: 1px solid #334155;
+
+    border-radius: 8px;
+
+    padding: 9px 13px;
+
+    cursor: pointer;
+}
+
+
+.quick-button:hover {
+    background: #1e293b;
+
+    border-color: #475569;
+}
+
+
+.quick-button.all-button {
+    background: #1e3a8a;
+
+    border-color: #2563eb;
+
+    color: white;
+}
+
+
+.clear-button {
+    background: transparent;
+
+    color: #94a3b8;
+
+    border: 1px solid #334155;
+
+    border-radius: 7px;
+
+    padding: 7px 11px;
+
+    cursor: pointer;
+}
+
+
+.add-row {
+    display: flex;
+
+    gap: 10px;
+
+    align-items: center;
+}
+
+
+.add-row input,
+.add-row select {
+    flex: 1;
+}
+
+
+.add-button,
+.standard-button,
+.scan-button,
+.ask-button {
+    background: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 12px 18px;
+
+    cursor: pointer;
+}
+
+
+.add-button:hover,
+.standard-button:hover,
+.scan-button:hover,
+.ask-button:hover {
+    background: #1d4ed8;
+}
+
+
+.ask-toggle {
+    background: #6d28d9;
+}
+
+
+.ask-toggle:hover {
+    background: #5b21b6;
+}
+
+
+.scan-button {
+    margin-top: 25px;
+
+    padding: 14px 24px;
+
+    font-size: 16px;
+}
+
+
+.scan-button:disabled {
+    background: #475569;
+
+    cursor: not-allowed;
+}
+
+
+.selected-tags {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 9px;
+
+    margin-top: 13px;
+}
+
+
+.selection-tag {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    background: #1e3a8a;
+
+    color: #dbeafe;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+}
+
+
+.selection-tag.technology {
+    background: #312e81;
+
+    color: #e0e7ff;
+}
+
+
+.selection-tag.source {
+    background: #164e63;
+
+    color: #cffafe;
+}
+
+
+.remove-tag {
+    border: none;
+
+    background: transparent;
+
+    color: inherit;
+
+    cursor: pointer;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    padding: 0;
+}
+
+
+.empty-selection {
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+#status {
+    margin-top: 17px;
+
+    color: #cbd5e1;
+}
+
+
+.search-summary {
+    margin-top: 18px;
+
+    padding: 15px;
+
+    background: #0d1726;
+
+    border: 1px solid #1f2d3d;
+
+    border-radius: 9px;
+
+    color: #94a3b8;
+
+    line-height: 1.7;
+}
+
+
+.source-warning {
+    margin-top: 14px;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    background: #713f12;
+
+    color: #fde68a;
+
+    display: none;
+}
+
+
+.email-controls,
+.watchlist-controls {
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+
+.email-controls input,
+.watchlist-controls input {
+    flex: 1;
+
+    min-width: 250px;
+}
+
+
+.email-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+
+.email-message {
+    margin-top: 15px;
+
+    color: #94a3b8;
+}
+
+
+.email-success {
+    color: #86efac;
+}
+
+
+.email-error {
+    color: #fca5a5;
+}
+
+
+.watchlist-tags {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+
+.watch-tag {
+    background: #312e81;
+
+    color: #c7d2fe;
+
+    border-radius: 20px;
+
+    padding: 7px 12px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+}
+
+
+.severity-filters {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+
+.filter-button {
+    background: #162235;
+
+    color: #cbd5e1;
+
+    border: 1px solid #334155;
+
+    padding: 9px 14px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+
+.filter-button.active {
+    background: #2563eb;
+
+    border-color: #2563eb;
+
+    color: white;
+}
+
+
+.results-count {
+    margin-top: 15px;
+
+    color: #94a3b8;
+}
+
+
+.top-threat-placeholder {
+    color: #94a3b8;
+}
+
+
+.top-threat-content h3 {
+    margin-top: 0;
+
+    font-size: 22px;
+}
+
+
+.top-risk {
+    font-size: 27px;
+
+    font-weight: bold;
+
+    margin: 12px 0;
+}
+
+
+.section-title {
+    margin: 30px 0 15px;
+}
+
+
+.threat-card {
+    padding: 24px;
+
+    margin-bottom: 22px;
+}
+
+
+.threat-card.watchlist-hit {
+    border-color: #7c3aed;
+
+    box-shadow:
+        0 0 0 1px #7c3aed;
+}
+
+
+.threat-card h2 {
+    margin-top: 0;
+
+    font-size: 22px;
+
+    line-height: 1.35;
+}
+
+
+.meta {
+    color: #94a3b8;
+
+    margin-bottom: 15px;
+}
+
+
+.description {
+    color: #cbd5e1;
+
+    line-height: 1.6;
+
+    margin-bottom: 18px;
+}
+
+
+.badges {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 9px;
+
+    margin: 15px 0;
+}
+
+
+.badge {
+    padding: 7px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+
+.badge-source {
+    background: #164e63;
+
+    color: #cffafe;
+}
+
+
+.badge-category {
+    background: #1e3a8a;
+
+    color: #bfdbfe;
+}
+
+
+.badge-platform {
+    background: #312e81;
+
+    color: #c7d2fe;
+}
+
+
+.badge-cve {
+    background: #4c1d95;
+
+    color: #e9d5ff;
+}
+
+
+.badge-low {
+    background: #14532d;
+
+    color: #bbf7d0;
+}
+
+
+.badge-medium {
+    background: #713f12;
+
+    color: #fde68a;
+}
+
+
+.badge-high {
+    background: #7c2d12;
+
+    color: #fed7aa;
+}
+
+
+.badge-critical {
+    background: #7f1d1d;
+
+    color: #fecaca;
+}
+
+
+.badge-info {
+    background: #334155;
+
+    color: #e2e8f0;
+}
+
+
+.badge-active {
+    background: #7f1d1d;
+
+    color: #fecaca;
+}
+
+
+.badge-patched {
+    background: #14532d;
+
+    color: #bbf7d0;
+}
+
+
+.badge-monitor {
+    background: #164e63;
+
+    color: #cffafe;
+}
+
+
+.ai-loading,
+.info-box,
+.mitre-box,
+.recommendations,
+.risk-box {
+    background: #0d1726;
+
+    border: 1px solid #1f2d3d;
+
+    border-radius: 10px;
+
+    padding: 16px;
+}
+
+
+.ai-loading {
+    color: #60a5fa;
+}
+
+
+.analysis-grid {
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 18px;
+
+    margin-top: 18px;
+}
+
+
+.info-box h4 {
+    margin: 0 0 8px;
+
+    color: #60a5fa;
+}
+
+
+.mitre-box,
+.recommendations,
+.risk-box {
+    margin-top: 18px;
+}
+
+
+.mitre-box strong {
+    color: #c084fc;
+}
+
+
+.recommendations {
+    white-space: pre-line;
+}
+
+
+.risk-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+
+.risk-score {
+    font-size: 28px;
+
+    font-weight: bold;
+}
+
+
+.risk-bar {
+    height: 8px;
+
+    background: #1e293b;
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    margin-top: 12px;
+}
+
+
+.risk-fill {
+    height: 100%;
+
+    background: #3b82f6;
+}
+
+
+.risk-reasons {
+    margin-top: 12px;
+
+    color: #cbd5e1;
+
+    line-height: 1.6;
+}
+
+
+.card-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 18px;
+
+    align-items: center;
+}
+
+
+.article-link {
+    color: #38bdf8;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    padding: 11px 0;
+}
+
+
+.ask-panel {
+    display: none;
+
+    margin-top: 20px;
+
+    padding: 18px;
+
+    background: #0b1424;
+
+    border: 1px solid #334155;
+
+    border-radius: 12px;
+}
+
+
+.ask-panel.open {
+    display: block;
+}
+
+
+.ask-panel h3 {
+    margin-top: 0;
+
+    color: #c4b5fd;
+}
+
+
+.ask-row {
+    display: flex;
+
+    gap: 10px;
+
+    align-items: center;
+}
+
+
+.ask-row input {
+    flex: 1;
+}
+
+
+.ask-answer {
+    display: none;
+
+    margin-top: 16px;
+
+    padding: 16px;
+
+    background: #111d2e;
+
+    border: 1px solid #334155;
+
+    border-radius: 10px;
+
+    color: #dbeafe;
+
+    line-height: 1.65;
+
+    white-space: pre-wrap;
+}
+
+
+.ask-answer.visible {
+    display: block;
+}
+
+
+.ask-loading {
+    color: #c4b5fd;
+}
+
+
+.error {
+    background: #7f1d1d;
+
+    color: #fecaca;
+
+    padding: 15px;
+
+    border-radius: 10px;
+}
+
+
+.empty {
+    background: #111d2e;
+
+    border: 1px solid #233349;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    color: #cbd5e1;
+}
+
+
+@media (
+    max-width: 800px
+) {
+
+    .stats {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+
+    .date-grid,
+    .analysis-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+
+    .add-row,
+    .ask-row {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<div class="brand">
+
+<h1>
+CyberWatch AI
+</h1>
+
+<p>
+Local AI Cyber Threat Intelligence
+</p>
+
+</div>
+
+
+<div class="system-status">
+
+● SYSTEM LIVE
+
+</div>
+
+</header>
+
+
+<div class="container">
+
+
+<div class="stats">
+
+
+<div class="stat-card">
+
+<h3>
+Articles Found
+</h3>
+
+<p id="totalThreats">
+0
+</p>
+
+</div>
+
+
+<div class="stat-card">
+
+<h3>
+Critical
+</h3>
+
+<p id="criticalThreats">
+0
+</p>
+
+</div>
+
+
+<div class="stat-card">
+
+<h3>
+High
+</h3>
+
+<p id="highThreats">
+0
+</p>
+
+</div>
+
+
+<div class="stat-card">
+
+<h3>
+Analyzed
+</h3>
+
+<p id="analyzedThreats">
+0
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="panel">
+
+
+<h2>
+🔎 Custom Threat Scanner
+</h2>
+
+
+<p class="panel-description">
+
+Choose your dates, attack types,
+technologies and intelligence sources.
+
+You can use the quick buttons
+or type your own value.
+
+</p>
+
+
+<div class="date-grid">
+
+
+<div>
+
+<label
+class="field-label"
+for="fromDate">
+
+From
+
+</label>
+
+
+<input
+class="date-input"
+id="fromDate"
+type="datetime-local">
+
+</div>
+
+
+<div>
+
+<label
+class="field-label"
+for="toDate">
+
+To
+
+</label>
+
+
+<input
+class="date-input"
+id="toDate"
+type="datetime-local">
+
+</div>
+
+
+</div>
+
+
+<!-- ATTACK TYPES -->
+
+
+<div class="selection-section">
+
+
+<div class="selection-header">
+
+<strong>
+Attack Types
+</strong>
+
+
+<button
+class="clear-button"
+onclick="clearAttackTypes()">
+
+Clear All
+
+</button>
+
+</div>
+
+
+<div class="quick-buttons">
+
+
+<button
+class="quick-button all-button"
+onclick="setAllAttackTypes()">
+
+All
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddAttack('Ransomware')">
+
+Ransomware
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddAttack('Malware')">
+
+Malware
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddAttack('Phishing')">
+
+Phishing
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddAttack('Data Breach')">
+
+Data Breach
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddAttack('Zero-Day')">
+
+Zero-Day
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddAttack('DDoS')">
+
+DDoS
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddAttack('SQL Injection')">
+
+SQL Injection
+
+</button>
+
+
+</div>
+
+
+<div class="add-row">
+
+
+<input
+class="text-input"
+id="attackInput"
+type="text"
+placeholder="Or type your own attack: Credential Theft, Supply Chain Attack..."
+autocomplete="off"
+onkeydown="
+if(event.key === 'Enter') {
+event.preventDefault();
+addAttackType();
+}
+">
+
+
+<button
+class="add-button"
+onclick="addAttackType()">
+
++ Add
+
+</button>
+
+
+</div>
+
+
+<div
+id="attackTags"
+class="selected-tags">
+</div>
+
+
+</div>
+
+
+<!-- TECHNOLOGY -->
+
+
+<div class="selection-section">
+
+
+<div class="selection-header">
+
+<strong>
+Technology / Platform
+</strong>
+
+
+<button
+class="clear-button"
+onclick="clearTechnologies()">
+
+Clear All
+
+</button>
+
+</div>
+
+
+<div class="quick-buttons">
+
+
+<button
+class="quick-button all-button"
+onclick="setAllTechnologies()">
+
+All
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddTechnology('Android')">
+
+Android
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddTechnology('Windows')">
+
+Windows
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddTechnology('Linux')">
+
+Linux
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddTechnology('iOS')">
+
+iOS
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddTechnology('Cloud')">
+
+Cloud
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddTechnology('Network')">
+
+Network
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddTechnology('Docker')">
+
+Docker
+
+</button>
+
+
+<button
+class="quick-button"
+onclick="quickAddTechnology('Cisco')">
+
+Cisco
+
+</button>
+
+
+</div>
+
+
+<div class="add-row">
+
+
+<input
+class="text-input"
+id="technologyInput"
+type="text"
+placeholder="Or type your own: Kubernetes, VMware, Apache, Fortinet..."
+autocomplete="off"
+onkeydown="
+if(event.key === 'Enter') {
+event.preventDefault();
+addTechnology();
+}
+">
+
+
+<button
+class="add-button"
+onclick="addTechnology()">
+
++ Add
+
+</button>
+
+
+</div>
+
+
+<div
+id="technologyTags"
+class="selected-tags">
+</div>
+
+
+</div>
+
+
+<!-- SOURCES -->
+
+
+<div class="selection-section">
+
+
+<div class="selection-header">
+
+<strong>
+Sources
+</strong>
+
+
+<button
+class="clear-button"
+onclick="clearSources()">
+
+Clear All
+
+</button>
+
+</div>
+
+
+<div class="add-row">
+
+
+<select
+class="source-select"
+id="sourceSelect">
+
+
+<option value="">
+Choose Source
+</option>
+
+
+<option value="all">
+All Sources
+</option>
+
+
+<option value="newsapi">
+NewsAPI
+</option>
+
+
+<option value="the hacker news">
+The Hacker News
+</option>
+
+
+<option value="bleepingcomputer">
+BleepingComputer
+</option>
+
+
+<option value="cisa">
+CISA
+</option>
+
+
+<option value="nvd">
+NVD
+</option>
+
+
+</select>
+
+
+<button
+class="add-button"
+onclick="addSource()">
+
++ Add
+
+</button>
+
+
+</div>
+
+
+<div
+id="sourceTags"
+class="selected-tags">
+</div>
+
+
+</div>
+
+
+<button
+class="scan-button"
+id="scanButton"
+onclick="scanThreats()">
+
+🔍 Scan Cyber Threats
+
+</button>
+
+
+<div id="status">
+</div>
+
+
+<div
+id="sourceWarning"
+class="source-warning">
+</div>
+
+
+<div
+id="searchSummary"
+class="search-summary">
+
+Configure your search above.
+
+</div>
+
+
+</div>
+
+
+<!-- TOP THREAT -->
+
+
+<div class="panel">
+
+
+<h2>
+🚨 Top Threat
+</h2>
+
+
+<div
+id="topThreat"
+class="top-threat-placeholder">
+
+Run a scan to identify the highest-risk threat.
+
+</div>
+
+
+</div>
+
+
+<!-- EMAIL -->
+
+
+<div class="panel">
+
+
+<h2>
+📧 Email Threat Report
+</h2>
+
+
+<p class="panel-description">
+
+Enter the recipient's email address.
+
+</p>
+
+
+<div class="email-controls">
+
+
+<input
+class="email-input"
+id="recipientEmail"
+type="email"
+placeholder="user@example.com">
+
+
+</div>
+
+
+<div class="email-actions">
+
+
+<button
+class="standard-button"
+onclick="emailTopThreat()">
+
+📧 Email Top Threat
+
+</button>
+
+
+<button
+class="standard-button"
+onclick="emailFullReport()">
+
+📄 Email Full Report
+
+</button>
+
+
+</div>
+
+
+<div
+id="emailMessage"
+class="email-message">
+</div>
+
+
+</div>
+
+
+<!-- WATCHLIST -->
+
+
+<div class="panel">
+
+
+<h2>
+⭐ Priority Watchlist
+</h2>
+
+
+<p class="panel-description">
+
+Add companies, products or technologies
+you want CyberWatch to prioritize.
+
+</p>
+
+
+<div class="watchlist-controls">
+
+
+<input
+class="text-input"
+id="watchlistInput"
+type="text"
+placeholder="Example: Cisco, Microsoft, Samsung, Fortinet..."
+onkeydown="
+if(event.key === 'Enter') {
+event.preventDefault();
+addWatchlistItem();
+}
+">
+
+
+<button
+class="standard-button"
+onclick="addWatchlistItem()">
+
+Add
+
+</button>
+
+
+</div>
+
+
+<div
+id="watchlistTags"
+class="watchlist-tags">
+</div>
+
+
+</div>
+
+
+<!-- SEVERITY -->
+
+
+<div class="panel">
+
+
+<h2>
+Result Filters
+</h2>
+
+
+<p class="panel-description">
+
+Filter analyzed results by severity.
+
+</p>
+
+
+<div class="severity-filters">
+
+
+<button
+class="filter-button severity-filter active"
+onclick="setSeverityFilter('all', this)">
+
+All
+
+</button>
+
+
+<button
+class="filter-button severity-filter"
+onclick="setSeverityFilter('critical', this)">
+
+Critical
+
+</button>
+
+
+<button
+class="filter-button severity-filter"
+onclick="setSeverityFilter('high', this)">
+
+High
+
+</button>
+
+
+<button
+class="filter-button severity-filter"
+onclick="setSeverityFilter('medium', this)">
+
+Medium
+
+</button>
+
+
+<button
+class="filter-button severity-filter"
+onclick="setSeverityFilter('low', this)">
+
+Low
+
+</button>
+
+
+</div>
+
+
+<div
+id="filterCount"
+class="results-count">
+
+Showing all threats
+
+</div>
+
+
+</div>
+
+
+<h2 class="section-title">
+
+Latest Threat Intelligence
+
+</h2>
+
+
+<div id="results">
+</div>
+
+
+</div>
+
+
+<script>
+
+
+let selectedAttackTypes = [];
+
+let selectedTechnologies = [];
+
+let selectedSources = [];
+
+let selectedSeverityFilter = "all";
+
+
+let analyzedThreatData = [];
+
+let analyzedCount = 0;
+
+let criticalCount = 0;
+
+let highCount = 0;
+
+let watchlist = [];
+
+
+const sourceNames = {
+
+    "all":
+        "All Sources",
+
+    "newsapi":
+        "NewsAPI",
+
+    "the hacker news":
+        "The Hacker News",
+
+    "bleepingcomputer":
+        "BleepingComputer",
+
+    "cisa":
+        "CISA",
+
+    "nvd":
+        "NVD"
+};
+
+
+window.onload =
+function() {
+
+    setDefaultDates();
+
+    loadWatchlist();
+
+    renderAttackTags();
+
+    renderTechnologyTags();
+
+    renderSourceTags();
+};
+
+
+function setDefaultDates() {
+
+    const now =
+        new Date();
+
+
+    const sevenDaysAgo =
+        new Date(
+            now.getTime()
+            -
+            7
+            *
+            24
+            *
+            60
+            *
+            60
+            *
+            1000
+        );
+
+
+    document
+        .getElementById(
+            "toDate"
+        )
+        .value =
+        toLocalDateTimeValue(
+            now
+        );
+
+
+    document
+        .getElementById(
+            "fromDate"
+        )
+        .value =
+        toLocalDateTimeValue(
+            sevenDaysAgo
+        );
+}
+
+
+function toLocalDateTimeValue(
+    date
+) {
+
+    const offset =
+        date.getTimezoneOffset();
+
+
+    const local =
+        new Date(
+            date.getTime()
+            -
+            offset
+            *
+            60000
+        );
+
+
+    return local
+        .toISOString()
+        .slice(
+            0,
+            16
+        );
+}
+
+
+/* ATTACK TYPES */
+
+
+function setAllAttackTypes() {
+
+    selectedAttackTypes = [
+        "all"
+    ];
+
+
+    renderAttackTags();
+}
+
+
+function quickAddAttack(
+    value
+) {
+
+    selectedAttackTypes =
+        selectedAttackTypes.filter(
+            item =>
+                item.toLowerCase()
+                !==
+                "all"
+        );
+
+
+    const exists =
+        selectedAttackTypes.some(
+            item =>
+                item.toLowerCase()
+                ===
+                value.toLowerCase()
+        );
+
+
+    if (!exists) {
+
+        selectedAttackTypes.push(
+            value
+        );
+    }
+
+
+    renderAttackTags();
+}
+
+
+function addAttackType() {
+
+    const input =
+        document.getElementById(
+            "attackInput"
+        );
+
+
+    const value =
+        input.value.trim();
+
+
+    if (!value) {
+        return;
+    }
+
+
+    if (
+        value.toLowerCase()
+        ===
+        "all"
+    ) {
+
+        setAllAttackTypes();
+
+        input.value = "";
+
+        return;
+    }
+
+
+    quickAddAttack(
+        value
+    );
+
+
+    input.value = "";
+}
+
+
+function removeAttackType(
+    index
+) {
+
+    selectedAttackTypes.splice(
+        index,
+        1
+    );
+
+
+    renderAttackTags();
+}
+
+
+function clearAttackTypes() {
+
+    selectedAttackTypes = [];
+
+
+    renderAttackTags();
+}
+
+
+function renderAttackTags() {
+
+    const container =
+        document.getElementById(
+            "attackTags"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (
+        selectedAttackTypes.length
+        ===
+        0
+    ) {
+
+        container.innerHTML =
+        `
+
+        <span
+        class="empty-selection">
+
+        No attack types selected —
+        searching all attack types.
+
+        </span>
+
+        `;
+
+
+        return;
+    }
+
+
+    selectedAttackTypes.forEach(
+        (
+            item,
+            index
+        ) => {
+
+            const tag =
+                document.createElement(
+                    "div"
+                );
+
+
+            tag.className =
+                "selection-tag";
+
+
+            tag.innerHTML =
+            `
+
+            ${escapeHtml(
+                formatLabel(
+                    item
+                )
+            )}
+
+            <button
+            class="remove-tag"
+            onclick="
+            removeAttackType(
+            ${index}
+            )
+            ">
+
+            ×
+
+            </button>
+
+            `;
+
+
+            container.appendChild(
+                tag
+            );
+        }
+    );
+}
+
+
+/* TECHNOLOGIES */
+
+
+function setAllTechnologies() {
+
+    selectedTechnologies = [
+        "all"
+    ];
+
+
+    renderTechnologyTags();
+}
+
+
+function quickAddTechnology(
+    value
+) {
+
+    selectedTechnologies =
+        selectedTechnologies.filter(
+            item =>
+                item.toLowerCase()
+                !==
+                "all"
+        );
+
+
+    const exists =
+        selectedTechnologies.some(
+            item =>
+                item.toLowerCase()
+                ===
+                value.toLowerCase()
+        );
+
+
+    if (!exists) {
+
+        selectedTechnologies.push(
+            value
+        );
+    }
+
+
+    renderTechnologyTags();
+}
+
+
+function addTechnology() {
+
+    const input =
+        document.getElementById(
+            "technologyInput"
+        );
+
+
+    const value =
+        input.value.trim();
+
+
+    if (!value) {
+        return;
+    }
+
+
+    if (
+        value.toLowerCase()
+        ===
+        "all"
+    ) {
+
+        setAllTechnologies();
+
+        input.value = "";
+
+        return;
+    }
+
+
+    quickAddTechnology(
+        value
+    );
+
+
+    input.value = "";
+}
+
+
+function removeTechnology(
+    index
+) {
+
+    selectedTechnologies.splice(
+        index,
+        1
+    );
+
+
+    renderTechnologyTags();
+}
+
+
+function clearTechnologies() {
+
+    selectedTechnologies = [];
+
+
+    renderTechnologyTags();
+}
+
+
+function renderTechnologyTags() {
+
+    const container =
+        document.getElementById(
+            "technologyTags"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (
+        selectedTechnologies.length
+        ===
+        0
+    ) {
+
+        container.innerHTML =
+        `
+
+        <span
+        class="empty-selection">
+
+        No technology selected —
+        searching all platforms.
+
+        </span>
+
+        `;
+
+
+        return;
+    }
+
+
+    selectedTechnologies.forEach(
+        (
+            item,
+            index
+        ) => {
+
+            const tag =
+                document.createElement(
+                    "div"
+                );
+
+
+            tag.className =
+                "selection-tag technology";
+
+
+            tag.innerHTML =
+            `
+
+            ${escapeHtml(
+                formatLabel(
+                    item
+                )
+            )}
+
+            <button
+            class="remove-tag"
+            onclick="
+            removeTechnology(
+            ${index}
+            )
+            ">
+
+            ×
+
+            </button>
+
+            `;
+
+
+            container.appendChild(
+                tag
+            );
+        }
+    );
+}
+
+
+/* SOURCES */
+
+
+function addSource() {
+
+    const select =
+        document.getElementById(
+            "sourceSelect"
+        );
+
+
+    const value =
+        select.value;
+
+
+    if (!value) {
+        return;
+    }
+
+
+    if (
+        value
+        ===
+        "all"
+    ) {
+
+        selectedSources = [
+            "all"
+        ];
+    }
+
+    else {
+
+        selectedSources =
+            selectedSources.filter(
+                item =>
+                    item !== "all"
+            );
+
+
+        if (
+            !selectedSources.includes(
+                value
+            )
+        ) {
+
+            selectedSources.push(
+                value
+            );
+        }
+    }
+
+
+    select.value = "";
+
+
+    renderSourceTags();
+}
+
+
+function removeSource(
+    index
+) {
+
+    selectedSources.splice(
+        index,
+        1
+    );
+
+
+    renderSourceTags();
+}
+
+
+function clearSources() {
+
+    selectedSources = [];
+
+
+    renderSourceTags();
+}
+
+
+function renderSourceTags() {
+
+    const container =
+        document.getElementById(
+            "sourceTags"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if (
+        selectedSources.length
+        ===
+        0
+    ) {
+
+        container.innerHTML =
+        `
+
+        <span
+        class="empty-selection">
+
+        No sources selected —
+        using all connected sources.
+
+        </span>
+
+        `;
+
+
+        return;
+    }
+
+
+    selectedSources.forEach(
+        (
+            item,
+            index
+        ) => {
+
+            const tag =
+                document.createElement(
+                    "div"
+                );
+
+
+            tag.className =
+                "selection-tag source";
+
+
+            tag.innerHTML =
+            `
+
+            ${escapeHtml(
+                sourceNames[
+                    item
+                ]
+                ||
+                item
+            )}
+
+            <button
+            class="remove-tag"
+            onclick="
+            removeSource(
+            ${index}
+            )
+            ">
+
+            ×
+
+            </button>
+
+            `;
+
+
+            container.appendChild(
+                tag
+            );
+        }
+    );
+}
+
+
+/* SCAN */
+
+
+async function scanThreats() {
+
+    const button =
+        document.getElementById(
+            "scanButton"
+        );
+
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
+    const results =
+        document.getElementById(
+            "results"
+        );
+
+
+    const warning =
+        document.getElementById(
+            "sourceWarning"
+        );
+
+
+    const fromValue =
+        document.getElementById(
+            "fromDate"
+        ).value;
+
+
+    const toValue =
+        document.getElementById(
+            "toDate"
+        ).value;
+
+
+    if (
+        !fromValue
+        ||
+        !toValue
+    ) {
+
+        status.innerText =
+            "Please choose both dates.";
+
+
+        return;
+    }
+
+
+    const fromDate =
+        new Date(
+            fromValue
+        );
+
+
+    const toDate =
+        new Date(
+            toValue
+        );
+
+
+    if (
+        fromDate >= toDate
+    ) {
+
+        status.innerText =
+            "From must be earlier than To.";
+
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+
+    warning.style.display =
+        "none";
+
+
+    results.innerHTML = "";
+
+
+    resetStats();
+
+
+    updateSearchSummary(
+        fromDate,
+        toDate
+    );
+
+
+    document
+        .getElementById(
+            "topThreat"
+        )
+        .innerText =
+        "Waiting for AI analysis...";
+
+
+    status.innerText =
+        "Searching connected cybersecurity sources...";
+
+
+    try {
+
+        const params =
+            new URLSearchParams();
+
+
+        params.set(
+            "from_date",
+            fromDate.toISOString()
+        );
+
+
+        params.set(
+            "to_date",
+            toDate.toISOString()
+        );
+
+
+        params.set(
+            "limit",
+            "20"
+        );
+
+
+        const attacks =
+            selectedAttackTypes.filter(
+                item =>
+                    item.toLowerCase()
+                    !==
+                    "all"
+            );
+
+
+        const technologies =
+            selectedTechnologies.filter(
+                item =>
+                    item.toLowerCase()
+                    !==
+                    "all"
+            );
+
+
+        if (
+            attacks.length > 0
+        ) {
+
+            params.set(
+                "attack_types",
+                attacks.join(",")
+            );
+        }
+
+
+        if (
+            technologies.length > 0
+        ) {
+
+            params.set(
+                "platforms",
+                technologies.join(",")
+            );
+        }
+
+
+        if (
+            selectedSources.length
+            >
+            0
+        ) {
+
+            params.set(
+                "sources",
+                selectedSources.join(",")
+            );
+        }
+
+
+        const response =
+            await fetch(
+
+                "/news?"
+                +
+                params.toString()
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.status !== "ok"
+        ) {
+
+            throw new Error(
+                data.message
+            );
+        }
+
+
+        if (
+            data.source_errors
+            &&
+            data.source_errors.length
+            >
+            0
+        ) {
+
+            warning.style.display =
+                "block";
+
+
+            warning.innerText =
+                "Some sources could not be loaded: "
+                +
+                data.source_errors.join(
+                    " | "
+                );
+        }
+
+
+        const articles =
+            data.articles
+            ||
+            [];
+
+
+        document
+            .getElementById(
+                "totalThreats"
+            )
+            .innerText =
+            articles.length;
+
+
+        if (
+            articles.length === 0
+        ) {
+
+            status.innerText =
+                "Search complete.";
+
+
+            results.innerHTML =
+            `
+
+            <div
+            class="empty">
+
+            No matching cyber intelligence found.
+
+            <br><br>
+
+            Try a larger date range
+            or fewer filters.
+
+            </div>
+
+            `;
+
+
+            return;
+        }
+
+
+        status.innerText =
+            articles.length
+            +
+            " results found. "
+            +
+            "Local AI analysis running...";
+
+
+        articles.forEach(
+            (
+                article,
+                index
+            ) => {
+
+                createArticleCard(
+                    article,
+                    index
+                );
+            }
+        );
+
+
+        for (
+            let i = 0;
+            i < articles.length;
+            i++
+        ) {
+
+            await analyzeArticle(
+                articles[i],
+                i
+            );
+        }
+
+
+        status.innerText =
+            "Scan complete. "
+            +
+            analyzedCount
+            +
+            " articles analyzed.";
+    }
+
+    catch (
+        error
+    ) {
+
+        status.innerText =
+            "Scan failed.";
+
+
+        results.innerHTML =
+        `
+
+        <div
+        class="error">
+
+        ${escapeHtml(
+            error.message
+        )}
+
+        </div>
+
+        `;
+    }
+
+    finally {
+
+        button.disabled =
+            false;
+    }
+}
+
+
+function updateSearchSummary(
+    fromDate,
+    toDate
+) {
+
+    const attacks =
+        selectedAttackTypes.length
+        >
+        0
+
+        ?
+        selectedAttackTypes.join(
+            ", "
+        )
+
+        :
+        "All";
+
+
+    const technologies =
+        selectedTechnologies.length
+        >
+        0
+
+        ?
+        selectedTechnologies.join(
+            ", "
+        )
+
+        :
+        "All";
+
+
+    const sources =
+        selectedSources.length
+        >
+        0
+
+        ?
+        selectedSources.map(
+            item =>
+                sourceNames[
+                    item
+                ]
+                ||
+                item
+        ).join(
+            ", "
+        )
+
+        :
+        "All Connected Sources";
+
+
+    document
+        .getElementById(
+            "searchSummary"
+        )
+        .innerHTML =
+        `
+
+        <strong>
+        Current Search
+        </strong>
+
+        <br>
+
+        From:
+        ${escapeHtml(
+            fromDate.toLocaleString()
+        )}
+
+        <br>
+
+        To:
+        ${escapeHtml(
+            toDate.toLocaleString()
+        )}
+
+        <br>
+
+        Attack Types:
+        ${escapeHtml(
+            attacks
+        )}
+
+        <br>
+
+        Technology:
+        ${escapeHtml(
+            technologies
+        )}
+
+        <br>
+
+        Sources:
+        ${escapeHtml(
+            sources
+        )}
+
+        `;
+}
+
+
+/* ARTICLE CARD */
+
+
+function createArticleCard(
+    article,
+    index
+) {
+
+    const results =
+        document.getElementById(
+            "results"
+        );
+
+
+    const technology =
+        detectTechnology(
+            article.title,
+            article.description
+        );
+
+
+    const cves =
+        detectCVEs(
+            article.title,
+            article.description
+        );
+
+
+    if (
+        article.cve
+        &&
+        !cves.includes(
+            article.cve
+        )
+    ) {
+
+        cves.push(
+            article.cve
+        );
+    }
+
+
+    const timeline =
+        article.known_exploited
+
+        ?
+        "Active Threat"
+
+        :
+        detectThreatStatus(
+            article.title,
+            article.description
+        );
+
+
+    const watchlistHit =
+        detectWatchlistHit(
+            article.title,
+            article.description
+        );
+
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+
+    card.className =
+        "threat-card";
+
+
+    if (
+        watchlistHit
+    ) {
+
+        card.classList.add(
+            "watchlist-hit"
+        );
+    }
+
+
+    card.dataset.severity =
+        "unknown";
+
+
+    let cveBadges = "";
+
+
+    cves.forEach(
+        cve => {
+
+            cveBadges +=
+            `
+
+            <span
+            class="badge badge-cve">
+
+            ${escapeHtml(
+                cve
+            )}
+
+            </span>
+
+            `;
+        }
+    );
+
+
+    let cvssBadge = "";
+
+
+    if (
+        article.cvss_score
+        !==
+        null
+        &&
+        article.cvss_score
+        !==
+        undefined
+    ) {
+
+        cvssBadge =
+        `
+
+        <span
+        class="badge badge-critical">
+
+        CVSS:
+        ${escapeHtml(
+            article.cvss_score
+        )}
+
+        </span>
+
+        `;
+    }
+
+
+    card.innerHTML =
+    `
+
+    <h2>
+
+    ${escapeHtml(
+        article.title
+    )}
+
+    </h2>
+
+
+    <div
+    class="meta">
+
+    ${escapeHtml(
+        article.source
+        ||
+        "Unknown"
+    )}
+
+    |
+
+    ${formatDate(
+        article.published_at
+    )}
+
+    </div>
+
+
+    <div
+    class="badges">
+
+
+    <span
+    class="badge badge-source">
+
+    ${escapeHtml(
+        article.source_group
+        ||
+        article.source
+        ||
+        "Unknown"
+    )}
+
+    </span>
+
+
+    <span
+    class="badge badge-platform">
+
+    ${escapeHtml(
+        technology
+    )}
+
+    </span>
+
+
+    <span
+    class="badge
+    ${getTimelineClass(
+        timeline
+    )}">
+
+    ${escapeHtml(
+        timeline
+    )}
+
+    </span>
+
+
+    ${cveBadges}
+
+    ${cvssBadge}
+
+
+    </div>
+
+
+    <div
+    class="description">
+
+    ${escapeHtml(
+        article.description
+    )}
+
+    </div>
+
+
+    <div
+    class="ai-loading"
+    id="analysis-${index}">
+
+    AI analysis pending...
+
+    </div>
+
+
+    <div
+    class="card-actions">
+
+
+    <a
+    class="article-link"
+    href="${sanitizeUrl(
+        article.url
+    )}"
+    target="_blank"
+    rel="noopener noreferrer">
+
+    View Original Source →
+
+    </a>
+
+
+    <button
+    class="standard-button"
+    onclick="
+    emailThreat(
+    ${index}
+    )
+    ">
+
+    📧 Email This Threat
+
+    </button>
+
+
+    <button
+    class="standard-button ask-toggle"
+    onclick="
+    toggleAskAI(
+    ${index}
+    )
+    ">
+
+    🤖 Ask AI
+
+    </button>
+
+
+    </div>
+
+
+    <div
+    class="ask-panel"
+    id="askPanel-${index}">
+
+
+    <h3>
+
+    🤖 Ask CyberWatch AI
+
+    </h3>
+
+
+    <div
+    class="ask-row">
+
+
+    <input
+    class="ask-input"
+    id="askInput-${index}"
+    type="text"
+    placeholder="Example: Explain this threat simply, am I affected, how can I protect myself?"
+    onkeydown="
+    if(event.key === 'Enter') {
+    event.preventDefault();
+    askThreatAI(${index});
+    }
+    ">
+
+
+    <button
+    class="ask-button"
+    id="askButton-${index}"
+    onclick="
+    askThreatAI(
+    ${index}
+    )
+    ">
+
+    Ask
+
+    </button>
+
+
+    </div>
+
+
+    <div
+    class="ask-answer"
+    id="askAnswer-${index}">
+    </div>
+
+
+    </div>
+
+    `;
+
+
+    results.appendChild(
+        card
+    );
+}
+
+
+/* AI ANALYSIS */
+
+
+async function analyzeArticle(
+    article,
+    index
+) {
+
+    const box =
+        document.getElementById(
+            "analysis-"
+            +
+            index
+        );
+
+
+    box.innerText =
+        "AI analyzing article...";
+
+
+    try {
+
+        const params =
+            new URLSearchParams();
+
+
+        params.set(
+            "title",
+            article.title
+        );
+
+
+        params.set(
+            "description",
+            article.description
+        );
+
+
+        const response =
+            await fetch(
+
+                "/analyze?"
+                +
+                params.toString()
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.status !== "ok"
+        ) {
+
+            throw new Error(
+                data.message
+            );
+        }
+
+
+        const analysis =
+            parseAnalysis(
+                data.analysis
+            );
+
+
+        const card =
+            box.closest(
+                ".threat-card"
+            );
+
+
+        card.dataset.severity =
+            analysis.severity
+                .toLowerCase();
+
+
+        const cves =
+            detectCVEs(
+                article.title,
+                article.description
+            );
+
+
+        if (
+            article.cve
+            &&
+            !cves.includes(
+                article.cve
+            )
+        ) {
+
+            cves.push(
+                article.cve
+            );
+        }
+
+
+        const technology =
+            detectTechnology(
+                article.title,
+                article.description
+            );
+
+
+        const timeline =
+            article.known_exploited
+
+            ?
+            "Active Threat"
+
+            :
+            detectThreatStatus(
+                article.title,
+                article.description
+            );
+
+
+        const watchlistHit =
+            detectWatchlistHit(
+                article.title,
+                article.description
+            );
+
+
+        const riskData =
+            calculateRiskScore(
+                analysis,
+                article,
+                cves,
+                watchlistHit
+            );
+
+
+        const mitre =
+            getMitreMapping(
+                analysis.attackType,
+                analysis.category
+            );
+
+
+        box.innerHTML =
+            buildAnalysisHTML(
+                analysis,
+                riskData,
+                mitre
+            );
+
+
+        analyzedThreatData[
+            index
+        ] = {
+
+            article:
+                article,
+
+            analysis:
+                analysis,
+
+            analysisText:
+                data.analysis,
+
+            risk:
+                riskData.score,
+
+            riskData:
+                riskData,
+
+            mitre:
+                mitre,
+
+            technology:
+                technology,
+
+            timeline:
+                timeline,
+
+            cves:
+                cves
+        };
+
+
+        analyzedCount++;
+
+
+        updateSeverityStats(
+            analysis.severity
+        );
+
+
+        document
+            .getElementById(
+                "analyzedThreats"
+            )
+            .innerText =
+            analyzedCount;
+
+
+        updateTopThreat();
+
+
+        applySeverityFilter();
+    }
+
+    catch (
+        error
+    ) {
+
+        box.innerHTML =
+        `
+
+        <div
+        class="error">
+
+        AI analysis failed.
+
+        </div>
+
+        `;
+    }
+}
+
+
+/* ASK AI */
+
+
+function toggleAskAI(
+    index
+) {
+
+    const panel =
+        document.getElementById(
+            "askPanel-"
+            +
+            index
+        );
+
+
+    panel.classList.toggle(
+        "open"
+    );
+
+
+    if (
+        panel.classList.contains(
+            "open"
+        )
+    ) {
+
+        const input =
+            document.getElementById(
+                "askInput-"
+                +
+                index
+            );
+
+
+        input.focus();
+    }
+}
+
+
+async function askThreatAI(
+    index
+) {
+
+    const threat =
+        analyzedThreatData[
+            index
+        ];
+
+
+    const input =
+        document.getElementById(
+            "askInput-"
+            +
+            index
+        );
+
+
+    const answerBox =
+        document.getElementById(
+            "askAnswer-"
+            +
+            index
+        );
+
+
+    const button =
+        document.getElementById(
+            "askButton-"
+            +
+            index
+        );
+
+
+    const question =
+        input.value.trim();
+
+
+    if (!question) {
+
+        answerBox.className =
+            "ask-answer visible";
+
+
+        answerBox.innerText =
+            "Please type a question first.";
+
+
+        return;
+    }
+
+
+    if (!threat) {
+
+        answerBox.className =
+            "ask-answer visible";
+
+
+        answerBox.innerText =
+            "Wait for the article analysis to finish first.";
+
+
+        return;
+    }
+
+
+    button.disabled =
+        true;
+
+
+    answerBox.className =
+        "ask-answer visible ask-loading";
+
+
+    answerBox.innerText =
+        "CyberWatch AI is thinking...";
+
+
+    try {
+
+        const response =
+            await fetch(
+
+                "/ask",
+
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            title:
+                                threat.article.title,
+
+                            description:
+                                threat.article.description,
+
+                            analysis:
+                                threat.analysisText
+                                ||
+                                buildAnalysisContext(
+                                    threat
+                                ),
+
+                            question:
+                                question
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.status !== "ok"
+        ) {
+
+            throw new Error(
+                data.message
+            );
+        }
+
+
+        answerBox.className =
+            "ask-answer visible";
+
+
+        answerBox.innerText =
+            data.answer;
+    }
+
+    catch (
+        error
+    ) {
+
+        answerBox.className =
+            "ask-answer visible";
+
+
+        answerBox.innerText =
+            "Ask AI failed: "
+            +
+            error.message;
+    }
+
+    finally {
+
+        button.disabled =
+            false;
+    }
+}
+
+
+function buildAnalysisContext(
+    threat
+) {
+
+    return (
+
+        "Summary: "
+        +
+        threat.analysis.summary
+        +
+        "\n"
+
+        +
+        "Attack Type: "
+        +
+        threat.analysis.attackType
+        +
+        "\n"
+
+        +
+        "Severity: "
+        +
+        threat.analysis.severity
+        +
+        "\n"
+
+        +
+        "Target: "
+        +
+        threat.analysis.target
+        +
+        "\n"
+
+        +
+        "Impact: "
+        +
+        threat.analysis.impact
+        +
+        "\n"
+
+        +
+        "MITRE: "
+        +
+        threat.mitre
+    );
+}
+
+
+/* PARSE AI */
+
+
+function parseAnalysis(
+    text
+) {
+
+    const result = {
+
+        summary:
+            "Unknown",
+
+        category:
+            "Unknown",
+
+        attackType:
+            "Unknown",
+
+        severity:
+            "Unknown",
+
+        target:
+            "Unknown",
+
+        impact:
+            "Unknown",
+
+        confidence:
+            "Unknown",
+
+        recommendations:
+            "No recommendations available."
+    };
+
+
+    if (!text) {
+        return result;
+    }
+
+
+    const lines =
+        text.split(
+            "\n"
+        );
+
+
+    let recommendationMode =
+        false;
+
+
+    let recommendationText =
+        "";
+
+
+    lines.forEach(
+        line => {
+
+            const clean =
+                line.trim();
+
+
+            if (
+                clean.startsWith(
+                    "SUMMARY:"
+                )
+            ) {
+
+                result.summary =
+                    clean.replace(
+                        "SUMMARY:",
+                        ""
+                    ).trim();
+            }
+
+            else if (
+                clean.startsWith(
+                    "CATEGORY:"
+                )
+            ) {
+
+                result.category =
+                    clean.replace(
+                        "CATEGORY:",
+                        ""
+                    ).trim();
+            }
+
+            else if (
+                clean.startsWith(
+                    "ATTACK_TYPE:"
+                )
+            ) {
+
+                result.attackType =
+                    clean.replace(
+                        "ATTACK_TYPE:",
+                        ""
+                    ).trim();
+            }
+
+            else if (
+                clean.startsWith(
+                    "SEVERITY:"
+                )
+            ) {
+
+                result.severity =
+                    clean.replace(
+                        "SEVERITY:",
+                        ""
+                    ).trim();
+            }
+
+            else if (
+                clean.startsWith(
+                    "TARGET:"
+                )
+            ) {
+
+                result.target =
+                    clean.replace(
+                        "TARGET:",
+                        ""
+                    ).trim();
+            }
+
+            else if (
+                clean.startsWith(
+                    "IMPACT:"
+                )
+            ) {
+
+                result.impact =
+                    clean.replace(
+                        "IMPACT:",
+                        ""
+                    ).trim();
+            }
+
+            else if (
+                clean.startsWith(
+                    "CONFIDENCE:"
+                )
+            ) {
+
+                result.confidence =
+                    clean.replace(
+                        "CONFIDENCE:",
+                        ""
+                    ).trim();
+            }
+
+            else if (
+                clean.startsWith(
+                    "RECOMMENDATIONS:"
+                )
+            ) {
+
+                recommendationMode =
+                    true;
+
+
+                const first =
+                    clean.replace(
+                        "RECOMMENDATIONS:",
+                        ""
+                    ).trim();
+
+
+                if (first) {
+
+                    recommendationText +=
+                        first
+                        +
+                        "\n";
+                }
+            }
+
+            else if (
+                recommendationMode
+                &&
+                clean !== ""
+            ) {
+
+                recommendationText +=
+                    clean
+                    +
+                    "\n";
+            }
+        }
+    );
+
+
+    if (
+        recommendationText
+        .trim()
+        !==
+        ""
+    ) {
+
+        result.recommendations =
+            recommendationText.trim();
+    }
+
+
+    return result;
+}
+
+
+/* BUILD ANALYSIS */
+
+
+function buildAnalysisHTML(
+    analysis,
+    riskData,
+    mitre
+) {
+
+    return `
+    
+    <div class="badges">
+
+        <span class="badge badge-category">
+            ${escapeHtml(
+                analysis.category
+            )}
+        </span>
+
+        <span
+        class="badge
+        ${getSeverityClass(
+            analysis.severity
+        )}">
+            ${escapeHtml(
+                analysis.severity
+            )}
+        </span>
+
+        <span class="badge badge-info">
+            Confidence:
+            ${escapeHtml(
+                analysis.confidence
+            )}
+        </span>
+
+    </div>
+
+
+    <div class="risk-box">
+
+        <div class="risk-header">
+
+            <strong>
+                CyberWatch Risk Score
+            </strong>
+
+            <div class="risk-score">
+                ${riskData.score}/100
+            </div>
+
+        </div>
+
+
+        <div class="risk-bar">
+
+            <div
+            class="risk-fill"
+            style="
+            width:
+            ${riskData.score}%
+            ">
+            </div>
+
+        </div>
+
+
+        <div class="risk-reasons">
+
+            ${riskData.reasons
+                .map(
+                    reason =>
+                        "• "
+                        +
+                        escapeHtml(
+                            reason
+                        )
+                )
+                .join(
+                    "<br>"
+                )
+            }
+
+        </div>
+
+    </div>
+
+
+    <div class="analysis-grid">
+
+        <div class="info-box">
+
+            <h4>
+                AI Summary
+            </h4>
+
+            ${escapeHtml(
+                analysis.summary
+            )}
+
+        </div>
+
+
+        <div class="info-box">
+
+            <h4>
+                Attack Type
+            </h4>
+
+            ${escapeHtml(
+                analysis.attackType
+            )}
+
+        </div>
+
+
+        <div class="info-box">
+
+            <h4>
+                Target
+            </h4>
+
+            ${escapeHtml(
+                analysis.target
+            )}
+
+        </div>
+
+
+        <div class="info-box">
+
+            <h4>
+                Possible Impact
+            </h4>
+
+            ${escapeHtml(
+                analysis.impact
+            )}
+
+        </div>
+
+    </div>
+
+
+    <div class="mitre-box">
+
+        <strong>
+            MITRE ATT&CK — Likely Mapping
+        </strong>
+
+        <br><br>
+
+        ${escapeHtml(
+            mitre
+        )}
+
+    </div>
+
+
+    <div class="recommendations">
+
+        <strong>
+            AI Defensive Recommendations
+        </strong>
+
+${escapeHtml(
+    analysis.recommendations
+)}
+
+    </div>
+
+    `;
+}
+
+
+/* RISK */
+
+
+function calculateRiskScore(
+    analysis,
+    article,
+    cves,
+    watchlistHit
+) {
+
+    let score = 18;
+
+
+    const reasons = [];
+
+
+    const severity =
+        analysis.severity
+            .toLowerCase();
+
+
+    if (
+        severity.includes(
+            "critical"
+        )
+    ) {
+
+        score = 88;
+
+        reasons.push(
+            "AI classified severity as Critical"
+        );
+    }
+
+    else if (
+        severity.includes(
+            "high"
+        )
+    ) {
+
+        score = 72;
+
+        reasons.push(
+            "AI classified severity as High"
+        );
+    }
+
+    else if (
+        severity.includes(
+            "medium"
+        )
+    ) {
+
+        score = 52;
+
+        reasons.push(
+            "AI classified severity as Medium"
+        );
+    }
+
+    else if (
+        severity.includes(
+            "low"
+        )
+    ) {
+
+        score = 28;
+
+        reasons.push(
+            "AI classified severity as Low"
+        );
+    }
+
+
+    if (
+        article.cvss_score
+        !==
+        null
+        &&
+        article.cvss_score
+        !==
+        undefined
+    ) {
+
+        const cvss =
+            Number(
+                article.cvss_score
+            );
+
+
+        if (
+            !Number.isNaN(
+                cvss
+            )
+        ) {
+
+            score =
+                Math.max(
+                    score,
+                    Math.round(
+                        cvss
+                        *
+                        10
+                    )
+                );
+
+
+            reasons.push(
+                "Official CVSS score: "
+                +
+                cvss
+            );
+        }
+    }
+
+
+    if (
+        article.known_exploited
+    ) {
+
+        score += 8;
+
+
+        reasons.push(
+            "Known exploited vulnerability"
+        );
+    }
+
+
+    const attack =
+        analysis.attackType
+            .toLowerCase();
+
+
+    if (
+        attack.includes(
+            "ransomware"
+        )
+        ||
+        attack.includes(
+            "zero-day"
+        )
+    ) {
+
+        score += 7;
+
+
+        reasons.push(
+            "High-impact attack type"
+        );
+    }
+
+
+    if (
+        cves.length > 0
+    ) {
+
+        score += 4;
+
+
+        reasons.push(
+            "CVE detected"
+        );
+    }
+
+
+    if (
+        analysis.confidence
+        .toLowerCase()
+        .includes(
+            "high"
+        )
+    ) {
+
+        score += 3;
+
+
+        reasons.push(
+            "High-confidence AI analysis"
+        );
+    }
+
+
+    if (
+        watchlistHit
+    ) {
+
+        score += 3;
+
+
+        reasons.push(
+            "Matches Priority Watchlist"
+        );
+    }
+
+
+    if (
+        score > 100
+    ) {
+
+        score = 100;
+    }
+
+
+    return {
+        score:
+            score,
+
+        reasons:
+            reasons
+    };
+}
+
+
+/* TECHNOLOGY DETECTION */
+
+
+function detectTechnology(
+    title,
+    description
+) {
+
+    const text =
+        (
+            (title || "")
+            +
+            " "
+            +
+            (description || "")
+        )
+        .toLowerCase();
+
+
+    const known = [
+        "android",
+        "windows",
+        "linux",
+        "ubuntu",
+        "debian",
+        "docker",
+        "kubernetes",
+        "cisco",
+        "fortinet",
+        "vmware",
+        "apache",
+        "wordpress",
+        "chrome",
+        "firefox",
+        "ios",
+        "iphone",
+        "ipad",
+        "macos",
+        "aws",
+        "azure",
+        "cloud",
+        "router",
+        "firewall",
+        "vpn",
+        "iot"
+    ];
+
+
+    for (
+        const item
+        of known
+    ) {
+
+        if (
+            text.includes(
+                item
+            )
+        ) {
+
+            return formatLabel(
+                item
+            );
+        }
+    }
+
+
+    return "Other";
+}
+
+
+/* CVE */
+
+
+function detectCVEs(
+    title,
+    description
+) {
+
+    const text =
+        (
+            (title || "")
+            +
+            " "
+            +
+            (description || "")
+        );
+
+
+    const matches =
+        text.match(
+            /CVE-\d{4}-\d{4,7}/gi
+        );
+
+
+    if (!matches) {
+        return [];
+    }
+
+
+    return [
+        ...new Set(
+            matches.map(
+                value =>
+                    value.toUpperCase()
+            )
+        )
+    ];
+}
+
+
+/* THREAT STATUS */
+
+
+function detectThreatStatus(
+    title,
+    description
+) {
+
+    const text =
+        (
+            (title || "")
+            +
+            " "
+            +
+            (description || "")
+        )
+        .toLowerCase();
+
+
+    if (
+        text.includes("patched")
+        ||
+        text.includes("patch available")
+        ||
+        text.includes("fix released")
+    ) {
+
+        return "Patched";
+    }
+
+
+    if (
+        text.includes("actively exploited")
+        ||
+        text.includes("active exploitation")
+        ||
+        text.includes("ongoing attack")
+    ) {
+
+        return "Active Threat";
+    }
+
+
+    if (
+        text.includes("attack")
+        ||
+        text.includes("breach")
+        ||
+        text.includes("compromised")
+    ) {
+
+        return "Reported";
+    }
+
+
+    return "Monitoring";
+}
+
+
+function getTimelineClass(
+    status
+) {
+
+    if (
+        status === "Active Threat"
+    ) {
+
+        return "badge-active";
+    }
+
+
+    if (
+        status === "Patched"
+    ) {
+
+        return "badge-patched";
+    }
+
+
+    return "badge-monitor";
+}
+
+
+/* MITRE */
+
+
+function getMitreMapping(
+    attackType,
+    category
+) {
+
+    const text =
+        (
+            attackType
+            +
+            " "
+            +
+            category
+        )
+        .toLowerCase();
+
+
+    if (
+        text.includes(
+            "ransomware"
+        )
+    ) {
+
+        return (
+            "T1486 — Data Encrypted for Impact"
+        );
+    }
+
+
+    if (
+        text.includes(
+            "phishing"
+        )
+    ) {
+
+        return (
+            "T1566 — Phishing"
+        );
+    }
+
+
+    if (
+        text.includes(
+            "ddos"
+        )
+    ) {
+
+        return (
+            "T1498 — Network Denial of Service"
+        );
+    }
+
+
+    if (
+        text.includes(
+            "account compromise"
+        )
+    ) {
+
+        return (
+            "T1078 — Valid Accounts"
+        );
+    }
+
+
+    if (
+        text.includes(
+            "zero-day"
+        )
+        ||
+        text.includes(
+            "vulnerability exploitation"
+        )
+    ) {
+
+        return (
+            "T1190 — Exploit Public-Facing Application"
+        );
+    }
+
+
+    return (
+        "No reliable MITRE ATT&CK mapping "
+        +
+        "identified from available article data."
+    );
+}
+
+
+/* SEVERITY FILTER */
+
+
+function setSeverityFilter(
+    value,
+    button
+) {
+
+    selectedSeverityFilter =
+        value;
+
+
+    document
+        .querySelectorAll(
+            ".severity-filter"
+        )
+        .forEach(
+            item =>
+                item.classList.remove(
+                    "active"
+                )
+        );
+
+
+    button.classList.add(
+        "active"
+    );
+
+
+    applySeverityFilter();
+}
+
+
+function applySeverityFilter() {
+
+    const cards =
+        document.querySelectorAll(
+            ".threat-card"
+        );
+
+
+    let visible = 0;
+
+
+    cards.forEach(
+        card => {
+
+            const severity =
+                card.dataset.severity
+                ||
+                "unknown";
+
+
+            const match =
+                selectedSeverityFilter
+                ===
+                "all"
+                ||
+                severity.includes(
+                    selectedSeverityFilter
+                );
+
+
+            card.style.display =
+                match
+                ?
+                "block"
+                :
+                "none";
+
+
+            if (match) {
+                visible++;
+            }
+        }
+    );
+
+
+    document
+        .getElementById(
+            "filterCount"
+        )
+        .innerText =
+        "Showing "
+        +
+        visible
+        +
+        " of "
+        +
+        cards.length
+        +
+        " threats";
+}
+
+
+/* STATS */
+
+
+function updateSeverityStats(
+    severity
+) {
+
+    const value =
+        severity.toLowerCase();
+
+
+    if (
+        value.includes(
+            "critical"
+        )
+    ) {
+
+        criticalCount++;
+    }
+
+
+    if (
+        value.includes(
+            "high"
+        )
+    ) {
+
+        highCount++;
+    }
+
+
+    document
+        .getElementById(
+            "criticalThreats"
+        )
+        .innerText =
+        criticalCount;
+
+
+    document
+        .getElementById(
+            "highThreats"
+        )
+        .innerText =
+        highCount;
+}
+
+
+function getSeverityClass(
+    severity
+) {
+
+    const value =
+        severity.toLowerCase();
+
+
+    if (
+        value.includes(
+            "critical"
+        )
+    ) {
+
+        return "badge-critical";
+    }
+
+
+    if (
+        value.includes(
+            "high"
+        )
+    ) {
+
+        return "badge-high";
+    }
+
+
+    if (
+        value.includes(
+            "medium"
+        )
+    ) {
+
+        return "badge-medium";
+    }
+
+
+    if (
+        value.includes(
+            "low"
+        )
+    ) {
+
+        return "badge-low";
+    }
+
+
+    return "badge-info";
+}
+
+
+/* WATCHLIST */
+
+
+function addWatchlistItem() {
+
+    const input =
+        document.getElementById(
+            "watchlistInput"
+        );
+
+
+    const value =
+        input.value.trim();
+
+
+    if (!value) {
+        return;
+    }
+
+
+    const exists =
+        watchlist.some(
+            item =>
+                item.toLowerCase()
+                ===
+                value.toLowerCase()
+        );
+
+
+    if (!exists) {
+
+        watchlist.push(
+            value
+        );
+    }
+
+
+    input.value = "";
+
+
+    saveWatchlist();
+
+
+    renderWatchlist();
+}
+
+
+function removeWatchlistItem(
+    index
+) {
+
+    watchlist.splice(
+        index,
+        1
+    );
+
+
+    saveWatchlist();
+
+
+    renderWatchlist();
+}
+
+
+function saveWatchlist() {
+
+    localStorage.setItem(
+        "cyberwatch_watchlist",
+        JSON.stringify(
+            watchlist
+        )
+    );
+}
+
+
+function loadWatchlist() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                "cyberwatch_watchlist"
+            );
+
+
+        if (saved) {
+
+            watchlist =
+                JSON.parse(
+                    saved
+                );
+        }
+    }
+
+    catch {
+
+        watchlist = [];
+    }
+
+
+    renderWatchlist();
+}
+
+
+function renderWatchlist() {
+
+    const container =
+        document.getElementById(
+            "watchlistTags"
+        );
+
+
+    container.innerHTML = "";
+
+
+    watchlist.forEach(
+        (
+            item,
+            index
+        ) => {
+
+            const tag =
+                document.createElement(
+                    "div"
+                );
+
+
+            tag.className =
+                "watch-tag";
+
+
+            tag.innerText =
+                item
+                +
+                " ×";
+
+
+            tag.onclick =
+                function() {
+
+                    removeWatchlistItem(
+                        index
+                    );
+                };
+
+
+            container.appendChild(
+                tag
+            );
+        }
+    );
+}
+
+
+function detectWatchlistHit(
+    title,
+    description
+) {
+
+    const text =
+        (
+            (title || "")
+            +
+            " "
+            +
+            (description || "")
+        )
+        .toLowerCase();
+
+
+    return watchlist.some(
+        item =>
+            text.includes(
+                item.toLowerCase()
+            )
+    );
+}
+
+
+/* TOP THREAT */
+
+
+function updateTopThreat() {
+
+    const valid =
+        analyzedThreatData
+        .filter(
+            item =>
+                item
+        );
+
+
+    if (
+        valid.length === 0
+    ) {
+
+        return;
+    }
+
+
+    const top =
+        [
+            ...valid
+        ]
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.risk
+                -
+                a.risk
+        )[0];
+
+
+    document
+        .getElementById(
+            "topThreat"
+        )
+        .innerHTML =
+        `
+
+        <div
+        class="top-threat-content">
+
+        <h3>
+
+        ${escapeHtml(
+            top.article.title
+        )}
+
+        </h3>
+
+        <div
+        class="top-risk">
+
+        Risk Score:
+        ${top.risk}/100
+
+        </div>
+
+        <div>
+
+        ${escapeHtml(
+            top.analysis.summary
+        )}
+
+        </div>
+
+        </div>
+
+        `;
+}
+
+
+/* EMAIL */
+
+
+function getRecipientEmail() {
+
+    const email =
+        document
+        .getElementById(
+            "recipientEmail"
+        )
+        .value
+        .trim();
+
+
+    if (!email) {
+
+        showEmailMessage(
+            "Please enter a recipient email address.",
+            false
+        );
+
+
+        return null;
+    }
+
+
+    return email;
+}
+
+
+async function sendEmail(
+    recipient,
+    subject,
+    content
+) {
+
+    const response =
+        await fetch(
+
+            "/send-email",
+
+            {
+
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify({
+
+                        recipient:
+                            recipient,
+
+                        subject:
+                            subject,
+
+                        content:
+                            content
+                    })
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if (
+        data.status !== "ok"
+    ) {
+
+        throw new Error(
+            data.message
+        );
+    }
+}
+
+
+async function emailThreat(
+    index
+) {
+
+    const recipient =
+        getRecipientEmail();
+
+
+    if (!recipient) {
+        return;
+    }
+
+
+    const threat =
+        analyzedThreatData[
+            index
+        ];
+
+
+    if (!threat) {
+
+        showEmailMessage(
+            "Wait for AI analysis to finish.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    try {
+
+        showEmailMessage(
+            "Sending threat report...",
+            true
+        );
+
+
+        await sendEmail(
+
+            recipient,
+
+            "CyberWatch AI - "
+            +
+            threat.analysis.severity
+            +
+            " Threat",
+
+            buildThreatEmail(
+                threat
+            )
+        );
+
+
+        showEmailMessage(
+            "Threat report sent successfully.",
+            true
+        );
+    }
+
+    catch (
+        error
+    ) {
+
+        showEmailMessage(
+            "Email failed: "
+            +
+            error.message,
+            false
+        );
+    }
+}
+
+
+async function emailTopThreat() {
+
+    const recipient =
+        getRecipientEmail();
+
+
+    if (!recipient) {
+        return;
+    }
+
+
+    const valid =
+        analyzedThreatData
+        .filter(
+            item =>
+                item
+        );
+
+
+    if (
+        valid.length === 0
+    ) {
+
+        showEmailMessage(
+            "Run a scan first.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    const top =
+        [
+            ...valid
+        ]
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.risk
+                -
+                a.risk
+        )[0];
+
+
+    try {
+
+        await sendEmail(
+
+            recipient,
+
+            "CyberWatch AI - Top Threat",
+
+            buildThreatEmail(
+                top
+            )
+        );
+
+
+        showEmailMessage(
+            "Top threat sent successfully.",
+            true
+        );
+    }
+
+    catch (
+        error
+    ) {
+
+        showEmailMessage(
+            "Email failed: "
+            +
+            error.message,
+            false
+        );
+    }
+}
+
+
+async function emailFullReport() {
+
+    const recipient =
+        getRecipientEmail();
+
+
+    if (!recipient) {
+        return;
+    }
+
+
+    const threats =
+        analyzedThreatData
+        .filter(
+            item =>
+                item
+        );
+
+
+    if (
+        threats.length === 0
+    ) {
+
+        showEmailMessage(
+            "Run a scan first.",
+            false
+        );
+
+
+        return;
+    }
+
+
+    let content =
+    `CYBERWATCH AI
+FULL THREAT INTELLIGENCE REPORT
+
+Threats analyzed:
+${threats.length}
+
+========================================
+`;
+
+
+    threats.forEach(
+        (
+            threat,
+            index
+        ) => {
+
+            content +=
+            `
+
+THREAT ${index + 1}
+
+${buildThreatEmail(
+    threat
+)}
+
+========================================
+`;
+        }
+    );
+
+
+    try {
+
+        await sendEmail(
+
+            recipient,
+
+            "CyberWatch AI - Full Threat Report",
+
+            content
+        );
+
+
+        showEmailMessage(
+            "Full report sent successfully.",
+            true
+        );
+    }
+
+    catch (
+        error
+    ) {
+
+        showEmailMessage(
+            "Email failed: "
+            +
+            error.message,
+            false
+        );
+    }
+}
+
+
+function buildThreatEmail(
+    threat
+) {
+
+    return `
+TITLE
+${threat.article.title}
+
+SOURCE
+${threat.article.source}
+
+RISK SCORE
+${threat.risk}/100
+
+SEVERITY
+${threat.analysis.severity}
+
+ATTACK TYPE
+${threat.analysis.attackType}
+
+TECHNOLOGY
+${threat.technology}
+
+STATUS
+${threat.timeline}
+
+TARGET
+${threat.analysis.target}
+
+SUMMARY
+${threat.analysis.summary}
+
+IMPACT
+${threat.analysis.impact}
+
+MITRE ATT&CK
+${threat.mitre}
+
+RECOMMENDATIONS
+${threat.analysis.recommendations}
+
+ORIGINAL SOURCE
+${threat.article.url}
+`;
+}
+
+
+function showEmailMessage(
+    message,
+    success
+) {
+
+    const box =
+        document.getElementById(
+            "emailMessage"
+        );
+
+
+    box.innerText =
+        message;
+
+
+    box.className =
+        success
+
+        ?
+        "email-message email-success"
+
+        :
+        "email-message email-error";
+}
+
+
+/* RESET */
+
+
+function resetStats() {
+
+    analyzedThreatData = [];
+
+    analyzedCount = 0;
+
+    criticalCount = 0;
+
+    highCount = 0;
+
+
+    document
+        .getElementById(
+            "totalThreats"
+        )
+        .innerText =
+        "0";
+
+
+    document
+        .getElementById(
+            "criticalThreats"
+        )
+        .innerText =
+        "0";
+
+
+    document
+        .getElementById(
+            "highThreats"
+        )
+        .innerText =
+        "0";
+
+
+    document
+        .getElementById(
+            "analyzedThreats"
+        )
+        .innerText =
+        "0";
+}
+
+
+/* HELPERS */
+
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+        return "Unknown date";
+    }
+
+
+    return new Date(
+        value
+    )
+    .toLocaleString();
+}
+
+
+function formatLabel(
+    value
+) {
+
+    if (!value) {
+        return "Other";
+    }
+
+
+    if (
+        value.toLowerCase()
+        ===
+        "all"
+    ) {
+
+        return "All";
+    }
+
+
+    return String(
+        value
+    )
+    .split(" ")
+    .filter(Boolean)
+    .map(
+        word =>
+            word.charAt(0)
+            .toUpperCase()
+            +
+            word.slice(1)
+    )
+    .join(" ");
+}
+
+
+function sanitizeUrl(
+    value
+) {
+
+    try {
+
+        const url =
+            new URL(
+                value
+            );
+
+
+        if (
+            url.protocol === "http:"
+            ||
+            url.protocol === "https:"
+        ) {
+
+            return url.href;
+        }
+    }
+
+    catch {
+
+        return "#";
+    }
+
+
+    return "#";
+}
+
+
+function escapeHtml(
+    value
+) {
+
+    if (
+        value === null
+        ||
+        value === undefined
+    ) {
+
+        return "";
+    }
+
+
+    return String(
+        value
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+}
+
+
+</script>
+
+</body>
+
+</html>
