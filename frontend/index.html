@@ -690,6 +690,40 @@ header {
     }
 }
 
+
+/* 2026 accessibility and usability refresh */
+body { background: linear-gradient(180deg, #e8f2ff 0%, #f8fafc 45%, #eef6ff 100%); color: #0f172a; min-height: 100vh; }
+header { background: linear-gradient(115deg, #0b1f3a 0%, #123c69 62%, #0e7490 100%); border-bottom: 0; box-shadow: 0 8px 24px rgba(15, 23, 42, .18); }
+.brand h1 { color: #fff; }
+.brand p { color: #dbeafe; }
+.system-status { background: rgba(15, 118, 110, .32); color: #d1fae5; border: 1px solid rgba(167, 243, 208, .45); }
+.stat-card, .panel, .threat-card { background: rgba(255, 255, 255, .96); border-color: #cbd5e1; box-shadow: 0 10px 30px rgba(30, 64, 175, .08); }
+.stat-card h3, .meta, #status, .search-summary, .results-count, .email-message { color: #475569; }
+.panel-description, .description, .field-label, .selection-header strong, .risk-reasons, .empty { color: #334155; }
+.date-input, .text-input, .email-input, .source-select, .ask-input { background: #f8fbff; border: 1px solid #94a3b8; color: #0f172a; min-height: 48px; color-scheme: light; }
+.date-input { font-size: 17px; font-weight: 650; cursor: pointer; }
+.date-input::-webkit-calendar-picker-indicator { opacity: .9; cursor: pointer; }
+.date-input:focus, .text-input:focus, .email-input:focus, .source-select:focus, .ask-input:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37, 99, 235, .14); }
+.quick-button, .clear-button, .filter-button { background: #eff6ff; color: #1e3a8a; border-color: #bfdbfe; }
+.quick-button:hover, .clear-button:hover, .filter-button:hover, .date-preset:hover { background: #dbeafe; }
+.add-button, .standard-button, .scan-button, .ask-button { background: linear-gradient(135deg, #1d4ed8, #2563eb); box-shadow: 0 5px 14px rgba(37, 99, 235, .2); }
+.secondary-action { background: linear-gradient(135deg, #0f766e, #0891b2); }
+.search-summary, .ai-loading, .info-box, .mitre-box, .recommendations, .risk-box, .ask-panel, .ask-answer { background: #f8fbff; border-color: #d7e2f0; color: #1e293b; }
+.info-box h4 { color: #1d4ed8; }
+.date-presets { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.date-presets span, .field-help { color: #64748b; font-size: 13px; }
+.date-preset { background: #fff; color: #1e40af; border: 1px solid #93c5fd; border-radius: 999px; padding: 9px 14px; cursor: pointer; font-weight: 650; }
+.date-preset.active { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+.email-form-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 16px; margin-top: 18px; }
+.email-recipients, .email-input { resize: vertical; font-family: inherit; }
+.field-help { margin-top: 7px; }
+.attachment-option { display: inline-flex; align-items: center; gap: 10px; margin: 18px 0; padding: 12px 14px; background: #ecfeff; border: 1px solid #a5f3fc; border-radius: 10px; color: #164e63; cursor: pointer; }
+.attachment-option input { width: 18px; height: 18px; accent-color: #0891b2; }
+.email-actions { margin-top: 0; }
+.email-message { min-height: 22px; font-weight: 600; }
+.email-success { color: #047857; }
+.email-error { color: #b91c1c; }
+@media(max-width: 800px) { .email-form-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 
@@ -771,7 +805,7 @@ From
 <input
 class="date-input"
 id="fromDate"
-type="datetime-local">
+type="date">
 
 </div>
 
@@ -787,10 +821,17 @@ To
 <input
 class="date-input"
 id="toDate"
-type="datetime-local">
+type="date">
 
 </div>
 
+</div>
+
+<div class="date-presets" aria-label="Quick date ranges">
+<button class="date-preset" onclick="setDatePreset(1, this)">Today</button>
+<button class="date-preset" onclick="setDatePreset(7, this)">Last 7 days</button>
+<button class="date-preset" onclick="setDatePreset(30, this)">Last 30 days</button>
+<span>Full calendar days are included automatically.</span>
 </div>
 
 
@@ -1119,49 +1160,42 @@ Run a scan to identify the highest-risk threat.
 </div>
 
 
-<div class="panel">
+<div class="panel email-panel">
 
 <h2>
-📧 Email Threat Report
+📧 Share Threat Report
 </h2>
 
 <p class="panel-description">
-Enter the recipient's email address.
+Send a report to yourself or up to 50 people. Separate addresses with commas, semicolons or new lines.
 </p>
 
+<label class="field-label" for="recipientEmails">Recipients</label>
+<textarea class="email-input email-recipients" id="recipientEmails" rows="2" placeholder="you@example.com, teammate@example.com"></textarea>
+<div class="field-help">Each address is validated before anything is sent.</div>
 
-<div class="email-controls">
-
-<input
-class="email-input"
-id="recipientEmail"
-type="email"
-placeholder="user@example.com">
-
+<div class="email-form-grid">
+<div>
+<label class="field-label" for="emailSubject">Subject</label>
+<input class="email-input" id="emailSubject" type="text" maxlength="160" placeholder="CyberWatch AI threat report">
+</div>
+<div>
+<label class="field-label" for="emailNote">Personal message</label>
+<textarea class="email-input" id="emailNote" rows="4" maxlength="2000" placeholder="Add a short message for the recipients..."></textarea>
+</div>
 </div>
 
+<label class="attachment-option">
+<input id="attachReport" type="checkbox" checked>
+<span>Attach the threat report as a text file</span>
+</label>
 
 <div class="email-actions">
-
-<button
-class="standard-button"
-onclick="emailTopThreat()">
-📧 Email Top Threat
-</button>
-
-<button
-class="standard-button"
-onclick="emailFullReport()">
-📄 Email Full Report
-</button>
-
+<button class="standard-button" onclick="emailTopThreat()">📧 Send Top Threat</button>
+<button class="standard-button secondary-action" onclick="emailFullReport()">📄 Send Full Report</button>
 </div>
 
-
-<div
-id="emailMessage"
-class="email-message">
-</div>
+<div id="emailMessage" class="email-message" role="status"></div>
 
 </div>
 
@@ -1328,69 +1362,44 @@ function() {
 };
 
 
-function toLocalDateTimeValue(
-    date
-) {
+function toLocalDateValue(date) {
+    const offset = date.getTimezoneOffset();
+    return new Date(date.getTime() - offset * 60000)
+        .toISOString()
+        .slice(0, 10);
+}
 
-    const offset =
-        date.getTimezoneOffset();
 
+function setDatePreset(days, button) {
+    const end = new Date();
+    const start = new Date();
 
-    return new Date(
-        date.getTime()
-        -
-        offset * 60000
-    )
-    .toISOString()
-    .slice(
-        0,
-        16
+    start.setDate(start.getDate() - (days - 1));
+
+    document.getElementById("fromDate").value =
+        toLocalDateValue(start);
+
+    document.getElementById("toDate").value =
+        toLocalDateValue(end);
+
+    document.querySelectorAll(".date-preset").forEach(
+        item => item.classList.remove("active")
     );
+
+    if (button) {
+        button.classList.add("active");
+    } else {
+        const defaultButton = document.querySelector(
+            ".date-preset:nth-child(2)"
+        );
+        if (defaultButton) defaultButton.classList.add("active");
+    }
 }
 
 
 function setDefaultDates() {
-
-    const now =
-        new Date();
-
-
-    const ago =
-        new Date(
-            now.getTime()
-            -
-            7
-            *
-            24
-            *
-            60
-            *
-            60
-            *
-            1000
-        );
-
-
-    document
-        .getElementById(
-            "toDate"
-        )
-        .value =
-        toLocalDateTimeValue(
-            now
-        );
-
-
-    document
-        .getElementById(
-            "fromDate"
-        )
-        .value =
-        toLocalDateTimeValue(
-            ago
-        );
+    setDatePreset(7);
 }
-
 
 function escapeHtml(
     value
@@ -2020,13 +2029,13 @@ async function scanThreats() {
 
     const fromDate =
         new Date(
-            fromValue
+            fromValue + "T00:00:00"
         );
 
 
     const toDate =
         new Date(
-            toValue
+            toValue + "T23:59:59"
         );
 
 
@@ -5335,454 +5344,172 @@ async function askThreatAI(
 
 /* EMAIL */
 
+function isValidEmail(value) {
+    const input = document.createElement("input");
+    input.type = "email";
+    input.value = value;
+    return input.checkValidity();
+}
 
-function getRecipientEmail() {
+function getEmailForm() {
+    const raw = document.getElementById("recipientEmails").value;
+    const recipients = [...new Set(
+        raw.split(/[;,\n]+/).map(item => item.trim()).filter(Boolean)
+    )];
 
-    const email =
-        document
-        .getElementById(
-            "recipientEmail"
-        )
-        .value
-        .trim();
-
-
-    if (!email) {
-
-        showEmailMessage(
-            "Please enter a recipient email address.",
-            false
-        );
-
-
+    if (recipients.length === 0) {
+        showEmailMessage("Add at least one recipient.", false);
         return null;
     }
 
-
-    return email;
-}
-
-
-async function sendEmail(
-    recipient,
-    subject,
-    content
-) {
-
-    const response =
-        await fetch(
-
-            "/send-email",
-
-            {
-
-                method:
-                    "POST",
-
-                headers: {
-
-                    "Content-Type":
-                        "application/json"
-                },
-
-                body:
-                    JSON.stringify({
-
-                        recipient:
-                            recipient,
-
-                        subject:
-                            subject,
-
-                        content:
-                            content
-                    })
-            }
-        );
-
-
-    const data =
-        await response.json();
-
-
-    if (
-        data.status !== "ok"
-    ) {
-
-        throw new Error(
-            data.message
-            ||
-            "Email failed."
-        );
+    if (recipients.length > 50) {
+        showEmailMessage("You can send to a maximum of 50 recipients.", false);
+        return null;
     }
+
+    const invalid = recipients.filter(item => !isValidEmail(item));
+    if (invalid.length) {
+        showEmailMessage("Check these addresses: " + invalid.join(", "), false);
+        return null;
+    }
+
+    return {
+        recipients,
+        subject: document.getElementById("emailSubject").value.trim(),
+        message: document.getElementById("emailNote").value.trim(),
+        attachReport: document.getElementById("attachReport").checked
+    };
 }
 
-
-function buildThreatEmail(
-    threat
-) {
-
-    return (
-
-        "TITLE\n"
-        +
-        threat.article.title
-        +
-        "\n\n"
-
-        +
-        "SOURCE\n"
-        +
-        threat.article.source
-        +
-        "\n\n"
-
-        +
-        "RISK SCORE\n"
-        +
-        threat.risk
-        +
-        "/100\n\n"
-
-        +
-        "SEVERITY\n"
-        +
-        threat.analysis.severity
-        +
-        "\n\n"
-
-        +
-        "ATTACK TYPE\n"
-        +
-        threat.analysis.attackType
-        +
-        "\n\n"
-
-        +
-        "TARGET\n"
-        +
-        threat.analysis.target
-        +
-        "\n\n"
-
-        +
-        "SUMMARY\n"
-        +
-        threat.analysis.summary
-        +
-        "\n\n"
-
-        +
-        "IMPACT\n"
-        +
-        threat.analysis.impact
-        +
-        "\n\n"
-
-        +
-        "MITRE ATT&CK\n"
-        +
-        threat.mitre
-        +
-        "\n\n"
-
-        +
-        "RECOMMENDATIONS\n"
-        +
-        threat.analysis.recommendations
-        +
-        "\n\n"
-
-        +
-        "ORIGINAL SOURCE\n"
-        +
-        threat.article.url
+async function sendEmail(form, fallbackSubject, content) {
+    showEmailMessage(
+        "Sending to " + form.recipients.length +
+        (form.recipients.length === 1 ? " recipient..." : " recipients..."),
+        true
     );
+
+    const response = await fetch("/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            recipients: form.recipients,
+            subject: form.subject || fallbackSubject,
+            message: form.message,
+            content,
+            attach_report: form.attachReport
+        })
+    });
+
+    const data = await response.json();
+    if (data.status !== "ok") {
+        throw new Error(data.message || "Email failed.");
+    }
+
+    return data;
 }
 
+function buildThreatEmail(threat) {
+    return [
+        "CYBERWATCH AI THREAT REPORT",
+        "",
+        "TITLE", threat.article.title,
+        "",
+        "SOURCE", threat.article.source,
+        "",
+        "RISK SCORE", threat.risk + "/100",
+        "",
+        "SEVERITY", threat.analysis.severity,
+        "",
+        "ATTACK TYPE", threat.analysis.attackType,
+        "",
+        "TARGET", threat.analysis.target,
+        "",
+        "SUMMARY", threat.analysis.summary,
+        "",
+        "IMPACT", threat.analysis.impact,
+        "",
+        "MITRE ATT&CK", threat.mitre,
+        "",
+        "RECOMMENDATIONS", threat.analysis.recommendations,
+        "",
+        "ORIGINAL SOURCE", threat.article.url
+    ].join("\n");
+}
 
-async function emailThreat(
-    index
-) {
-
-    const email =
-        getRecipientEmail();
-
-
-    const threat =
-        analyzedThreatData[
-            index
-        ];
-
-
-    if (!email) {
-        return;
-    }
-
-
+async function emailThreat(index) {
+    const form = getEmailForm();
+    const threat = analyzedThreatData[index];
+    if (!form) return;
     if (!threat) {
-
-        showEmailMessage(
-            "Wait for analysis to finish.",
-            false
-        );
-
-
+        showEmailMessage("Wait for analysis to finish.", false);
         return;
     }
-
 
     try {
-
         await sendEmail(
-
-            email,
-
-            "CyberWatch AI - "
-            +
-            threat.analysis.severity
-            +
-            " Threat",
-
-            buildThreatEmail(
-                threat
-            )
+            form,
+            "CyberWatch AI - " + threat.analysis.severity + " Threat",
+            buildThreatEmail(threat)
         );
-
-
-        showEmailMessage(
-            "Threat report sent successfully.",
-            true
-        );
-    }
-
-    catch (
-        error
-    ) {
-
-        showEmailMessage(
-            "Email failed: "
-            +
-            error.message,
-            false
-        );
+        showEmailMessage("Threat report sent successfully.", true);
+    } catch (error) {
+        showEmailMessage("Email failed: " + error.message, false);
     }
 }
-
 
 async function emailTopThreat() {
-
-    const email =
-        getRecipientEmail();
-
-
-    const threats =
-        analyzedThreatData.filter(
-            Boolean
-        );
-
-
-    if (!email) {
+    const form = getEmailForm();
+    const threats = analyzedThreatData.filter(Boolean);
+    if (!form) return;
+    if (!threats.length) {
+        showEmailMessage("Run a scan first.", false);
         return;
     }
 
-
-    if (
-        threats.length === 0
-    ) {
-
-        showEmailMessage(
-            "Run a scan first.",
-            false
-        );
-
-
-        return;
-    }
-
-
-    const top =
-        [
-            ...threats
-        ]
-        .sort(
-            (
-                a,
-                b
-            ) =>
-                b.risk
-                -
-                a.risk
-        )[0];
-
-
+    const top = [...threats].sort((a, b) => b.risk - a.risk)[0];
     try {
-
-        await sendEmail(
-
-            email,
-
-            "CyberWatch AI - Top Threat",
-
-            buildThreatEmail(
-                top
-            )
-        );
-
-
-        showEmailMessage(
-            "Top threat sent successfully.",
-            true
-        );
-    }
-
-    catch (
-        error
-    ) {
-
-        showEmailMessage(
-            "Email failed: "
-            +
-            error.message,
-            false
-        );
+        await sendEmail(form, "CyberWatch AI - Top Threat", buildThreatEmail(top));
+        showEmailMessage("Top threat sent successfully.", true);
+    } catch (error) {
+        showEmailMessage("Email failed: " + error.message, false);
     }
 }
-
 
 async function emailFullReport() {
-
-    const email =
-        getRecipientEmail();
-
-
-    const threats =
-        analyzedThreatData.filter(
-            Boolean
-        );
-
-
-    if (!email) {
+    const form = getEmailForm();
+    const threats = analyzedThreatData.filter(Boolean);
+    if (!form) return;
+    if (!threats.length) {
+        showEmailMessage("Run a scan first.", false);
         return;
     }
 
-
-    if (
-        threats.length === 0
-    ) {
-
-        showEmailMessage(
-            "Run a scan first.",
-            false
-        );
-
-
-        return;
-    }
-
-
-    let content =
-        "CYBERWATCH AI\n"
-        +
-        "FULL THREAT INTELLIGENCE REPORT\n\n"
-        +
-        "Threats analyzed: "
-        +
-        threats.length
-        +
-        "\n\n"
-        +
-        "========================================\n";
-
-
-    threats.forEach(
-        (
-            threat,
-            index
-        ) => {
-
-            content +=
-
-                "\nTHREAT "
-                +
-                (
-                    index
-                    +
-                    1
-                )
-                +
-                "\n\n"
-
-                +
-                buildThreatEmail(
-                    threat
-                )
-
-                +
-                "\n\n"
-                +
-                "========================================\n";
-        }
+    const sections = threats.map((threat, index) =>
+        "THREAT " + (index + 1) + "\n\n" + buildThreatEmail(threat)
     );
-
+    const content = [
+        "CYBERWATCH AI",
+        "FULL THREAT INTELLIGENCE REPORT",
+        "",
+        "Threats analyzed: " + threats.length,
+        "",
+        sections.join("\n\n========================================\n\n")
+    ].join("\n");
 
     try {
-
-        await sendEmail(
-
-            email,
-
-            "CyberWatch AI - Full Threat Report",
-
-            content
-        );
-
-
-        showEmailMessage(
-            "Full report sent successfully.",
-            true
-        );
-    }
-
-    catch (
-        error
-    ) {
-
-        showEmailMessage(
-            "Email failed: "
-            +
-            error.message,
-            false
-        );
+        await sendEmail(form, "CyberWatch AI - Full Threat Report", content);
+        showEmailMessage("Full report sent successfully.", true);
+    } catch (error) {
+        showEmailMessage("Email failed: " + error.message, false);
     }
 }
 
-
-function showEmailMessage(
-    message,
-    success
-) {
-
-    const box =
-        document.getElementById(
-            "emailMessage"
-        );
-
-
-    box.innerText =
-        message;
-
-
-    box.className =
-        success
-
-        ?
-
-        "email-message email-success"
-
-        :
-
-        "email-message email-error";
+function showEmailMessage(message, success) {
+    const box = document.getElementById("emailMessage");
+    box.innerText = message;
+    box.className = success
+        ? "email-message email-success"
+        : "email-message email-error";
 }
 
 </script>
