@@ -1,14 +1,46 @@
 import os
-from groq import Groq
+import requests
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-client = Groq(api_key=GROQ_API_KEY)
+OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
 
-MODEL = "llama-3.3-70b-versatile"
+OLLAMA_URL = "https://ollama.com/api/chat"
+
+MODEL = "qwen3.5:cloud"
+
+
+
+def ollama_chat(messages, temperature=0.1):
+    if not OLLAMA_API_KEY:
+        raise Exception("OLLAMA_API_KEY is missing.")
+
+    response = requests.post(
+        OLLAMA_URL,
+        headers={
+            "Authorization": f"Bearer {OLLAMA_API_KEY}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": MODEL,
+            "messages": messages,
+            "stream": False,
+            "options": {
+                "temperature": temperature
+            }
+        },
+        timeout=90
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    return data["message"]["content"]
+
 
 
 def analyze_article(title, description):
@@ -79,9 +111,8 @@ Important rules:
   0.1-3.9 = Low
 """
 
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=[
+        result = ollama_chat(
+            [
                 {
                     "role": "system",
                     "content": (
@@ -96,23 +127,26 @@ Important rules:
                     "content": prompt
                 }
             ],
-            temperature=0.1,
-            max_tokens=900
+            temperature=0.1
         )
 
-        result = response.choices[0].message.content
-
-        print("GROQ ANALYSIS SUCCESS")
+        print("OLLAMA ANALYSIS SUCCESS")
         print(result)
 
         return result
 
     except Exception as e:
-        print("GROQ ANALYSIS ERROR:", e)
+        print("OLLAMA ANALYSIS ERROR:", e)
         return "AI analysis failed."
 
 
-def answer_threat_question(title, description, analysis, question):
+
+def answer_threat_question(
+    title,
+    description,
+    analysis,
+    question
+):
     try:
         prompt = f"""
 You are CyberWatch AI, a defensive cybersecurity assistant.
@@ -145,9 +179,8 @@ Do not automatically claim the user is affected.
 Do not invent facts about the incident.
 """
 
-        response = client.chat.completions.create(
-            model=MODEL,
-            messages=[
+        result = ollama_chat(
+            [
                 {
                     "role": "system",
                     "content": (
@@ -160,12 +193,14 @@ Do not invent facts about the incident.
                     "content": prompt
                 }
             ],
-            temperature=0.2,
-            max_tokens=700
+            temperature=0.2
         )
 
-        return response.choices[0].message.content
+        print("OLLAMA ASK AI SUCCESS")
+        print(result)
+
+        return result
 
     except Exception as e:
-        print("GROQ ASK AI ERROR:", e)
+        print("OLLAMA ASK AI ERROR:", e)
         return "AI response failed."
