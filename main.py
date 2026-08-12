@@ -17,7 +17,7 @@ import secrets
 import hashlib
 import hmac
 import time
-import smtplib
+
 from email.message import EmailMessage
 
 
@@ -27,7 +27,9 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
+GMAIL_CLIENT_ID = os.getenv("GMAIL_CLIENT_ID")
+GMAIL_CLIENT_SECRET = os.getenv("GMAIL_CLIENT_SECRET")
+GMAIL_REFRESH_TOKEN = os.getenv("GMAIL_REFRESH_TOKEN")
 APP_USERNAME = os.getenv("APP_USERNAME")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
 FROM_EMAIL = os.getenv(
@@ -287,7 +289,7 @@ def api_status():
         "email_enabled": bool(
             RESEND_API_KEY
             or
-            (EMAIL_ADDRESS and EMAIL_APP_PASSWORD)
+            all([EMAIL_ADDRESS, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN])
         ),
 
         "ollama_enabled": bool(
@@ -1897,13 +1899,57 @@ def ask_ai(
         }
 
 
-def send_email_with_gmail(
+def get_gmail_access_token():
+    if not all([
+        GMAIL_CLIENT_ID,
+        GMAIL_CLIENT_SECRET,
+        GMAIL_REFRESH_TOKEN
+    ]):
+        raise Exception(
+            "Gmail API is not fully configured."
+        )
+
+    try:
+        response = requests.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "client_id": GMAIL_CLIENT_ID,
+                "client_secret": GMAIL_CLIENT_SECRET,
+                "refresh_token": GMAIL_REFRESH_TOKEN,
+                "grant_type": "refresh_token"
+            },
+            timeout=30
+        )
+        response.raise_for_status()
+    except requests.RequestException as error:
+        print("GMAIL TOKEN ERROR:", error)
+        raise Exception(
+            "Gmail authorization failed. "
+            "Please reconnect the sender account."
+        )
+
+    access_token = response.json().get("access_token")
+
+    if not access_token:
+        raise Exception(
+            "Gmail did not return an access token."
+        )
+
+    return access_token
+
+
+def send_email_with_gmail_api(
     recipients,
     subject,
     message,
     content,
     attach_report
 ):
+    if not EMAIL_ADDRESS:
+        raise Exception(
+            "The Gmail sender address is not configured."
+        )
+
     email_body = (
         message.strip()
         or
@@ -1917,35 +1963,58 @@ def send_email_with_gmail(
             + content
         ).strip()
 
-    email = EmailMessage()
-    email["From"] = (
-        f"CyberWatch AI <{EMAIL_ADDRESS}>"
+    access_token = get_gmail_access_token()
+    send_url = (
+        "https://gmail.googleapis.com/gmail/v1/"
+        "users/me/messages/send"
     )
-    email["To"] = ", ".join(recipients)
-    email["Subject"] = subject
-    email.set_content(email_body)
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
 
-    if attach_report:
-        email.add_attachment(
-            content.encode("utf-8"),
-            maintype="text",
-            subtype="plain",
-            filename="cyberwatch-threat-report.txt"
+    for recipient in recipients:
+        email = EmailMessage()
+        email["From"] = (
+            f"CyberWatch AI <{EMAIL_ADDRESS}>"
         )
+        email["To"] = recipient
+        email["Reply-To"] = EMAIL_ADDRESS
+        email["Subject"] = subject
+        email.set_content(email_body)
 
-    with smtplib.SMTP_SSL(
-        "smtp.gmail.com",
-        465,
-        timeout=30
-    ) as server:
-        server.login(
-            EMAIL_ADDRESS,
-            EMAIL_APP_PASSWORD
-        )
-        server.send_message(email)
+        if attach_report:
+            email.add_attachment(
+                content.encode("utf-8"),
+                maintype="text",
+                subtype="plain",
+                filename="cyberwatch-threat-report.txt"
+            )
+
+        raw_message = base64.urlsafe_b64encode(
+            email.as_bytes()
+        ).decode("ascii")
+
+        try:
+            response = requests.post(
+                send_url,
+                headers=headers,
+                json={"raw": raw_message},
+                timeout=30
+            )
+            response.raise_for_status()
+        except requests.RequestException as error:
+            print(
+                "GMAIL API SEND ERROR:",
+                type(error).__name__
+            )
+            raise Exception(
+                "Gmail could not send the report. "
+                "Please try again."
+            )
 
     return {
-        "provider": "gmail",
+        "provider": "gmail-api",
         "recipients": len(recipients)
     }
 
@@ -1957,16 +2026,6 @@ def send_email_with_resend(
     content,
     attach_report
 ):
-
-    if EMAIL_ADDRESS and EMAIL_APP_PASSWORD:
-        return send_email_with_gmail(
-            recipients,
-            subject,
-            message,
-            content,
-            attach_report
-        )
-
     if not RESEND_API_KEY:
         raise Exception(
             "Email delivery is not configured."
@@ -1978,48 +2037,84 @@ def send_email_with_resend(
         "A CyberWatch AI threat report is included below."
     )
 
-    payload = {
-        "from": FROM_EMAIL,
-        "to": recipients,
-        "subject": subject
-    }
-
-    if attach_report:
-        payload["text"] = email_body
-        payload["attachments"] = [
-            {
-                "content": base64.b64encode(
-                    content.encode("utf-8")
-                ).decode("ascii"),
-                "filename": "cyberwatch-threat-report.txt"
-            }
-        ]
-    else:
-        payload["text"] = (
+    if not attach_report:
+        email_body = (
             email_body
             + "\n\n"
             + content
         ).strip()
 
     try:
-        response = resend.Emails.send(payload)
+        for recipient in recipients:
+            payload = {
+                "from": FROM_EMAIL,
+                "to": [recipient],
+                "subject": subject,
+                "text": email_body
+            }
 
-        print(
-            "RESEND EMAIL SUCCESS:",
-            response
-        )
+            if attach_report:
+                payload["attachments"] = [
+                    {
+                        "content": base64.b64encode(
+                            content.encode("utf-8")
+                        ).decode("ascii"),
+                        "filename": (
+                            "cyberwatch-threat-report.txt"
+                        )
+                    }
+                ]
 
-        return response
+            resend.Emails.send(payload)
+
+        return {
+            "provider": "resend",
+            "recipients": len(recipients)
+        }
 
     except Exception as error:
         print(
             "RESEND EMAIL ERROR:",
-            error
+            type(error).__name__
+        )
+        raise Exception(
+            "The email provider could not send the report."
         )
 
-        raise Exception(
-            str(error)
+
+def deliver_email_report(
+    recipients,
+    subject,
+    message,
+    content,
+    attach_report
+):
+    if all([
+        EMAIL_ADDRESS,
+        GMAIL_CLIENT_ID,
+        GMAIL_CLIENT_SECRET,
+        GMAIL_REFRESH_TOKEN
+    ]):
+        return send_email_with_gmail_api(
+            recipients,
+            subject,
+            message,
+            content,
+            attach_report
         )
+
+    if RESEND_API_KEY:
+        return send_email_with_resend(
+            recipients,
+            subject,
+            message,
+            content,
+            attach_report
+        )
+
+    raise Exception(
+        "Email delivery is not configured."
+    )
 
 
 @app.post("/send-email")
@@ -2059,7 +2154,7 @@ def send_email_report(
                 "message": "Email report is empty."
             }
 
-        send_email_with_resend(
+        deliver_email_report(
             recipients,
             subject,
             message,
