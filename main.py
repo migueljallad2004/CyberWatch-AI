@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,14 +15,18 @@ import re
 
 
 load_dotenv()
+
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+
 resend.api_key = RESEND_API_KEY
 
 
 app = FastAPI(
     title="CyberWatch AI",
     description="Multi-source AI Cyber Threat Intelligence",
-    version="5.0"
+    version="6.0"
 )
 
 
@@ -36,8 +39,13 @@ app.add_middleware(
 )
 
 
+FRONTEND_FILE = os.path.join(
+    os.path.dirname(__file__),
+    "frontend",
+    "index.html"
+)
 
-NEWS_API_KEY = os.getenv("NEWS_API_KEY")
+
 NEWS_API_URL = "https://newsapi.org/v2/everything"
 
 THE_HACKER_NEWS_RSS = (
@@ -56,7 +64,6 @@ CISA_KEV_URL = (
 NVD_API_URL = (
     "https://services.nvd.nist.gov/rest/json/cves/2.0"
 )
-
 
 
 SUPPORTED_SOURCES = [
@@ -81,16 +88,12 @@ class AskRequest(BaseModel):
     question: str
 
 
-FRONTEND_FILE = os.path.join(
-    os.path.dirname(__file__),
-    "frontend",
-    "index.html"
-)
-
-
 @app.get("/")
 def home():
-    return FileResponse(FRONTEND_FILE)
+
+    return FileResponse(
+        FRONTEND_FILE
+    )
 
 
 @app.get("/api/status")
@@ -98,9 +101,13 @@ def api_status():
 
     return {
         "name": "CyberWatch AI",
+
         "status": "Running",
+
         "version": "6.0",
-        "ai": "Groq Cloud AI",
+
+        "ai": "Ollama Cloud AI",
+
         "sources": [
             "NewsAPI",
             "The Hacker News",
@@ -108,11 +115,13 @@ def api_status():
             "CISA",
             "NVD"
         ],
+
         "email_enabled": bool(
             RESEND_API_KEY
         ),
-        "groq_enabled": bool(
-            os.getenv("GROQ_API_KEY")
+
+        "ollama_enabled": bool(
+            OLLAMA_API_KEY
         )
     }
 
@@ -160,23 +169,6 @@ def parse_csv(value):
     ]
 
 
-def remove_all_keyword(items):
-
-    return [
-        item
-        for item in items
-        if item.strip().lower() != "all"
-    ]
-
-
-def normalize_source(value):
-
-    return (
-        value.strip()
-        .lower()
-    )
-
-
 def strip_html(value):
 
     if not value:
@@ -200,7 +192,7 @@ def strip_html(value):
     return value.strip()
 
 
-def item_matches_filters(
+def matches_filters(
     title,
     description,
     attack_types,
@@ -208,35 +200,34 @@ def item_matches_filters(
 ):
 
     text = (
-        (title or "")
-        +
-        " "
-        +
-        (description or "")
+        f"{title or ''} "
+        f"{description or ''}"
     ).lower()
 
 
     if attack_types:
 
         attack_match = any(
-            attack.lower() in text
-            for attack in attack_types
+            item.lower() in text
+            for item in attack_types
         )
 
 
         if not attack_match:
+
             return False
 
 
     if platforms:
 
         platform_match = any(
-            platform.lower() in text
-            for platform in platforms
+            item.lower() in text
+            for item in platforms
         )
 
 
         if not platform_match:
+
             return False
 
 
@@ -250,6 +241,7 @@ def date_in_range(
 ):
 
     if not value:
+
         return True
 
 
@@ -259,18 +251,19 @@ def date_in_range(
             value
         )
 
+
+        return (
+            start
+            <=
+            date
+            <=
+            end
+        )
+
+
     except Exception:
 
         return True
-
-
-    return (
-        start
-        <=
-        date
-        <=
-        end
-    )
 
 
 def validate_date_range(
@@ -316,6 +309,7 @@ def build_newsapi_query(
 ):
 
     attack_query = ""
+
     platform_query = ""
 
 
@@ -347,7 +341,11 @@ def build_newsapi_query(
         )
 
 
-    if attack_query and platform_query:
+    if (
+        attack_query
+        and
+        platform_query
+    ):
 
         return (
             attack_query
@@ -359,19 +357,27 @@ def build_newsapi_query(
 
 
     if attack_query:
+
         return attack_query
 
 
     if platform_query:
 
-        return (
-            "("
+        base_query = (
             '"cyber attack" OR '
             '"cybersecurity" OR '
             '"ransomware" OR '
             '"malware" OR '
             '"data breach" OR '
             '"security vulnerability"'
+        )
+
+
+        return (
+            "("
+            +
+            base_query
+            +
             ") AND "
             +
             platform_query
@@ -406,32 +412,42 @@ def fetch_newsapi(
         )
 
 
-    query = build_newsapi_query(
-        attack_types,
-        platforms
-    )
-
-
-    params = {
-        "q": query,
-        "searchIn": "title,description",
-        "language": "en",
-        "sortBy": "publishedAt",
-        "pageSize": limit,
-        "from": start.isoformat(),
-        "to": end.isoformat()
-    }
-
-
-    headers = {
-        "X-Api-Key": NEWS_API_KEY
-    }
-
-
     response = requests.get(
+
         NEWS_API_URL,
-        params=params,
-        headers=headers,
+
+        params={
+
+            "q":
+                build_newsapi_query(
+                    attack_types,
+                    platforms
+                ),
+
+            "searchIn":
+                "title,description",
+
+            "language":
+                "en",
+
+            "sortBy":
+                "publishedAt",
+
+            "pageSize":
+                limit,
+
+            "from":
+                start.isoformat(),
+
+            "to":
+                end.isoformat()
+        },
+
+        headers={
+            "X-Api-Key":
+                NEWS_API_KEY
+        },
+
         timeout=20
     )
 
@@ -442,17 +458,23 @@ def fetch_newsapi(
     data = response.json()
 
 
-    if data.get("status") != "ok":
+    if (
+        data.get("status")
+        !=
+        "ok"
+    ):
 
         raise Exception(
+
             data.get(
                 "message",
                 "NewsAPI returned an error."
             )
+
         )
 
 
-    articles = []
+    results = []
 
 
     for item in data.get(
@@ -466,18 +488,23 @@ def fetch_newsapi(
 
 
         if not title:
+
             continue
 
 
         description = (
-            item.get("description")
+            item.get(
+                "description"
+            )
             or
             "No description available."
         )
 
 
-        articles.append({
-            "title": title,
+        results.append({
+
+            "title":
+                title,
 
             "description":
                 description,
@@ -513,12 +540,16 @@ def fetch_newsapi(
             "cvss_score":
                 None,
 
+            "cvss_severity":
+                None,
+
             "known_exploited":
                 False
+
         })
 
 
-    return articles
+    return results
 
 
 def parse_feed_date(entry):
@@ -527,24 +558,26 @@ def parse_feed_date(entry):
         "published_parsed"
     ):
 
-        date = datetime(
-            *entry.published_parsed[:6],
-            tzinfo=timezone.utc
-        )
+        return datetime(
 
-        return date.isoformat()
+            *entry.published_parsed[:6],
+
+            tzinfo=timezone.utc
+
+        ).isoformat()
 
 
     if entry.get(
         "updated_parsed"
     ):
 
-        date = datetime(
-            *entry.updated_parsed[:6],
-            tzinfo=timezone.utc
-        )
+        return datetime(
 
-        return date.isoformat()
+            *entry.updated_parsed[:6],
+
+            tzinfo=timezone.utc
+
+        ).isoformat()
 
 
     return None
@@ -586,23 +619,26 @@ def fetch_rss_source(
     for entry in feed.entries:
 
         title = (
-            entry.get("title")
+            entry.get(
+                "title"
+            )
             or
             "Untitled"
         )
 
 
-        description = (
-            entry.get("summary")
+        description = strip_html(
+
+            entry.get(
+                "summary"
+            )
             or
-            entry.get("description")
+            entry.get(
+                "description"
+            )
             or
             ""
-        )
 
-
-        description = strip_html(
-            description
         )
 
 
@@ -620,7 +656,7 @@ def fetch_rss_source(
             continue
 
 
-        if not item_matches_filters(
+        if not matches_filters(
             title,
             description,
             attack_types,
@@ -631,6 +667,7 @@ def fetch_rss_source(
 
 
         results.append({
+
             "title":
                 title,
 
@@ -660,8 +697,12 @@ def fetch_rss_source(
             "cvss_score":
                 None,
 
+            "cvss_severity":
+                None,
+
             "known_exploited":
                 False
+
         })
 
 
@@ -716,6 +757,7 @@ def fetch_cisa(
 
 
         if not date_added:
+
             continue
 
 
@@ -726,6 +768,7 @@ def fetch_cisa(
             ).replace(
                 tzinfo=timezone.utc
             )
+
 
         except Exception:
 
@@ -786,12 +829,17 @@ def fetch_cisa(
 
 
         full_description = (
+
             f"{vendor} {product}. "
+
             f"{description} "
+
             f"Required action: "
             f"{required_action}. "
+
             f"Known ransomware use: "
             f"{ransomware_use}."
+
         )
 
 
@@ -801,7 +849,7 @@ def fetch_cisa(
         )
 
 
-        if not item_matches_filters(
+        if not matches_filters(
             title,
             full_description,
             attack_types,
@@ -812,6 +860,7 @@ def fetch_cisa(
 
 
         results.append({
+
             "title":
                 title,
 
@@ -848,8 +897,12 @@ def fetch_cisa(
             "cvss_score":
                 None,
 
+            "cvss_severity":
+                None,
+
             "known_exploited":
                 True
+
         })
 
 
@@ -874,10 +927,15 @@ def get_nvd_cvss(cve):
 
 
     versions = [
+
         "cvssMetricV40",
+
         "cvssMetricV31",
+
         "cvssMetricV30",
+
         "cvssMetricV2"
+
     ]
 
 
@@ -890,6 +948,7 @@ def get_nvd_cvss(cve):
 
 
         if not metric_list:
+
             continue
 
 
@@ -903,6 +962,7 @@ def get_nvd_cvss(cve):
 
 
         return {
+
             "score":
                 cvss_data.get(
                     "baseScore"
@@ -918,12 +978,18 @@ def get_nvd_cvss(cve):
                         "baseSeverity"
                     )
                 )
+
         }
 
 
     return {
-        "score": None,
-        "severity": None
+
+        "score":
+            None,
+
+        "severity":
+            None
+
     }
 
 
@@ -935,32 +1001,35 @@ def fetch_nvd(
     limit
 ):
 
-    params = {
-        "pubStartDate":
-            start.strftime(
-                "%Y-%m-%dT%H:%M:%S.000Z"
-            ),
-
-        "pubEndDate":
-            end.strftime(
-                "%Y-%m-%dT%H:%M:%S.000Z"
-            ),
-
-        "resultsPerPage":
-            min(
-                max(
-                    limit * 5,
-                    20
-                ),
-                100
-            )
-    }
-
-
     response = requests.get(
+
         NVD_API_URL,
-        params=params,
+
+        params={
+
+            "pubStartDate":
+                start.strftime(
+                    "%Y-%m-%dT%H:%M:%S.000Z"
+                ),
+
+            "pubEndDate":
+                end.strftime(
+                    "%Y-%m-%dT%H:%M:%S.000Z"
+                ),
+
+            "resultsPerPage":
+                min(
+                    max(
+                        limit * 5,
+                        20
+                    ),
+                    100
+                )
+
+        },
+
         timeout=30
+
     )
 
 
@@ -999,7 +1068,9 @@ def fetch_nvd(
         ):
 
             if (
-                item.get("lang")
+                item.get(
+                    "lang"
+                )
                 ==
                 "en"
             ):
@@ -1009,10 +1080,11 @@ def fetch_nvd(
                     ""
                 )
 
+
                 break
 
 
-        if not item_matches_filters(
+        if not matches_filters(
             cve_id,
             description,
             attack_types,
@@ -1028,10 +1100,13 @@ def fetch_nvd(
 
 
         results.append({
+
             "title":
-                cve_id
-                +
-                " - NVD Vulnerability",
+                (
+                    cve_id
+                    +
+                    " - NVD Vulnerability"
+                ),
 
             "description":
                 description,
@@ -1073,6 +1148,7 @@ def fetch_nvd(
 
             "known_exploited":
                 False
+
         })
 
 
@@ -1088,7 +1164,9 @@ def fetch_nvd(
     return results
 
 
-def remove_duplicates(articles):
+def remove_duplicates(
+    articles
+):
 
     unique = []
 
@@ -1138,12 +1216,14 @@ def remove_duplicates(articles):
 
 
         if url:
+
             seen_urls.add(
                 url
             )
 
 
         if title:
+
             seen_titles.add(
                 title
             )
@@ -1157,7 +1237,9 @@ def remove_duplicates(articles):
     return unique
 
 
-def sort_date_value(article):
+def sort_date_value(
+    article
+):
 
     value = article.get(
         "published_at"
@@ -1176,6 +1258,7 @@ def sort_date_value(article):
         return parse_date(
             value
         )
+
 
     except Exception:
 
@@ -1212,27 +1295,48 @@ def get_news(
         )
 
 
-        attack_list = remove_all_keyword(
-            parse_csv(
+        attack_list = [
+
+            item
+
+            for item in parse_csv(
                 attack_types
             )
-        )
+
+            if (
+                item.lower()
+                !=
+                "all"
+            )
+
+        ]
 
 
-        platform_list = remove_all_keyword(
-            parse_csv(
+        platform_list = [
+
+            item
+
+            for item in parse_csv(
                 platforms
             )
-        )
+
+            if (
+                item.lower()
+                !=
+                "all"
+            )
+
+        ]
 
 
         source_list = [
-            normalize_source(
-                item
-            )
+
+            item.lower()
+
             for item in parse_csv(
                 sources
             )
+
         ]
 
 
@@ -1248,9 +1352,13 @@ def get_news(
 
 
         source_list = [
+
             source
+
             for source in source_list
+
             if source in SUPPORTED_SOURCES
+
         ]
 
 
@@ -1261,12 +1369,13 @@ def get_news(
             )
 
 
-        if limit < 1:
-            limit = 1
-
-
-        if limit > 50:
-            limit = 50
+        limit = max(
+            1,
+            min(
+                limit,
+                50
+            )
+        )
 
 
         combined = []
@@ -1274,11 +1383,15 @@ def get_news(
         errors = []
 
 
-        if "newsapi" in source_list:
+        if (
+            "newsapi"
+            in source_list
+        ):
 
             try:
 
                 combined.extend(
+
                     fetch_newsapi(
                         start,
                         end,
@@ -1286,7 +1399,9 @@ def get_news(
                         platform_list,
                         limit
                     )
+
                 )
+
 
             except Exception as error:
 
@@ -1305,16 +1420,27 @@ def get_news(
             try:
 
                 combined.extend(
+
                     fetch_rss_source(
+
                         THE_HACKER_NEWS_RSS,
+
                         "The Hacker News",
+
                         start,
+
                         end,
+
                         attack_list,
+
                         platform_list,
+
                         limit
+
                     )
+
                 )
+
 
             except Exception as error:
 
@@ -1333,16 +1459,27 @@ def get_news(
             try:
 
                 combined.extend(
+
                     fetch_rss_source(
+
                         BLEEPING_COMPUTER_RSS,
+
                         "BleepingComputer",
+
                         start,
+
                         end,
+
                         attack_list,
+
                         platform_list,
+
                         limit
+
                     )
+
                 )
+
 
             except Exception as error:
 
@@ -1353,19 +1490,31 @@ def get_news(
                 )
 
 
-        if "cisa" in source_list:
+        if (
+            "cisa"
+            in source_list
+        ):
 
             try:
 
                 combined.extend(
+
                     fetch_cisa(
+
                         start,
+
                         end,
+
                         attack_list,
+
                         platform_list,
+
                         limit
+
                     )
+
                 )
+
 
             except Exception as error:
 
@@ -1376,19 +1525,31 @@ def get_news(
                 )
 
 
-        if "nvd" in source_list:
+        if (
+            "nvd"
+            in source_list
+        ):
 
             try:
 
                 combined.extend(
+
                     fetch_nvd(
+
                         start,
+
                         end,
+
                         attack_list,
+
                         platform_list,
+
                         limit
+
                     )
+
                 )
+
 
             except Exception as error:
 
@@ -1416,6 +1577,7 @@ def get_news(
 
 
         return {
+
             "status":
                 "ok",
 
@@ -1438,17 +1600,20 @@ def get_news(
 
             "articles":
                 combined
+
         }
 
 
     except Exception as error:
 
         return {
+
             "status":
                 "error",
 
             "message":
                 str(error)
+
         }
 
 
@@ -1467,22 +1632,26 @@ def analyze(
 
 
         return {
+
             "status":
                 "ok",
 
             "analysis":
                 result
+
         }
 
 
     except Exception as error:
 
         return {
+
             "status":
                 "error",
 
             "message":
                 str(error)
+
         }
 
 
@@ -1502,74 +1671,57 @@ def ask_ai(
         if not question:
 
             return {
+
                 "status":
                     "error",
 
                 "message":
                     "Question cannot be empty."
+
             }
 
 
-        prompt = f"""
-You are CyberWatch AI.
-
-You are a defensive cybersecurity threat intelligence assistant.
-
-Answer the user's question using the threat information below.
-
-Keep the answer clear and concise.
-
-Do not provide malware code, credential theft instructions,
-destructive commands, or offensive exploitation instructions.
-
-THREAT TITLE:
-{request.title}
-
-THREAT DESCRIPTION:
-{request.description}
-
-CYBERWATCH ANALYSIS:
-{request.analysis}
-
-USER QUESTION:
-{question}
-
-ANSWER:
-"""
-
-
         answer = answer_threat_question(
+
             request.title,
+
             request.description,
+
             request.analysis,
+
             question
+
         )
 
 
         return {
+
             "status":
                 "ok",
 
             "answer":
                 answer
+
         }
 
 
     except Exception as error:
 
         return {
+
             "status":
                 "error",
 
             "message":
                 str(error)
+
         }
 
 
 def send_email_with_resend(
-    recipient: str,
-    subject: str,
-    content: str
+    recipient,
+    subject,
+    content
 ):
 
     if not RESEND_API_KEY:
@@ -1582,17 +1734,24 @@ def send_email_with_resend(
     try:
 
         response = resend.Emails.send({
+
             "from":
-                "CyberWatch AI <onboarding@resend.dev>",
+                (
+                    "CyberWatch AI "
+                    "<onboarding@resend.dev>"
+                ),
 
             "to":
-                [recipient],
+                [
+                    recipient
+                ],
 
             "subject":
                 subject,
 
             "text":
                 content
+
         })
 
 
@@ -1626,14 +1785,18 @@ def send_email_report(
     try:
 
         recipient = (
-            report.recipient
+            str(
+                report.recipient
+            )
             .strip()
         )
+
 
         subject = (
             report.subject
             .strip()
         )
+
 
         content = (
             report.content
@@ -1644,11 +1807,13 @@ def send_email_report(
         if not recipient:
 
             return {
+
                 "status":
                     "error",
 
                 "message":
                     "Recipient email is required."
+
             }
 
 
@@ -1662,36 +1827,46 @@ def send_email_report(
         if not content:
 
             return {
+
                 "status":
                     "error",
 
                 "message":
                     "Email report is empty."
+
             }
 
 
         send_email_with_resend(
+
             recipient,
+
             subject,
+
             content
+
         )
 
 
         return {
+
             "status":
                 "ok",
 
             "message":
                 "Email sent successfully."
+
         }
 
 
     except Exception as error:
 
         return {
+
             "status":
                 "error",
 
             "message":
                 str(error)
+
         }
