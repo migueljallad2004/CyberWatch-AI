@@ -1,7 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Depends, HTTPException, Request, Response, status
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel, EmailStr
 from dotenv import load_dotenv
 
@@ -15,6 +14,9 @@ import os
 import re
 import base64
 import secrets
+import hashlib
+import hmac
+import time
 import smtplib
 from email.message import EmailMessage
 
@@ -36,43 +38,90 @@ FROM_EMAIL = os.getenv(
 resend.api_key = RESEND_API_KEY
 
 
-security = HTTPBasic()
+SESSION_COOKIE = "cyberwatch_session"
+SESSION_TTL = 60 * 60 * 12
 
 
-def require_auth(
-    credentials: HTTPBasicCredentials = Depends(security)
-):
-    if not APP_USERNAME or not APP_PASSWORD:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Private access is not configured."
-        )
+def session_token(expires_at):
+    payload = f"{APP_USERNAME}:{expires_at}"
+    signature = hmac.new(
+        APP_PASSWORD.encode("utf-8"),
+        payload.encode("utf-8"),
+        hashlib.sha256
+    ).hexdigest()
+    return f"{expires_at}.{signature}"
 
-    username_ok = secrets.compare_digest(
-        credentials.username,
-        APP_USERNAME
-    )
-    password_ok = secrets.compare_digest(
-        credentials.password,
-        APP_PASSWORD
-    )
 
-    if not (username_ok and password_ok):
+def valid_session(token):
+    if not token or not APP_USERNAME or not APP_PASSWORD:
+        return False
+
+    try:
+        expires_text, signature = token.split(".", 1)
+        expires_at = int(expires_text)
+    except (ValueError, TypeError):
+        return False
+
+    if expires_at < int(time.time()):
+        return False
+
+    expected = session_token(expires_at).split(".", 1)[1]
+    return secrets.compare_digest(signature, expected)
+
+
+def require_auth(request: Request):
+    token = request.cookies.get(SESSION_COOKIE)
+    if not valid_session(token):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username or password.",
-            headers={"WWW-Authenticate": "Basic"}
+            detail="Authentication required."
         )
 
-    return credentials.username
+    return APP_USERNAME
 
 
 app = FastAPI(
     title="CyberWatch AI",
     description="Multi-source AI Cyber Threat Intelligence",
-    version="6.1",
-    dependencies=[Depends(require_auth)]
+    version="6.2"
 )
+
+
+PUBLIC_PATHS = {
+    "/login",
+    "/api/login",
+    "/favicon.ico",
+    "/docs",
+    "/openapi.json"
+}
+
+
+@app.middleware("http")
+async def private_access(request: Request, call_next):
+    if (
+        request.url.path not in PUBLIC_PATHS
+        and
+        not valid_session(
+            request.cookies.get(SESSION_COOKIE)
+        )
+    ):
+        if request.url.path.startswith("/api/") or request.url.path in {
+            "/news", "/analyze", "/ask", "/send-email"
+        }:
+            return JSONResponse(
+                status_code=401,
+                content={
+                    "status": "error",
+                    "message": "Please sign in again."
+                }
+            )
+
+        return RedirectResponse(
+            url="/login",
+            status_code=303
+        )
+
+    return await call_next(request)
 
 
 app.add_middleware(
@@ -120,6 +169,11 @@ SUPPORTED_SOURCES = [
 ]
 
 
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
 class EmailReport(BaseModel):
     recipients: list[EmailStr]
     subject: str = "CyberWatch AI Threat Report"
@@ -133,6 +187,73 @@ class AskRequest(BaseModel):
     description: str
     analysis: str
     question: str
+
+
+LOGIN_HTML = base64.b64decode("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj48aGVhZD48bWV0YSBjaGFyc2V0PSJVVEYtOCI+CjxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsaW5pdGlhbC1zY2FsZT0xIj4KPHRpdGxlPlNpZ24gaW4gwrcgQ3liZXJXYXRjaCBBSTwvdGl0bGU+CjxzdHlsZT4KKntib3gtc2l6aW5nOmJvcmRlci1ib3h9IGJvZHl7bWFyZ2luOjA7bWluLWhlaWdodDoxMDB2aDtkaXNwbGF5OmdyaWQ7cGxhY2UtaXRlbXM6Y2VudGVyO2ZvbnQtZmFtaWx5OkludGVyLEFyaWFsLHNhbnMtc2VyaWY7Y29sb3I6IzBmMTcyYTtiYWNrZ3JvdW5kOnJhZGlhbC1ncmFkaWVudChjaXJjbGUgYXQgMTUlIDEwJSwjMzhiZGY4IDAsdHJhbnNwYXJlbnQgMjglKSxyYWRpYWwtZ3JhZGllbnQoY2lyY2xlIGF0IDkwJSA5MCUsIzI1NjNlYiAwLHRyYW5zcGFyZW50IDM0JSksbGluZWFyLWdyYWRpZW50KDEzNWRlZywjMDcxYTMzLCMwZjNmNjggNTUlLCMwZTc0OTApO3BhZGRpbmc6MjRweH0KLnNoZWxse3dpZHRoOm1pbig5NjBweCwxMDAlKTtkaXNwbGF5OmdyaWQ7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOjEuMDhmciAuOTJmcjtiYWNrZ3JvdW5kOnJnYmEoMjU1LDI1NSwyNTUsLjk3KTtib3JkZXI6MXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsLjU1KTtib3JkZXItcmFkaXVzOjI4cHg7b3ZlcmZsb3c6aGlkZGVuO2JveC1zaGFkb3c6MCAzMHB4IDgwcHggcmdiYSgyLDgsMjMsLjM1KX0KLmhlcm97cGFkZGluZzo2NHB4IDU0cHg7YmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoMTQ1ZGVnLCMwYjFmM2EsIzEyM2M2OSk7Y29sb3I6I2ZmZjtwb3NpdGlvbjpyZWxhdGl2ZX0uaGVybzphZnRlcntjb250ZW50OiIiO3Bvc2l0aW9uOmFic29sdXRlO3dpZHRoOjIyMHB4O2hlaWdodDoyMjBweDtib3JkZXI6MzZweCBzb2xpZCByZ2JhKDU2LDE4OSwyNDgsLjEyKTtib3JkZXItcmFkaXVzOjUwJTtyaWdodDotOTVweDtib3R0b206LTk1cHh9Ci5tYXJre3dpZHRoOjU4cHg7aGVpZ2h0OjU4cHg7ZGlzcGxheTpncmlkO3BsYWNlLWl0ZW1zOmNlbnRlcjtib3JkZXItcmFkaXVzOjE4cHg7YmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoMTM1ZGVnLCMzOGJkZjgsIzI1NjNlYik7Zm9udC1zaXplOjI5cHg7Ym94LXNoYWRvdzowIDEycHggMjhweCByZ2JhKDM3LDk5LDIzNSwuMzUpfQpoMXtmb250LXNpemU6MzhweDttYXJnaW46MjhweCAwIDEycHg7bGV0dGVyLXNwYWNpbmc6LTFweH0uaGVybyBwe2NvbG9yOiNjZmU4ZmY7bGluZS1oZWlnaHQ6MS43O2ZvbnQtc2l6ZToxN3B4fS5zZWN1cmV7ZGlzcGxheTpmbGV4O2dhcDo5cHg7YWxpZ24taXRlbXM6Y2VudGVyO21hcmdpbi10b3A6MzRweDtjb2xvcjojYTdmM2QwO2ZvbnQtd2VpZ2h0OjcwMH0KLmZvcm17cGFkZGluZzo1OHB4IDUycHg7ZGlzcGxheTpmbGV4O2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyfS5mb3JtIGgye2ZvbnQtc2l6ZToyOHB4O21hcmdpbjowIDAgOHB4fS5zdWJ0aXRsZXtjb2xvcjojNjQ3NDhiO21hcmdpbjowIDAgMzBweDtsaW5lLWhlaWdodDoxLjV9CmxhYmVse2Rpc3BsYXk6YmxvY2s7Zm9udC13ZWlnaHQ6NzUwO21hcmdpbjowIDAgOHB4fWlucHV0e3dpZHRoOjEwMCU7aGVpZ2h0OjUycHg7Ym9yZGVyOjFweCBzb2xpZCAjOTRhM2I4O2JvcmRlci1yYWRpdXM6MTJweDtwYWRkaW5nOjAgMTVweDtmb250LXNpemU6MTZweDtiYWNrZ3JvdW5kOiNmOGZiZmY7Y29sb3I6IzBmMTcyYTtvdXRsaW5lOm5vbmU7bWFyZ2luLWJvdHRvbToyMHB4fWlucHV0OmZvY3Vze2JvcmRlci1jb2xvcjojMjU2M2ViO2JveC1zaGFkb3c6MCAwIDAgNHB4IHJnYmEoMzcsOTksMjM1LC4xMyl9CmJ1dHRvbntoZWlnaHQ6NTJweDtib3JkZXI6MDtib3JkZXItcmFkaXVzOjEycHg7YmFja2dyb3VuZDpsaW5lYXItZ3JhZGllbnQoMTM1ZGVnLCMxZDRlZDgsIzBlNzQ5MCk7Y29sb3I6d2hpdGU7Zm9udC1zaXplOjE2cHg7Zm9udC13ZWlnaHQ6ODAwO2N1cnNvcjpwb2ludGVyO2JveC1zaGFkb3c6MCAxMHB4IDI0cHggcmdiYSgzNyw5OSwyMzUsLjI0KX1idXR0b246aG92ZXJ7ZmlsdGVyOmJyaWdodG5lc3MoMS4wNil9Ci5lcnJvcntkaXNwbGF5Om5vbmU7YmFja2dyb3VuZDojZmVmMmYyO2JvcmRlcjoxcHggc29saWQgI2ZlY2FjYTtjb2xvcjojYjkxYzFjO2JvcmRlci1yYWRpdXM6MTBweDtwYWRkaW5nOjExcHggMTNweDttYXJnaW4tYm90dG9tOjE4cHg7Zm9udC13ZWlnaHQ6NjUwfS5lcnJvci5zaG93e2Rpc3BsYXk6YmxvY2t9Lm5vdGV7Y29sb3I6Izk0YTNiODt0ZXh0LWFsaWduOmNlbnRlcjtmb250LXNpemU6MTNweDttYXJnaW4tdG9wOjIwcHh9CkBtZWRpYShtYXgtd2lkdGg6NzYwcHgpey5zaGVsbHtncmlkLXRlbXBsYXRlLWNvbHVtbnM6MWZyfS5oZXJve3BhZGRpbmc6MzhweCAzMnB4fS5oZXJvIGgxe2ZvbnQtc2l6ZTozMHB4fS5mb3Jte3BhZGRpbmc6MzhweCAzMHB4fX0KPC9zdHlsZT48L2hlYWQ+PGJvZHk+CjxtYWluIGNsYXNzPSJzaGVsbCI+PHNlY3Rpb24gY2xhc3M9Imhlcm8iPjxkaXYgY2xhc3M9Im1hcmsiPuKXiDwvZGl2PjxoMT5DeWJlcldhdGNoIEFJPC9oMT48cD5Qcml2YXRlIGN5YmVyIHRocmVhdCBpbnRlbGxpZ2VuY2UsIEFJIGFuYWx5c2lzIGFuZCBzZWN1cmUgcmVwb3J0IHNoYXJpbmfigJRhdmFpbGFibGUgb25seSB0byBhdXRob3JpemVkIHVzZXJzLjwvcD48ZGl2IGNsYXNzPSJzZWN1cmUiPuKXjyBFbmNyeXB0ZWQgcHJpdmF0ZSBhY2Nlc3M8L2Rpdj48L3NlY3Rpb24+CjxzZWN0aW9uIGNsYXNzPSJmb3JtIj48aDI+V2VsY29tZSBiYWNrPC9oMj48cCBjbGFzcz0ic3VidGl0bGUiPlNpZ24gaW4gdG8gb3BlbiB5b3VyIHRocmVhdCBpbnRlbGxpZ2VuY2UgZGFzaGJvYXJkLjwvcD48ZGl2IGlkPSJlcnJvciIgY2xhc3M9ImVycm9yIiByb2xlPSJhbGVydCI+PC9kaXY+PGZvcm0gaWQ9ImxvZ2luRm9ybSI+PGxhYmVsIGZvcj0idXNlcm5hbWUiPlVzZXJuYW1lPC9sYWJlbD48aW5wdXQgaWQ9InVzZXJuYW1lIiBhdXRvY29tcGxldGU9InVzZXJuYW1lIiByZXF1aXJlZCBhdXRvZm9jdXM+PGxhYmVsIGZvcj0icGFzc3dvcmQiPlBhc3N3b3JkPC9sYWJlbD48aW5wdXQgaWQ9InBhc3N3b3JkIiB0eXBlPSJwYXNzd29yZCIgYXV0b2NvbXBsZXRlPSJjdXJyZW50LXBhc3N3b3JkIiByZXF1aXJlZD48YnV0dG9uIGlkPSJzdWJtaXQiIHR5cGU9InN1Ym1pdCI+U2lnbiBpbiBzZWN1cmVseTwvYnV0dG9uPjwvZm9ybT48ZGl2IGNsYXNzPSJub3RlIj5DeWJlcldhdGNoIEFJIMK3IFByaXZhdGUgd29ya3NwYWNlPC9kaXY+PC9zZWN0aW9uPjwvbWFpbj4KPHNjcmlwdD5kb2N1bWVudC5nZXRFbGVtZW50QnlJZCgibG9naW5Gb3JtIikuYWRkRXZlbnRMaXN0ZW5lcigic3VibWl0Iixhc3luYyBmdW5jdGlvbihldmVudCl7ZXZlbnQucHJldmVudERlZmF1bHQoKTtjb25zdCBidXR0b249ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoInN1Ym1pdCIpLGVycm9yPWRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCJlcnJvciIpO2Vycm9yLmNsYXNzTGlzdC5yZW1vdmUoInNob3ciKTtidXR0b24uZGlzYWJsZWQ9dHJ1ZTtidXR0b24udGV4dENvbnRlbnQ9IlNpZ25pbmcgaW4uLi4iO3RyeXtjb25zdCByZXNwb25zZT1hd2FpdCBmZXRjaCgiL2FwaS9sb2dpbiIse21ldGhvZDoiUE9TVCIsaGVhZGVyczp7IkNvbnRlbnQtVHlwZSI6ImFwcGxpY2F0aW9uL2pzb24ifSxib2R5OkpTT04uc3RyaW5naWZ5KHt1c2VybmFtZTpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgidXNlcm5hbWUiKS52YWx1ZSxwYXNzd29yZDpkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgicGFzc3dvcmQiKS52YWx1ZX0pfSk7Y29uc3QgZGF0YT1hd2FpdCByZXNwb25zZS5qc29uKCk7aWYoIXJlc3BvbnNlLm9rfHxkYXRhLnN0YXR1cyE9PSJvayIpdGhyb3cgbmV3IEVycm9yKGRhdGEubWVzc2FnZXx8IlNpZ24gaW4gZmFpbGVkLiIpO3dpbmRvdy5sb2NhdGlvbi5ocmVmPSIvIjt9Y2F0Y2goZXJyKXtlcnJvci50ZXh0Q29udGVudD1lcnIubWVzc2FnZTtlcnJvci5jbGFzc0xpc3QuYWRkKCJzaG93Iik7YnV0dG9uLmRpc2FibGVkPWZhbHNlO2J1dHRvbi50ZXh0Q29udGVudD0iU2lnbiBpbiBzZWN1cmVseSI7fX0pOzwvc2NyaXB0Pgo8L2JvZHk+PC9odG1sPg==").decode("utf-8")
+
+
+@app.get("/login", response_class=HTMLResponse)
+def login_page(request: Request):
+    if valid_session(request.cookies.get(SESSION_COOKIE)):
+        return RedirectResponse(url="/", status_code=303)
+
+    return HTMLResponse(content=LOGIN_HTML)
+
+
+@app.post("/api/login")
+def login(request: LoginRequest):
+    if not APP_USERNAME or not APP_PASSWORD:
+        raise HTTPException(
+            status_code=503,
+            detail="Private access is not configured."
+        )
+
+    username_ok = secrets.compare_digest(
+        request.username,
+        APP_USERNAME
+    )
+    password_ok = secrets.compare_digest(
+        request.password,
+        APP_PASSWORD
+    )
+
+    if not (username_ok and password_ok):
+        return JSONResponse(
+            status_code=401,
+            content={
+                "status": "error",
+                "message": "Incorrect username or password."
+            }
+        )
+
+    expires_at = int(time.time()) + SESSION_TTL
+    response = JSONResponse({
+        "status": "ok",
+        "message": "Signed in."
+    })
+    response.set_cookie(
+        SESSION_COOKIE,
+        session_token(expires_at),
+        max_age=SESSION_TTL,
+        httponly=True,
+        secure=True,
+        samesite="lax"
+    )
+    return response
+
+
+@app.post("/api/logout")
+def logout():
+    response = JSONResponse({
+        "status": "ok"
+    })
+    response.delete_cookie(
+        SESSION_COOKIE,
+        httponly=True,
+        secure=True,
+        samesite="lax"
+    )
+    return response
 
 
 @app.get("/")
@@ -335,11 +456,11 @@ def validate_date_range(
     if end > (
         now
         +
-        timedelta(minutes=5)
+        timedelta(days=1)
     ):
 
         raise Exception(
-            "The To date cannot be in the future."
+            "The To date cannot be more than one day in the future."
         )
 
 
@@ -1338,6 +1459,15 @@ def get_news(
         )
 
 
+        now = datetime.now(
+            timezone.utc
+        )
+
+
+        if end > now:
+            end = now
+
+
         validate_date_range(
             start,
             end
@@ -1948,4 +2078,3 @@ def send_email_report(
             "status": "error",
             "message": str(error)
         }
-
