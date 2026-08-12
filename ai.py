@@ -24,7 +24,7 @@ def ollama_chat(messages, temperature=0.1):
             "Authorization": f"Bearer {OLLAMA_API_KEY}",
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0 (compatible; CyberWatchAI/6.0)"
+            "User-Agent": "*"
         },
         json={
             "model": MODEL,
