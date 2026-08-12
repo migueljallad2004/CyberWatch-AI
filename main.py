@@ -15,6 +15,8 @@ import os
 import re
 import base64
 import secrets
+import smtplib
+from email.message import EmailMessage
 
 
 load_dotenv()
@@ -22,6 +24,8 @@ load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
+EMAIL_APP_PASSWORD = os.getenv("EMAIL_APP_PASSWORD")
 APP_USERNAME = os.getenv("APP_USERNAME")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
 FROM_EMAIL = os.getenv(
@@ -161,6 +165,8 @@ def api_status():
 
         "email_enabled": bool(
             RESEND_API_KEY
+            or
+            (EMAIL_ADDRESS and EMAIL_APP_PASSWORD)
         ),
 
         "ollama_enabled": bool(
@@ -1761,6 +1767,59 @@ def ask_ai(
         }
 
 
+def send_email_with_gmail(
+    recipients,
+    subject,
+    message,
+    content,
+    attach_report
+):
+    email_body = (
+        message.strip()
+        or
+        "A CyberWatch AI threat report is included below."
+    )
+
+    if not attach_report:
+        email_body = (
+            email_body
+            + "\n\n"
+            + content
+        ).strip()
+
+    email = EmailMessage()
+    email["From"] = (
+        f"CyberWatch AI <{EMAIL_ADDRESS}>"
+    )
+    email["To"] = ", ".join(recipients)
+    email["Subject"] = subject
+    email.set_content(email_body)
+
+    if attach_report:
+        email.add_attachment(
+            content.encode("utf-8"),
+            maintype="text",
+            subtype="plain",
+            filename="cyberwatch-threat-report.txt"
+        )
+
+    with smtplib.SMTP_SSL(
+        "smtp.gmail.com",
+        465,
+        timeout=30
+    ) as server:
+        server.login(
+            EMAIL_ADDRESS,
+            EMAIL_APP_PASSWORD
+        )
+        server.send_message(email)
+
+    return {
+        "provider": "gmail",
+        "recipients": len(recipients)
+    }
+
+
 def send_email_with_resend(
     recipients,
     subject,
@@ -1769,9 +1828,18 @@ def send_email_with_resend(
     attach_report
 ):
 
+    if EMAIL_ADDRESS and EMAIL_APP_PASSWORD:
+        return send_email_with_gmail(
+            recipients,
+            subject,
+            message,
+            content,
+            attach_report
+        )
+
     if not RESEND_API_KEY:
         raise Exception(
-            "RESEND_API_KEY is missing."
+            "Email delivery is not configured."
         )
 
     email_body = (
