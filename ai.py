@@ -10,7 +10,7 @@ OLLAMA_API_KEY = os.getenv("OLLAMA_API_KEY")
 
 OLLAMA_URL = "https://ollama.com/api/chat"
 
-MODEL = "qwen3.5:cloud"
+MODEL = "gpt-oss:20b"
 
 
 
