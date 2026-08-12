@@ -2,16 +2,10 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>CyberWatch AI</title>
-
 
 <style>
 
@@ -19,14 +13,12 @@
     box-sizing: border-box;
 }
 
-
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: #08111f;
     color: white;
 }
-
 
 header {
     background: #0d1726;
@@ -38,18 +30,15 @@ header {
     align-items: center;
 }
 
-
 .brand h1 {
     margin: 0;
     font-size: 30px;
 }
 
-
 .brand p {
     margin: 6px 0 0;
     color: #94a3b8;
 }
-
 
 .system-status {
     background: #123524;
@@ -61,7 +50,6 @@ header {
     font-size: 14px;
 }
 
-
 .container {
     width: 92%;
     max-width: 1250px;
@@ -69,18 +57,14 @@ header {
     margin: 30px auto;
 }
 
-
 .stats {
     display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     gap: 18px;
 
     margin-bottom: 25px;
 }
-
 
 .stat-card,
 .panel,
@@ -92,11 +76,9 @@ header {
     border-radius: 14px;
 }
 
-
 .stat-card {
     padding: 20px;
 }
-
 
 .stat-card h3 {
     margin: 0;
@@ -106,7 +88,6 @@ header {
     font-size: 14px;
 }
 
-
 .stat-card p {
     margin: 10px 0 0;
 
@@ -115,18 +96,15 @@ header {
     font-weight: bold;
 }
 
-
 .panel {
     padding: 25px;
 
     margin-bottom: 25px;
 }
 
-
 .panel h2 {
     margin-top: 0;
 }
-
 
 .panel-description {
     color: #b9c5d4;
@@ -134,29 +112,24 @@ header {
     line-height: 1.6;
 }
 
-
 .date-grid {
     display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 
     gap: 18px;
 
-    margin-top: 25px;
+    margin-top: 20px;
 }
-
 
 .field-label {
     display: block;
 
-    margin-bottom: 9px;
+    margin-bottom: 8px;
 
     color: #cbd5e1;
 
     font-weight: bold;
 }
-
 
 .date-input,
 .text-input,
@@ -180,7 +153,6 @@ header {
     outline: none;
 }
 
-
 .date-input:focus,
 .text-input:focus,
 .email-input:focus,
@@ -189,103 +161,71 @@ header {
     border-color: #3b82f6;
 }
 
-
 .selection-section {
-    margin-top: 26px;
+    margin-top: 24px;
 }
-
 
 .selection-header {
     display: flex;
 
     justify-content: space-between;
-
     align-items: center;
 
-    gap: 15px;
+    gap: 12px;
 
-    margin-bottom: 11px;
+    margin-bottom: 10px;
 }
-
 
 .selection-header strong {
     color: #cbd5e1;
-
-    font-size: 17px;
 }
 
-
-.quick-buttons {
+.quick-buttons,
+.selected-tags,
+.email-actions,
+.severity-filters,
+.card-actions,
+.watchlist-tags {
     display: flex;
 
     flex-wrap: wrap;
 
-    gap: 8px;
-
-    margin-bottom: 12px;
+    gap: 9px;
 }
 
+.quick-button,
+.clear-button,
+.add-button,
+.standard-button,
+.scan-button,
+.ask-button,
+.filter-button {
+    border: none;
 
-.quick-button {
+    border-radius: 8px;
+
+    padding: 10px 14px;
+
+    cursor: pointer;
+}
+
+.quick-button,
+.clear-button,
+.filter-button {
     background: #162235;
 
     color: #cbd5e1;
 
     border: 1px solid #334155;
-
-    border-radius: 8px;
-
-    padding: 9px 13px;
-
-    cursor: pointer;
 }
-
-
-.quick-button:hover {
-    background: #1e293b;
-
-    border-color: #475569;
-}
-
 
 .quick-button.all-button {
     background: #1e3a8a;
 
-    border-color: #2563eb;
-
     color: white;
+
+    border-color: #2563eb;
 }
-
-
-.clear-button {
-    background: transparent;
-
-    color: #94a3b8;
-
-    border: 1px solid #334155;
-
-    border-radius: 7px;
-
-    padding: 7px 11px;
-
-    cursor: pointer;
-}
-
-
-.add-row {
-    display: flex;
-
-    gap: 10px;
-
-    align-items: center;
-}
-
-
-.add-row input,
-.add-row select {
-    flex: 1;
-}
-
 
 .add-button,
 .standard-button,
@@ -294,43 +234,19 @@ header {
     background: #2563eb;
 
     color: white;
-
-    border: none;
-
-    border-radius: 8px;
-
-    padding: 12px 18px;
-
-    cursor: pointer;
 }
-
-
-.add-button:hover,
-.standard-button:hover,
-.scan-button:hover,
-.ask-button:hover {
-    background: #1d4ed8;
-}
-
 
 .ask-toggle {
     background: #6d28d9;
 }
 
-
-.ask-toggle:hover {
-    background: #5b21b6;
-}
-
-
 .scan-button {
-    margin-top: 25px;
+    margin-top: 24px;
 
     padding: 14px 24px;
 
     font-size: 16px;
 }
-
 
 .scan-button:disabled {
     background: #475569;
@@ -338,23 +254,42 @@ header {
     cursor: not-allowed;
 }
 
-
-.selected-tags {
+.add-row,
+.email-controls,
+.watchlist-controls,
+.ask-row {
     display: flex;
 
-    flex-wrap: wrap;
+    gap: 10px;
 
-    gap: 9px;
-
-    margin-top: 13px;
+    align-items: center;
 }
 
+.add-row input,
+.add-row select,
+.email-controls input,
+.watchlist-controls input,
+.ask-row input {
+    flex: 1;
+}
 
-.selection-tag {
+.selected-tags {
+    margin-top: 12px;
+}
+
+.selection-tag,
+.watch-tag,
+.badge {
     display: inline-flex;
 
     align-items: center;
 
+    border-radius: 20px;
+
+    font-size: 13px;
+}
+
+.selection-tag {
     gap: 8px;
 
     padding: 8px 12px;
@@ -362,26 +297,25 @@ header {
     background: #1e3a8a;
 
     color: #dbeafe;
-
-    border-radius: 20px;
-
-    font-size: 13px;
 }
-
 
 .selection-tag.technology {
     background: #312e81;
-
-    color: #e0e7ff;
 }
-
 
 .selection-tag.source {
     background: #164e63;
-
-    color: #cffafe;
 }
 
+.watch-tag {
+    padding: 8px 12px;
+
+    background: #312e81;
+
+    color: #c7d2fe;
+
+    cursor: pointer;
+}
 
 .remove-tag {
     border: none;
@@ -392,31 +326,19 @@ header {
 
     cursor: pointer;
 
-    font-size: 17px;
-
-    font-weight: bold;
-
-    padding: 0;
+    font-size: 16px;
 }
 
+#status,
+.search-summary,
+.results-count,
+.email-message {
+    margin-top: 15px;
 
-.empty-selection {
-    color: #64748b;
-
-    font-size: 13px;
+    color: #94a3b8;
 }
-
-
-#status {
-    margin-top: 17px;
-
-    color: #cbd5e1;
-}
-
 
 .search-summary {
-    margin-top: 18px;
-
     padding: 15px;
 
     background: #0d1726;
@@ -425,13 +347,12 @@ header {
 
     border-radius: 9px;
 
-    color: #94a3b8;
-
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
-
 .source-warning {
+    display: none;
+
     margin-top: 14px;
 
     padding: 12px;
@@ -441,148 +362,15 @@ header {
     background: #713f12;
 
     color: #fde68a;
-
-    display: none;
 }
-
-
-.email-controls,
-.watchlist-controls {
-    display: flex;
-
-    gap: 10px;
-
-    flex-wrap: wrap;
-}
-
-
-.email-controls input,
-.watchlist-controls input {
-    flex: 1;
-
-    min-width: 250px;
-}
-
-
-.email-actions {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin-top: 15px;
-}
-
-
-.email-message {
-    margin-top: 15px;
-
-    color: #94a3b8;
-}
-
 
 .email-success {
     color: #86efac;
 }
 
-
 .email-error {
     color: #fca5a5;
 }
-
-
-.watchlist-tags {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin-top: 15px;
-}
-
-
-.watch-tag {
-    background: #312e81;
-
-    color: #c7d2fe;
-
-    border-radius: 20px;
-
-    padding: 7px 12px;
-
-    cursor: pointer;
-
-    font-size: 13px;
-}
-
-
-.severity-filters {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-}
-
-
-.filter-button {
-    background: #162235;
-
-    color: #cbd5e1;
-
-    border: 1px solid #334155;
-
-    padding: 9px 14px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-}
-
-
-.filter-button.active {
-    background: #2563eb;
-
-    border-color: #2563eb;
-
-    color: white;
-}
-
-
-.results-count {
-    margin-top: 15px;
-
-    color: #94a3b8;
-}
-
-
-.top-threat-placeholder {
-    color: #94a3b8;
-}
-
-
-.top-threat-content h3 {
-    margin-top: 0;
-
-    font-size: 22px;
-}
-
-
-.top-risk {
-    font-size: 27px;
-
-    font-weight: bold;
-
-    margin: 12px 0;
-}
-
-
-.section-title {
-    margin: 30px 0 15px;
-}
-
 
 .threat-card {
     padding: 24px;
@@ -590,14 +378,11 @@ header {
     margin-bottom: 22px;
 }
 
-
 .threat-card.watchlist-hit {
     border-color: #7c3aed;
 
-    box-shadow:
-        0 0 0 1px #7c3aed;
+    box-shadow: 0 0 0 1px #7c3aed;
 }
-
 
 .threat-card h2 {
     margin-top: 0;
@@ -607,13 +392,11 @@ header {
     line-height: 1.35;
 }
 
-
 .meta {
     color: #94a3b8;
 
     margin-bottom: 15px;
 }
-
 
 .description {
     color: #cbd5e1;
@@ -622,7 +405,6 @@ header {
 
     margin-bottom: 18px;
 }
-
 
 .badges {
     display: flex;
@@ -634,17 +416,13 @@ header {
     margin: 15px 0;
 }
 
-
 .badge {
     padding: 7px 11px;
-
-    border-radius: 20px;
 
     font-size: 12px;
 
     font-weight: bold;
 }
-
 
 .badge-source {
     background: #164e63;
@@ -652,20 +430,11 @@ header {
     color: #cffafe;
 }
 
-
-.badge-category {
-    background: #1e3a8a;
-
-    color: #bfdbfe;
-}
-
-
 .badge-platform {
     background: #312e81;
 
     color: #c7d2fe;
 }
-
 
 .badge-cve {
     background: #4c1d95;
@@ -673,13 +442,11 @@ header {
     color: #e9d5ff;
 }
 
-
 .badge-low {
     background: #14532d;
 
     color: #bbf7d0;
 }
-
 
 .badge-medium {
     background: #713f12;
@@ -687,13 +454,11 @@ header {
     color: #fde68a;
 }
 
-
 .badge-high {
     background: #7c2d12;
 
     color: #fed7aa;
 }
-
 
 .badge-critical {
     background: #7f1d1d;
@@ -701,34 +466,11 @@ header {
     color: #fecaca;
 }
 
-
 .badge-info {
     background: #334155;
 
     color: #e2e8f0;
 }
-
-
-.badge-active {
-    background: #7f1d1d;
-
-    color: #fecaca;
-}
-
-
-.badge-patched {
-    background: #14532d;
-
-    color: #bbf7d0;
-}
-
-
-.badge-monitor {
-    background: #164e63;
-
-    color: #cffafe;
-}
-
 
 .ai-loading,
 .info-box,
@@ -744,23 +486,19 @@ header {
     padding: 16px;
 }
 
-
 .ai-loading {
     color: #60a5fa;
 }
 
-
 .analysis-grid {
     display: grid;
 
-    grid-template-columns:
-        1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 
     gap: 18px;
 
     margin-top: 18px;
 }
-
 
 .info-box h4 {
     margin: 0 0 8px;
@@ -768,41 +506,34 @@ header {
     color: #60a5fa;
 }
 
-
 .mitre-box,
 .recommendations,
 .risk-box {
     margin-top: 18px;
 }
 
-
 .mitre-box strong {
     color: #c084fc;
 }
-
 
 .recommendations {
     white-space: pre-line;
 }
 
-
 .risk-header {
     display: flex;
 
     justify-content: space-between;
-
     align-items: center;
 
     gap: 15px;
 }
-
 
 .risk-score {
     font-size: 28px;
 
     font-weight: bold;
 }
-
 
 .risk-bar {
     height: 8px;
@@ -816,13 +547,11 @@ header {
     margin-top: 12px;
 }
 
-
 .risk-fill {
     height: 100%;
 
     background: #3b82f6;
 }
-
 
 .risk-reasons {
     margin-top: 12px;
@@ -831,20 +560,6 @@ header {
 
     line-height: 1.6;
 }
-
-
-.card-actions {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 12px;
-
-    margin-top: 18px;
-
-    align-items: center;
-}
-
 
 .article-link {
     color: #38bdf8;
@@ -855,7 +570,6 @@ header {
 
     padding: 11px 0;
 }
-
 
 .ask-panel {
     display: none;
@@ -871,32 +585,15 @@ header {
     border-radius: 12px;
 }
 
-
 .ask-panel.open {
     display: block;
 }
-
 
 .ask-panel h3 {
     margin-top: 0;
 
     color: #c4b5fd;
 }
-
-
-.ask-row {
-    display: flex;
-
-    gap: 10px;
-
-    align-items: center;
-}
-
-
-.ask-row input {
-    flex: 1;
-}
-
 
 .ask-answer {
     display: none;
@@ -918,16 +615,9 @@ header {
     white-space: pre-wrap;
 }
 
-
 .ask-answer.visible {
     display: block;
 }
-
-
-.ask-loading {
-    color: #c4b5fd;
-}
-
 
 .error {
     background: #7f1d1d;
@@ -938,7 +628,6 @@ header {
 
     border-radius: 10px;
 }
-
 
 .empty {
     background: #111d2e;
@@ -952,23 +641,36 @@ header {
     color: #cbd5e1;
 }
 
+.top-risk {
+    font-size: 27px;
 
-@media (
-    max-width: 800px
-) {
+    font-weight: bold;
+
+    margin: 12px 0;
+}
+
+.section-title {
+    margin: 30px 0 15px;
+}
+
+.filter-button.active {
+    background: #2563eb;
+
+    color: white;
+
+    border-color: #2563eb;
+}
+
+@media(max-width: 800px) {
 
     .stats {
-        grid-template-columns:
-            1fr 1fr;
+        grid-template-columns: 1fr 1fr;
     }
-
 
     .date-grid,
     .analysis-grid {
-        grid-template-columns:
-            1fr;
+        grid-template-columns: 1fr;
     }
-
 
     header {
         flex-direction: column;
@@ -978,9 +680,10 @@ header {
         gap: 15px;
     }
 
-
     .add-row,
-    .ask-row {
+    .ask-row,
+    .email-controls,
+    .watchlist-controls {
         flex-direction: column;
 
         align-items: stretch;
@@ -988,12 +691,10 @@ header {
 }
 
 </style>
-
 </head>
 
 
 <body>
-
 
 <header>
 
@@ -1011,9 +712,7 @@ Cloud AI Cyber Threat Intelligence
 
 
 <div class="system-status">
-
 ● SYSTEM LIVE
-
 </div>
 
 </header>
@@ -1024,94 +723,50 @@ Cloud AI Cyber Threat Intelligence
 
 <div class="stats">
 
-
 <div class="stat-card">
-
-<h3>
-Articles Found
-</h3>
-
-<p id="totalThreats">
-0
-</p>
-
+<h3>Articles Found</h3>
+<p id="totalThreats">0</p>
 </div>
 
-
 <div class="stat-card">
-
-<h3>
-Critical
-</h3>
-
-<p id="criticalThreats">
-0
-</p>
-
+<h3>Critical</h3>
+<p id="criticalThreats">0</p>
 </div>
 
-
 <div class="stat-card">
-
-<h3>
-High
-</h3>
-
-<p id="highThreats">
-0
-</p>
-
+<h3>High</h3>
+<p id="highThreats">0</p>
 </div>
 
-
 <div class="stat-card">
-
-<h3>
-Analyzed
-</h3>
-
-<p id="analyzedThreats">
-0
-</p>
-
+<h3>Analyzed</h3>
+<p id="analyzedThreats">0</p>
 </div>
-
 
 </div>
 
 
 <div class="panel">
 
-
 <h2>
 🔎 Custom Threat Scanner
 </h2>
 
-
 <p class="panel-description">
-
 Choose your dates, attack types,
 technologies and intelligence sources.
-
-You can use the quick buttons
-or type your own value.
-
 </p>
 
 
 <div class="date-grid">
-
 
 <div>
 
 <label
 class="field-label"
 for="fromDate">
-
 From
-
 </label>
-
 
 <input
 class="date-input"
@@ -1126,11 +781,8 @@ type="datetime-local">
 <label
 class="field-label"
 for="toDate">
-
 To
-
 </label>
-
 
 <input
 class="date-input"
@@ -1139,15 +791,10 @@ type="datetime-local">
 
 </div>
 
-
 </div>
 
 
-<!-- ATTACK TYPES -->
-
-
 <div class="selection-section">
-
 
 <div class="selection-header">
 
@@ -1155,13 +802,10 @@ type="datetime-local">
 Attack Types
 </strong>
 
-
 <button
 class="clear-button"
 onclick="clearAttackTypes()">
-
 Clear All
-
 </button>
 
 </div>
@@ -1169,107 +813,75 @@ Clear All
 
 <div class="quick-buttons">
 
-
 <button
 class="quick-button all-button"
 onclick="setAllAttackTypes()">
-
 All
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddAttack('Ransomware')">
-
 Ransomware
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddAttack('Malware')">
-
 Malware
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddAttack('Phishing')">
-
 Phishing
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddAttack('Data Breach')">
-
 Data Breach
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddAttack('Zero-Day')">
-
 Zero-Day
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddAttack('DDoS')">
-
 DDoS
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddAttack('SQL Injection')">
-
 SQL Injection
-
 </button>
-
 
 </div>
 
 
 <div class="add-row">
 
-
 <input
 class="text-input"
 id="attackInput"
-type="text"
-placeholder="Or type your own attack: Credential Theft, Supply Chain Attack..."
-autocomplete="off"
+placeholder="Or type your own attack..."
 onkeydown="
 if(event.key === 'Enter') {
-event.preventDefault();
-addAttackType();
+    event.preventDefault();
+    addAttackType();
 }
 ">
-
 
 <button
 class="add-button"
 onclick="addAttackType()">
-
 + Add
-
 </button>
-
 
 </div>
 
@@ -1279,15 +891,10 @@ id="attackTags"
 class="selected-tags">
 </div>
 
-
 </div>
 
 
-<!-- TECHNOLOGY -->
-
-
 <div class="selection-section">
-
 
 <div class="selection-header">
 
@@ -1295,13 +902,10 @@ class="selected-tags">
 Technology / Platform
 </strong>
 
-
 <button
 class="clear-button"
 onclick="clearTechnologies()">
-
 Clear All
-
 </button>
 
 </div>
@@ -1309,116 +913,81 @@ Clear All
 
 <div class="quick-buttons">
 
-
 <button
 class="quick-button all-button"
 onclick="setAllTechnologies()">
-
 All
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddTechnology('Android')">
-
 Android
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddTechnology('Windows')">
-
 Windows
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddTechnology('Linux')">
-
 Linux
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddTechnology('iOS')">
-
 iOS
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddTechnology('Cloud')">
-
 Cloud
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddTechnology('Network')">
-
 Network
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddTechnology('Docker')">
-
 Docker
-
 </button>
-
 
 <button
 class="quick-button"
 onclick="quickAddTechnology('Cisco')">
-
 Cisco
-
 </button>
-
 
 </div>
 
 
 <div class="add-row">
 
-
 <input
 class="text-input"
 id="technologyInput"
-type="text"
-placeholder="Or type your own: Kubernetes, VMware, Apache, Fortinet..."
-autocomplete="off"
+placeholder="Or type your own technology..."
 onkeydown="
 if(event.key === 'Enter') {
-event.preventDefault();
-addTechnology();
+    event.preventDefault();
+    addTechnology();
 }
 ">
-
 
 <button
 class="add-button"
 onclick="addTechnology()">
-
 + Add
-
 </button>
-
 
 </div>
 
@@ -1428,15 +997,10 @@ id="technologyTags"
 class="selected-tags">
 </div>
 
-
 </div>
 
 
-<!-- SOURCES -->
-
-
 <div class="selection-section">
-
 
 <div class="selection-header">
 
@@ -1444,13 +1008,10 @@ class="selected-tags">
 Sources
 </strong>
 
-
 <button
 class="clear-button"
 onclick="clearSources()">
-
 Clear All
-
 </button>
 
 </div>
@@ -1458,46 +1019,37 @@ Clear All
 
 <div class="add-row">
 
-
 <select
 class="source-select"
 id="sourceSelect">
-
 
 <option value="">
 Choose Source
 </option>
 
-
 <option value="all">
 All Sources
 </option>
-
 
 <option value="newsapi">
 NewsAPI
 </option>
 
-
 <option value="the hacker news">
 The Hacker News
 </option>
-
 
 <option value="bleepingcomputer">
 BleepingComputer
 </option>
 
-
 <option value="cisa">
 CISA
 </option>
 
-
 <option value="nvd">
 NVD
 </option>
-
 
 </select>
 
@@ -1505,11 +1057,8 @@ NVD
 <button
 class="add-button"
 onclick="addSource()">
-
 + Add
-
 </button>
-
 
 </div>
 
@@ -1518,7 +1067,6 @@ onclick="addSource()">
 id="sourceTags"
 class="selected-tags">
 </div>
-
 
 </div>
 
@@ -1551,20 +1099,14 @@ Configure your search above.
 
 </div>
 
-
 </div>
-
-
-<!-- TOP THREAT -->
 
 
 <div class="panel">
 
-
 <h2>
 🚨 Top Threat
 </h2>
-
 
 <div
 id="topThreat"
@@ -1574,30 +1116,21 @@ Run a scan to identify the highest-risk threat.
 
 </div>
 
-
 </div>
 
 
-<!-- EMAIL -->
-
-
 <div class="panel">
-
 
 <h2>
 📧 Email Threat Report
 </h2>
 
-
 <p class="panel-description">
-
 Enter the recipient's email address.
-
 </p>
 
 
 <div class="email-controls">
-
 
 <input
 class="email-input"
@@ -1605,30 +1138,22 @@ id="recipientEmail"
 type="email"
 placeholder="user@example.com">
 
-
 </div>
 
 
 <div class="email-actions">
 
-
 <button
 class="standard-button"
 onclick="emailTopThreat()">
-
 📧 Email Top Threat
-
 </button>
-
 
 <button
 class="standard-button"
 onclick="emailFullReport()">
-
 📄 Email Full Report
-
 </button>
-
 
 </div>
 
@@ -1638,20 +1163,14 @@ id="emailMessage"
 class="email-message">
 </div>
 
-
 </div>
-
-
-<!-- WATCHLIST -->
 
 
 <div class="panel">
 
-
 <h2>
 ⭐ Priority Watchlist
 </h2>
-
 
 <p class="panel-description">
 
@@ -1663,28 +1182,22 @@ you want CyberWatch to prioritize.
 
 <div class="watchlist-controls">
 
-
 <input
 class="text-input"
 id="watchlistInput"
-type="text"
-placeholder="Example: Cisco, Microsoft, Samsung, Fortinet..."
+placeholder="Example: Cisco, Microsoft, Samsung..."
 onkeydown="
 if(event.key === 'Enter') {
-event.preventDefault();
-addWatchlistItem();
+    event.preventDefault();
+    addWatchlistItem();
 }
 ">
-
 
 <button
 class="standard-button"
 onclick="addWatchlistItem()">
-
 Add
-
 </button>
-
 
 </div>
 
@@ -1694,75 +1207,51 @@ id="watchlistTags"
 class="watchlist-tags">
 </div>
 
-
 </div>
 
 
-<!-- SEVERITY -->
-
-
 <div class="panel">
-
 
 <h2>
 Result Filters
 </h2>
 
-
 <p class="panel-description">
-
 Filter analyzed results by severity.
-
 </p>
 
 
 <div class="severity-filters">
 
-
 <button
 class="filter-button severity-filter active"
 onclick="setSeverityFilter('all', this)">
-
 All
-
 </button>
-
 
 <button
 class="filter-button severity-filter"
 onclick="setSeverityFilter('critical', this)">
-
 Critical
-
 </button>
-
 
 <button
 class="filter-button severity-filter"
 onclick="setSeverityFilter('high', this)">
-
 High
-
 </button>
-
 
 <button
 class="filter-button severity-filter"
 onclick="setSeverityFilter('medium', this)">
-
 Medium
-
 </button>
-
 
 <button
 class="filter-button severity-filter"
 onclick="setSeverityFilter('low', this)">
-
 Low
-
 </button>
-
 
 </div>
 
@@ -1770,31 +1259,24 @@ Low
 <div
 id="filterCount"
 class="results-count">
-
 Showing all threats
-
 </div>
-
 
 </div>
 
 
 <h2 class="section-title">
-
 Latest Threat Intelligence
-
 </h2>
 
 
 <div id="results">
 </div>
 
-
 </div>
 
 
 <script>
-
 
 let selectedAttackTypes = [];
 
@@ -1804,36 +1286,29 @@ let selectedSources = [];
 
 let selectedSeverityFilter = "all";
 
-
 let analyzedThreatData = [];
-
-let analyzedCount = 0;
-
-let criticalCount = 0;
-
-let highCount = 0;
 
 let watchlist = [];
 
 
 const sourceNames = {
 
-    "all":
+    all:
         "All Sources",
 
-    "newsapi":
+    newsapi:
         "NewsAPI",
 
     "the hacker news":
         "The Hacker News",
 
-    "bleepingcomputer":
+    bleepingcomputer:
         "BleepingComputer",
 
-    "cisa":
+    cisa:
         "CISA",
 
-    "nvd":
+    nvd:
         "NVD"
 };
 
@@ -1853,13 +1328,34 @@ function() {
 };
 
 
+function toLocalDateTimeValue(
+    date
+) {
+
+    const offset =
+        date.getTimezoneOffset();
+
+
+    return new Date(
+        date.getTime()
+        -
+        offset * 60000
+    )
+    .toISOString()
+    .slice(
+        0,
+        16
+    );
+}
+
+
 function setDefaultDates() {
 
     const now =
         new Date();
 
 
-    const sevenDaysAgo =
+    const ago =
         new Date(
             now.getTime()
             -
@@ -1891,35 +1387,115 @@ function setDefaultDates() {
         )
         .value =
         toLocalDateTimeValue(
-            sevenDaysAgo
+            ago
         );
 }
 
 
-function toLocalDateTimeValue(
-    date
+function escapeHtml(
+    value
 ) {
 
-    const offset =
-        date.getTimezoneOffset();
+    if (
+        value === null
+        ||
+        value === undefined
+    ) {
+
+        return "";
+    }
 
 
-    const local =
+    return String(
+        value
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+}
+
+
+function sanitizeUrl(
+    value
+) {
+
+    try {
+
+        const url =
+            new URL(
+                value
+            );
+
+
+        if (
+            url.protocol === "http:"
+            ||
+            url.protocol === "https:"
+        ) {
+
+            return url.href;
+        }
+    }
+
+    catch {
+        return "#";
+    }
+
+
+    return "#";
+}
+
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+        return "Unknown date";
+    }
+
+
+    const date =
         new Date(
+            value
+        );
+
+
+    if (
+        Number.isNaN(
             date.getTime()
-            -
-            offset
-            *
-            60000
+        )
+    ) {
+
+        return String(
+            value
         );
+    }
 
 
-    return local
-        .toISOString()
-        .slice(
-            0,
-            16
-        );
+    return date.toLocaleString();
 }
 
 
@@ -1995,19 +1571,25 @@ function addAttackType() {
     ) {
 
         setAllAttackTypes();
+    }
 
-        input.value = "";
+    else {
 
-        return;
+        quickAddAttack(
+            value
+        );
     }
 
 
-    quickAddAttack(
-        value
-    );
-
-
     input.value = "";
+}
+
+
+function clearAttackTypes() {
+
+    selectedAttackTypes = [];
+
+    renderAttackTags();
 }
 
 
@@ -2025,94 +1607,14 @@ function removeAttackType(
 }
 
 
-function clearAttackTypes() {
-
-    selectedAttackTypes = [];
-
-
-    renderAttackTags();
-}
-
-
 function renderAttackTags() {
 
-    const container =
-        document.getElementById(
-            "attackTags"
-        );
-
-
-    container.innerHTML = "";
-
-
-    if (
-        selectedAttackTypes.length
-        ===
-        0
-    ) {
-
-        container.innerHTML =
-        `
-
-        <span
-        class="empty-selection">
-
-        No attack types selected —
-        searching all attack types.
-
-        </span>
-
-        `;
-
-
-        return;
-    }
-
-
-    selectedAttackTypes.forEach(
-        (
-            item,
-            index
-        ) => {
-
-            const tag =
-                document.createElement(
-                    "div"
-                );
-
-
-            tag.className =
-                "selection-tag";
-
-
-            tag.innerHTML =
-            `
-
-            ${escapeHtml(
-                formatLabel(
-                    item
-                )
-            )}
-
-            <button
-            class="remove-tag"
-            onclick="
-            removeAttackType(
-            ${index}
-            )
-            ">
-
-            ×
-
-            </button>
-
-            `;
-
-
-            container.appendChild(
-                tag
-            );
-        }
+    renderTags(
+        "attackTags",
+        selectedAttackTypes,
+        "",
+        "removeAttackType",
+        "No attack types selected — searching all attack types."
     );
 }
 
@@ -2189,19 +1691,25 @@ function addTechnology() {
     ) {
 
         setAllTechnologies();
+    }
 
-        input.value = "";
+    else {
 
-        return;
+        quickAddTechnology(
+            value
+        );
     }
 
 
-    quickAddTechnology(
-        value
-    );
-
-
     input.value = "";
+}
+
+
+function clearTechnologies() {
+
+    selectedTechnologies = [];
+
+    renderTechnologyTags();
 }
 
 
@@ -2219,20 +1727,29 @@ function removeTechnology(
 }
 
 
-function clearTechnologies() {
+function renderTechnologyTags() {
 
-    selectedTechnologies = [];
-
-
-    renderTechnologyTags();
+    renderTags(
+        "technologyTags",
+        selectedTechnologies,
+        "technology",
+        "removeTechnology",
+        "No technology selected — searching all platforms."
+    );
 }
 
 
-function renderTechnologyTags() {
+function renderTags(
+    id,
+    array,
+    extraClass,
+    removeFunction,
+    emptyText
+) {
 
     const container =
         document.getElementById(
-            "technologyTags"
+            id
         );
 
 
@@ -2240,22 +1757,14 @@ function renderTechnologyTags() {
 
 
     if (
-        selectedTechnologies.length
-        ===
-        0
+        array.length === 0
     ) {
 
         container.innerHTML =
         `
-
-        <span
-        class="empty-selection">
-
-        No technology selected —
-        searching all platforms.
-
+        <span style="color:#64748b;font-size:13px">
+        ${escapeHtml(emptyText)}
         </span>
-
         `;
 
 
@@ -2263,7 +1772,7 @@ function renderTechnologyTags() {
     }
 
 
-    selectedTechnologies.forEach(
+    array.forEach(
         (
             item,
             index
@@ -2276,30 +1785,24 @@ function renderTechnologyTags() {
 
 
             tag.className =
-                "selection-tag technology";
+                (
+                    "selection-tag "
+                    +
+                    extraClass
+                ).trim();
 
 
             tag.innerHTML =
             `
-
-            ${escapeHtml(
-                formatLabel(
-                    item
-                )
-            )}
+            ${escapeHtml(item)}
 
             <button
             class="remove-tag"
-            onclick="
-            removeTechnology(
-            ${index}
-            )
-            ">
+            onclick="${removeFunction}(${index})">
 
             ×
 
             </button>
-
             `;
 
 
@@ -2332,9 +1835,7 @@ function addSource() {
 
 
     if (
-        value
-        ===
-        "all"
+        value === "all"
     ) {
 
         selectedSources = [
@@ -2371,6 +1872,14 @@ function addSource() {
 }
 
 
+function clearSources() {
+
+    selectedSources = [];
+
+    renderSourceTags();
+}
+
+
 function removeSource(
     index
 ) {
@@ -2379,15 +1888,6 @@ function removeSource(
         index,
         1
     );
-
-
-    renderSourceTags();
-}
-
-
-function clearSources() {
-
-    selectedSources = [];
 
 
     renderSourceTags();
@@ -2406,22 +1906,14 @@ function renderSourceTags() {
 
 
     if (
-        selectedSources.length
-        ===
-        0
+        selectedSources.length === 0
     ) {
 
         container.innerHTML =
         `
-
-        <span
-        class="empty-selection">
-
-        No sources selected —
-        using all connected sources.
-
+        <span style="color:#64748b;font-size:13px">
+        No sources selected — using all connected sources.
         </span>
-
         `;
 
 
@@ -2447,27 +1939,19 @@ function renderSourceTags() {
 
             tag.innerHTML =
             `
-
             ${escapeHtml(
-                sourceNames[
-                    item
-                ]
+                sourceNames[item]
                 ||
                 item
             )}
 
             <button
             class="remove-tag"
-            onclick="
-            removeSource(
-            ${index}
-            )
-            ">
+            onclick="removeSource(${index})">
 
             ×
 
             </button>
-
             `;
 
 
@@ -2560,21 +2044,14 @@ async function scanThreats() {
 
     button.disabled = true;
 
-
     warning.style.display =
         "none";
 
-
     results.innerHTML = "";
 
+    analyzedThreatData = [];
 
-    resetStats();
-
-
-    updateSearchSummary(
-        fromDate,
-        toDate
-    );
+    updateStats();
 
 
     document
@@ -2582,11 +2059,89 @@ async function scanThreats() {
             "topThreat"
         )
         .innerText =
-        "Waiting for AI analysis...";
+        "Waiting for analysis...";
 
 
     status.innerText =
         "Searching connected cybersecurity sources...";
+
+
+    const attacks =
+        selectedAttackTypes.filter(
+            item =>
+                item.toLowerCase()
+                !==
+                "all"
+        );
+
+
+    const technologies =
+        selectedTechnologies.filter(
+            item =>
+                item.toLowerCase()
+                !==
+                "all"
+        );
+
+
+    document
+        .getElementById(
+            "searchSummary"
+        )
+        .innerHTML =
+        `
+
+        <strong>
+        Current Search
+        </strong>
+
+        <br>
+
+        From:
+        ${escapeHtml(
+            fromDate.toLocaleString()
+        )}
+
+        <br>
+
+        To:
+        ${escapeHtml(
+            toDate.toLocaleString()
+        )}
+
+        <br>
+
+        Attack Types:
+        ${escapeHtml(
+            attacks.join(", ")
+            ||
+            "All"
+        )}
+
+        <br>
+
+        Technology:
+        ${escapeHtml(
+            technologies.join(", ")
+            ||
+            "All"
+        )}
+
+        <br>
+
+        Sources:
+        ${escapeHtml(
+            selectedSources.map(
+                item =>
+                    sourceNames[item]
+                    ||
+                    item
+            ).join(", ")
+            ||
+            "All Connected Sources"
+        )}
+
+        `;
 
 
     try {
@@ -2613,24 +2168,6 @@ async function scanThreats() {
         );
 
 
-        const attacks =
-            selectedAttackTypes.filter(
-                item =>
-                    item.toLowerCase()
-                    !==
-                    "all"
-            );
-
-
-        const technologies =
-            selectedTechnologies.filter(
-                item =>
-                    item.toLowerCase()
-                    !==
-                    "all"
-            );
-
-
         if (
             attacks.length > 0
         ) {
@@ -2654,9 +2191,7 @@ async function scanThreats() {
 
 
         if (
-            selectedSources.length
-            >
-            0
+            selectedSources.length > 0
         ) {
 
             params.set(
@@ -2668,7 +2203,6 @@ async function scanThreats() {
 
         const response =
             await fetch(
-
                 "/news?"
                 +
                 params.toString()
@@ -2685,6 +2219,8 @@ async function scanThreats() {
 
             throw new Error(
                 data.message
+                ||
+                "News request failed."
             );
         }
 
@@ -2728,38 +2264,20 @@ async function scanThreats() {
             articles.length === 0
         ) {
 
+            results.innerHTML =
+            `
+            <div class="empty">
+            No matching cyber intelligence found.
+            </div>
+            `;
+
+
             status.innerText =
                 "Search complete.";
 
 
-            results.innerHTML =
-            `
-
-            <div
-            class="empty">
-
-            No matching cyber intelligence found.
-
-            <br><br>
-
-            Try a larger date range
-            or fewer filters.
-
-            </div>
-
-            `;
-
-
             return;
         }
-
-
-        status.innerText =
-            articles.length
-            +
-            " results found. "
-            +
-            "Local AI analysis running...";
 
 
         articles.forEach(
@@ -2774,6 +2292,12 @@ async function scanThreats() {
                 );
             }
         );
+
+
+        status.innerText =
+            articles.length
+            +
+            " results found. AI analysis running...";
 
 
         for (
@@ -2792,7 +2316,9 @@ async function scanThreats() {
         status.innerText =
             "Scan complete. "
             +
-            analyzedCount
+            analyzedThreatData
+                .filter(Boolean)
+                .length
             +
             " articles analyzed.";
     }
@@ -2807,16 +2333,11 @@ async function scanThreats() {
 
         results.innerHTML =
         `
-
-        <div
-        class="error">
-
+        <div class="error">
         ${escapeHtml(
             error.message
         )}
-
         </div>
-
         `;
     }
 
@@ -2828,107 +2349,264 @@ async function scanThreats() {
 }
 
 
-function updateSearchSummary(
-    fromDate,
-    toDate
+/* ARTICLE HELPERS */
+
+
+function detectCVEs(
+    title,
+    description
 ) {
 
-    const attacks =
-        selectedAttackTypes.length
-        >
-        0
-
-        ?
-        selectedAttackTypes.join(
-            ", "
+    const text =
+        (
+            title
+            ||
+            ""
         )
+        +
+        " "
+        +
+        (
+            description
+            ||
+            ""
+        );
 
-        :
-        "All";
 
-
-    const technologies =
-        selectedTechnologies.length
-        >
-        0
-
-        ?
-        selectedTechnologies.join(
-            ", "
+    const matches =
+        text.match(
+            /CVE-\d{4}-\d{4,7}/gi
         )
+        ||
+        [];
 
-        :
-        "All";
+
+    return [
+        ...new Set(
+            matches.map(
+                item =>
+                    item.toUpperCase()
+            )
+        )
+    ];
+}
 
 
-    const sources =
-        selectedSources.length
-        >
-        0
+function detectTechnology(
+    title,
+    description
+) {
 
-        ?
-        selectedSources.map(
-            item =>
-                sourceNames[
-                    item
-                ]
+    const text =
+        (
+            (
+                title
                 ||
-                item
-        ).join(
-            ", "
+                ""
+            )
+            +
+            " "
+            +
+            (
+                description
+                ||
+                ""
+            )
         )
-
-        :
-        "All Connected Sources";
+        .toLowerCase();
 
 
-    document
-        .getElementById(
-            "searchSummary"
+    const technologies = [
+
+        [
+            "android",
+            "Android"
+        ],
+
+        [
+            "windows",
+            "Windows"
+        ],
+
+        [
+            "linux",
+            "Linux"
+        ],
+
+        [
+            "ios",
+            "iOS"
+        ],
+
+        [
+            "iphone",
+            "iOS"
+        ],
+
+        [
+            "vmware",
+            "VMware"
+        ],
+
+        [
+            "cisco",
+            "Cisco"
+        ],
+
+        [
+            "docker",
+            "Docker"
+        ],
+
+        [
+            "kubernetes",
+            "Kubernetes"
+        ],
+
+        [
+            "fortinet",
+            "Fortinet"
+        ],
+
+        [
+            "chrome",
+            "Chrome"
+        ],
+
+        [
+            "microsoft",
+            "Microsoft"
+        ],
+
+        [
+            "sap",
+            "SAP"
+        ],
+
+        [
+            "cloud",
+            "Cloud"
+        ],
+
+        [
+            "vpn",
+            "VPN"
+        ]
+
+    ];
+
+
+    for (
+        const pair
+        of technologies
+    ) {
+
+        if (
+            text.includes(
+                pair[0]
+            )
+        ) {
+
+            return pair[1];
+        }
+    }
+
+
+    return "Other";
+}
+
+
+function detectWatchlistHit(
+    title,
+    description
+) {
+
+    const text =
+        (
+            (
+                title
+                ||
+                ""
+            )
+            +
+            " "
+            +
+            (
+                description
+                ||
+                ""
+            )
         )
-        .innerHTML =
-        `
+        .toLowerCase();
 
-        <strong>
-        Current Search
-        </strong>
 
-        <br>
+    return watchlist.some(
+        item =>
+            text.includes(
+                item.toLowerCase()
+            )
+    );
+}
 
-        From:
-        ${escapeHtml(
-            fromDate.toLocaleString()
-        )}
 
-        <br>
+function detectStatus(
+    article
+) {
 
-        To:
-        ${escapeHtml(
-            toDate.toLocaleString()
-        )}
+    const text =
+        (
+            (
+                article.title
+                ||
+                ""
+            )
+            +
+            " "
+            +
+            (
+                article.description
+                ||
+                ""
+            )
+        )
+        .toLowerCase();
 
-        <br>
 
-        Attack Types:
-        ${escapeHtml(
-            attacks
-        )}
+    if (
+        article.known_exploited
+        ||
+        text.includes(
+            "actively exploited"
+        )
+        ||
+        text.includes(
+            "in the wild"
+        )
+    ) {
 
-        <br>
+        return "Active Threat";
+    }
 
-        Technology:
-        ${escapeHtml(
-            technologies
-        )}
 
-        <br>
+    if (
+        text.includes(
+            "patched"
+        )
+        ||
+        text.includes(
+            "fix available"
+        )
+        ||
+        text.includes(
+            "security update"
+        )
+    ) {
 
-        Sources:
-        ${escapeHtml(
-            sources
-        )}
+        return "Patched / Fix Available";
+    }
 
-        `;
+
+    return "Monitoring";
 }
 
 
@@ -2940,16 +2618,394 @@ function createArticleCard(
     index
 ) {
 
-    const results =
-        document.getElementById(
-            "results"
+    const cves =
+        detectCVEs(
+            article.title,
+            article.description
         );
+
+
+    if (
+        article.cve
+        &&
+        !cves.includes(
+            article.cve
+        )
+    ) {
+
+        cves.push(
+            article.cve
+        );
+    }
 
 
     const technology =
         detectTechnology(
             article.title,
             article.description
+        );
+
+
+    const timeline =
+        detectStatus(
+            article
+        );
+
+
+    const watchlistHit =
+        detectWatchlistHit(
+            article.title,
+            article.description
+        );
+
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+
+    card.className =
+        "threat-card"
+        +
+        (
+            watchlistHit
+            ?
+            " watchlist-hit"
+            :
+            ""
+        );
+
+
+    card.dataset.severity =
+        "unknown";
+
+
+    card.id =
+        "card-"
+        +
+        index;
+
+
+    const cveBadges =
+        cves.map(
+            cve =>
+            `
+            <span class="badge badge-cve">
+            ${escapeHtml(cve)}
+            </span>
+            `
+        )
+        .join("");
+
+
+    let cvssBadge = "";
+
+
+    if (
+        article.cvss_score
+        !==
+        null
+        &&
+        article.cvss_score
+        !==
+        undefined
+    ) {
+
+        cvssBadge =
+        `
+        <span class="badge badge-critical">
+        CVSS:
+        ${escapeHtml(
+            article.cvss_score
+        )}
+        </span>
+        `;
+    }
+
+
+    card.innerHTML =
+    `
+
+    <h2>
+
+    ${escapeHtml(
+        article.title
+    )}
+
+    </h2>
+
+
+    <div class="meta">
+
+    ${escapeHtml(
+        article.source
+        ||
+        "Unknown"
+    )}
+
+    |
+
+    ${formatDate(
+        article.published_at
+    )}
+
+    </div>
+
+
+    <div class="badges">
+
+    <span class="badge badge-source">
+
+    ${escapeHtml(
+        article.source_group
+        ||
+        article.source
+        ||
+        "Unknown"
+    )}
+
+    </span>
+
+
+    <span class="badge badge-platform">
+    ${escapeHtml(
+        technology
+    )}
+    </span>
+
+
+    <span class="badge badge-info">
+    ${escapeHtml(
+        timeline
+    )}
+    </span>
+
+
+    ${cveBadges}
+
+    ${cvssBadge}
+
+    </div>
+
+
+    <div class="description">
+
+    ${escapeHtml(
+        article.description
+        ||
+        "No description available."
+    )}
+
+    </div>
+
+
+    <div
+    class="ai-loading"
+    id="analysis-${index}">
+
+    AI analysis pending...
+
+    </div>
+
+
+    <div class="card-actions">
+
+    <a
+    class="article-link"
+    href="${sanitizeUrl(
+        article.url
+    )}"
+    target="_blank"
+    rel="noopener noreferrer">
+
+    View Original Source →
+
+    </a>
+
+
+    <button
+    class="standard-button"
+    onclick="emailThreat(${index})">
+
+    📧 Email This Threat
+
+    </button>
+
+
+    <button
+    class="standard-button ask-toggle"
+    onclick="toggleAskAI(${index})">
+
+    🤖 Ask AI
+
+    </button>
+
+    </div>
+
+
+    <div
+    class="ask-panel"
+    id="askPanel-${index}">
+
+    <h3>
+    🤖 Ask CyberWatch AI
+    </h3>
+
+
+    <div class="ask-row">
+
+    <input
+    class="ask-input"
+    id="askInput-${index}"
+    placeholder="Example: explain this threat simply"
+    onkeydown="
+    if(event.key === 'Enter') {
+        event.preventDefault();
+        askThreatAI(${index});
+    }
+    ">
+
+
+    <button
+    class="ask-button"
+    id="askButton-${index}"
+    onclick="askThreatAI(${index})">
+
+    Ask
+
+    </button>
+
+    </div>
+
+
+    <div
+    class="ask-answer"
+    id="askAnswer-${index}">
+    </div>
+
+    </div>
+
+    `;
+
+
+    document
+        .getElementById(
+            "results"
+        )
+        .appendChild(
+            card
+        );
+}
+
+
+/* AI ANALYSIS */
+
+
+async function analyzeArticle(
+    article,
+    index
+) {
+
+    const box =
+        document.getElementById(
+            "analysis-"
+            +
+            index
+        );
+
+
+    box.innerText =
+        "AI analyzing article...";
+
+
+    let rawAnalysis = "";
+
+    let analysis;
+
+
+    try {
+
+        const params =
+            new URLSearchParams();
+
+
+        params.set(
+            "title",
+            article.title
+            ||
+            ""
+        );
+
+
+        params.set(
+            "description",
+            article.description
+            ||
+            ""
+        );
+
+
+        const response =
+            await fetch(
+                "/analyze?"
+                +
+                params.toString()
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.status !== "ok"
+        ) {
+
+            throw new Error(
+                data.message
+                ||
+                "AI analysis failed."
+            );
+        }
+
+
+        rawAnalysis =
+            data.analysis
+            ||
+            "";
+
+
+        analysis =
+            parseAnalysis(
+                rawAnalysis
+            );
+    }
+
+    catch (
+        error
+    ) {
+
+        console.error(
+            "AI analysis request failed:",
+            error
+        );
+
+
+        rawAnalysis = "";
+
+
+        analysis =
+            createFallbackAnalysis(
+                article
+            );
+    }
+
+
+    analysis =
+        completeAnalysisWithFallback(
+            analysis,
+            article
         );
 
 
@@ -2974,16 +3030,16 @@ function createArticleCard(
     }
 
 
-    const timeline =
-        article.known_exploited
-
-        ?
-        "Active Threat"
-
-        :
-        detectThreatStatus(
+    const technology =
+        detectTechnology(
             article.title,
             article.description
+        );
+
+
+    const timeline =
+        detectStatus(
+            article
         );
 
 
@@ -2994,844 +3050,93 @@ function createArticleCard(
         );
 
 
+    const riskData =
+        calculateRiskScore(
+            analysis,
+            article,
+            cves,
+            watchlistHit
+        );
+
+
+    const mitre =
+        getMitreMapping(
+            analysis.attackType,
+            analysis.category
+        );
+
+
     const card =
-        document.createElement(
-            "div"
+        document.getElementById(
+            "card-"
+            +
+            index
         );
-
-
-    card.className =
-        "threat-card";
-
-
-    if (
-        watchlistHit
-    ) {
-
-        card.classList.add(
-            "watchlist-hit"
-        );
-    }
 
 
     card.dataset.severity =
-        "unknown";
-
-
-    let cveBadges = "";
-
-
-    cves.forEach(
-        cve => {
-
-            cveBadges +=
-            `
-
-            <span
-            class="badge badge-cve">
-
-            ${escapeHtml(
-                cve
-            )}
-
-            </span>
-
-            `;
-        }
-    );
-
-
-    let cvssBadge = "";
-
-
-    if (
-        article.cvss_score
-        !==
-        null
-        &&
-        article.cvss_score
-        !==
-        undefined
-    ) {
-
-        cvssBadge =
-        `
-
-        <span
-        class="badge badge-critical">
-
-        CVSS:
-        ${escapeHtml(
-            article.cvss_score
-        )}
-
-        </span>
-
-        `;
-    }
-
-
-    card.innerHTML =
-    `
-
-    <h2>
-
-    ${escapeHtml(
-        article.title
-    )}
-
-    </h2>
-
-
-    <div
-    class="meta">
-
-    ${escapeHtml(
-        article.source
-        ||
-        "Unknown"
-    )}
-
-    |
-
-    ${formatDate(
-        article.published_at
-    )}
-
-    </div>
-
-
-    <div
-    class="badges">
-
-
-    <span
-    class="badge badge-source">
-
-    ${escapeHtml(
-        article.source_group
-        ||
-        article.source
-        ||
-        "Unknown"
-    )}
-
-    </span>
-
-
-    <span
-    class="badge badge-platform">
-
-    ${escapeHtml(
-        technology
-    )}
-
-    </span>
-
-
-    <span
-    class="badge
-    ${getTimelineClass(
-        timeline
-    )}">
-
-    ${escapeHtml(
-        timeline
-    )}
-
-    </span>
-
-
-    ${cveBadges}
-
-    ${cvssBadge}
-
-
-    </div>
-
-
-    <div
-    class="description">
-
-    ${escapeHtml(
-        article.description
-    )}
-
-    </div>
-
-
-    <div
-    class="ai-loading"
-    id="analysis-${index}">
-
-    AI analysis pending...
-
-    </div>
-
-
-    <div
-    class="card-actions">
-
-
-    <a
-    class="article-link"
-    href="${sanitizeUrl(
-        article.url
-    )}"
-    target="_blank"
-    rel="noopener noreferrer">
-
-    View Original Source →
-
-    </a>
-
-
-    <button
-    class="standard-button"
-    onclick="
-    emailThreat(
-    ${index}
-    )
-    ">
-
-    📧 Email This Threat
-
-    </button>
-
-
-    <button
-    class="standard-button ask-toggle"
-    onclick="
-    toggleAskAI(
-    ${index}
-    )
-    ">
-
-    🤖 Ask AI
-
-    </button>
-
-
-    </div>
-
-
-    <div
-    class="ask-panel"
-    id="askPanel-${index}">
-
-
-    <h3>
-
-    🤖 Ask CyberWatch AI
-
-    </h3>
-
-
-    <div
-    class="ask-row">
-
-
-    <input
-    class="ask-input"
-    id="askInput-${index}"
-    type="text"
-    placeholder="Example: Explain this threat simply, am I affected, how can I protect myself?"
-    onkeydown="
-    if(event.key === 'Enter') {
-    event.preventDefault();
-    askThreatAI(${index});
-    }
-    ">
-
-
-    <button
-    class="ask-button"
-    id="askButton-${index}"
-    onclick="
-    askThreatAI(
-    ${index}
-    )
-    ">
-
-    Ask
-
-    </button>
-
-
-    </div>
-
-
-    <div
-    class="ask-answer"
-    id="askAnswer-${index}">
-    </div>
-
-
-    </div>
-
-    `;
-
-
-    results.appendChild(
-        card
-    );
-}
-
-
-/* AI ANALYSIS */
-
-
-async function analyzeArticle(
-    article,
-    index
-) {
-
-    const box =
-        document.getElementById(
-            "analysis-"
-            +
-            index
-        );
-
-
-    box.innerText =
-        "AI analyzing article...";
-
-
-    try {
-
-        const params =
-            new URLSearchParams();
-
-
-        params.set(
-            "title",
-            article.title
-        );
-
-
-        params.set(
-            "description",
-            article.description
-        );
-
-
-        const response =
-            await fetch(
-
-                "/analyze?"
-                +
-                params.toString()
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            data.status !== "ok"
-        ) {
-
-            throw new Error(
-                data.message
-            );
-        }
-
-
-        const analysis =
-            parseAnalysis(
-                data.analysis
-            );
-
-
-        // Fallback severity when AI is unavailable, rate-limited,
-        // or returns an unknown severity.
-        if (
-            !analysis.severity
+        (
+            analysis.severity
             ||
-            analysis.severity
-                .toLowerCase()
-                .includes("unknown")
-        ) {
-
-            const fallbackText = (
-                (article.title || "")
-                +
-                " "
-                +
-                (article.description || "")
-            ).toLowerCase();
-
-            const cvssValue =
-                article.cvss_score !== null
-                &&
-                article.cvss_score !== undefined
-                ? Number(article.cvss_score)
-                : null;
-
-            if (
-                cvssValue !== null
-                &&
-                !Number.isNaN(cvssValue)
-            ) {
-                if (cvssValue >= 9) {
-                    analysis.severity = "Critical";
-                }
-                else if (cvssValue >= 7) {
-                    analysis.severity = "High";
-                }
-                else if (cvssValue >= 4) {
-                    analysis.severity = "Medium";
-                }
-                else {
-                    analysis.severity = "Low";
-                }
-            }
-            else if (
-                fallbackText.includes("remote code execution")
-                || fallbackText.includes("arbitrary code execution")
-                || fallbackText.includes("authentication bypass")
-                || fallbackText.includes("critical vulnerability")
-                || fallbackText.includes("maximum severity")
-            ) {
-                analysis.severity = "Critical";
-            }
-            else if (
-                fallbackText.includes("zero-day")
-                || fallbackText.includes("zero day")
-                || fallbackText.includes("actively exploited")
-                || fallbackText.includes("ransomware")
-                || fallbackText.includes("privilege escalation")
-                || fallbackText.includes("credential theft")
-                || fallbackText.includes("data breach")
-                || fallbackText.includes("malware")
-            ) {
-                analysis.severity = "High";
-            }
-            else if (
-                fallbackText.includes("vulnerability")
-                || fallbackText.includes("security flaw")
-                || fallbackText.includes("denial of service")
-                || fallbackText.includes("ddos")
-                || fallbackText.includes("information disclosure")
-            ) {
-                analysis.severity = "Medium";
-            }
-            else {
-                analysis.severity = "Low";
-            }
-        }
-
-
-        const card =
-            box.closest(
-                ".threat-card"
-            );
-
-
-        card.dataset.severity =
-            analysis.severity
-                .toLowerCase();
-
-
-        const cves =
-            detectCVEs(
-                article.title,
-                article.description
-            );
-
-
-        if (
-            article.cve
-            &&
-            !cves.includes(
-                article.cve
-            )
-        ) {
-
-            cves.push(
-                article.cve
-            );
-        }
-
-
-        const technology =
-            detectTechnology(
-                article.title,
-                article.description
-            );
-
-
-        const timeline =
-            article.known_exploited
-
-            ?
-            "Active Threat"
-
-            :
-            detectThreatStatus(
-                article.title,
-                article.description
-            );
-
-
-        const watchlistHit =
-            detectWatchlistHit(
-                article.title,
-                article.description
-            );
-
-
-        const riskData =
-            calculateRiskScore(
-                analysis,
-                article,
-                cves,
-                watchlistHit
-            );
-
-
-        const mitre =
-            getMitreMapping(
-                analysis.attackType,
-                analysis.category
-            );
-
-
-        box.innerHTML =
-            buildAnalysisHTML(
-                analysis,
-                riskData,
-                mitre
-            );
-
-
-        analyzedThreatData[
-            index
-        ] = {
-
-            article:
-                article,
-
-            analysis:
-                analysis,
-
-            analysisText:
-                data.analysis,
-
-            risk:
-                riskData.score,
-
-            riskData:
-                riskData,
-
-            mitre:
-                mitre,
-
-            technology:
-                technology,
-
-            timeline:
-                timeline,
-
-            cves:
-                cves
-        };
-
-
-        analyzedCount++;
-
-
-        updateSeverityStats(
-            analysis.severity
-        );
-
-
-        document
-            .getElementById(
-                "analyzedThreats"
-            )
-            .innerText =
-            analyzedCount;
-
-
-        updateTopThreat();
-
-
-        applySeverityFilter();
-    }
-
-    catch (
-        error
-    ) {
-
-        box.innerHTML =
-        `
-
-        <div
-        class="error">
-
-        AI analysis failed.
-
-        </div>
-
-        `;
-    }
-}
-
-
-/* ASK AI */
-
-
-function toggleAskAI(
-    index
-) {
-
-    const panel =
-        document.getElementById(
-            "askPanel-"
-            +
-            index
-        );
-
-
-    panel.classList.toggle(
-        "open"
-    );
-
-
-    if (
-        panel.classList.contains(
-            "open"
+            "unknown"
         )
-    ) {
-
-        const input =
-            document.getElementById(
-                "askInput-"
-                +
-                index
-            );
+        .toLowerCase();
 
 
-        input.focus();
-    }
-}
-
-
-async function askThreatAI(
-    index
-) {
-
-    const threat =
-        analyzedThreatData[
-            index
-        ];
-
-
-    const input =
-        document.getElementById(
-            "askInput-"
-            +
-            index
+    box.innerHTML =
+        buildAnalysisHTML(
+            analysis,
+            riskData,
+            mitre
         );
 
 
-    const answerBox =
-        document.getElementById(
-            "askAnswer-"
-            +
-            index
-        );
+    analyzedThreatData[
+        index
+    ] = {
+
+        article:
+            article,
+
+        analysis:
+            analysis,
+
+        analysisText:
+            rawAnalysis
+            ||
+            buildAnalysisContextFromParts(
+                analysis
+            ),
+
+        risk:
+            riskData.score,
+
+        riskData:
+            riskData,
+
+        mitre:
+            mitre,
+
+        technology:
+            technology,
+
+        timeline:
+            timeline,
+
+        cves:
+            cves
+    };
 
 
-    const button =
-        document.getElementById(
-            "askButton-"
-            +
-            index
-        );
+    updateStats();
 
+    updateTopThreat();
 
-    const question =
-        input.value.trim();
-
-
-    if (!question) {
-
-        answerBox.className =
-            "ask-answer visible";
-
-
-        answerBox.innerText =
-            "Please type a question first.";
-
-
-        return;
-    }
-
-
-    if (!threat) {
-
-        answerBox.className =
-            "ask-answer visible";
-
-
-        answerBox.innerText =
-            "Wait for the article analysis to finish first.";
-
-
-        return;
-    }
-
-
-    button.disabled =
-        true;
-
-
-    answerBox.className =
-        "ask-answer visible ask-loading";
-
-
-    answerBox.innerText =
-        "CyberWatch AI is thinking...";
-
-
-    try {
-
-        const response =
-            await fetch(
-
-                "/ask",
-
-                {
-
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            title:
-                                threat.article.title,
-
-                            description:
-                                threat.article.description,
-
-                            analysis:
-                                threat.analysisText
-                                ||
-                                buildAnalysisContext(
-                                    threat
-                                ),
-
-                            question:
-                                question
-                        })
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            data.status !== "ok"
-        ) {
-
-            throw new Error(
-                data.message
-            );
-        }
-
-
-        answerBox.className =
-            "ask-answer visible";
-
-
-        answerBox.innerText =
-            data.answer;
-    }
-
-    catch (
-        error
-    ) {
-
-        answerBox.className =
-            "ask-answer visible";
-
-
-        answerBox.innerText =
-            "Ask AI failed: "
-            +
-            error.message;
-    }
-
-    finally {
-
-        button.disabled =
-            false;
-    }
+    applySeverityFilter();
 }
 
 
-function buildAnalysisContext(
-    threat
-) {
-
-    return (
-
-        "Summary: "
-        +
-        threat.analysis.summary
-        +
-        "\n"
-
-        +
-        "Attack Type: "
-        +
-        threat.analysis.attackType
-        +
-        "\n"
-
-        +
-        "Severity: "
-        +
-        threat.analysis.severity
-        +
-        "\n"
-
-        +
-        "Target: "
-        +
-        threat.analysis.target
-        +
-        "\n"
-
-        +
-        "Impact: "
-        +
-        threat.analysis.impact
-        +
-        "\n"
-
-        +
-        "MITRE: "
-        +
-        threat.mitre
-    );
-}
-
-
-/* PARSE AI */
+/* ROBUST AI PARSER */
 
 
 function parseAnalysis(
@@ -3871,18 +3176,44 @@ function parseAnalysis(
     }
 
 
+    const normalizedText =
+        String(
+            text
+        )
+
+        .replace(
+            /\r/g,
+            ""
+        )
+
+        .replace(
+            /\*\*/g,
+            ""
+        )
+
+        .replace(
+            /__/g,
+            ""
+        )
+
+        .replace(
+            /`/g,
+            ""
+        );
+
+
     const lines =
-        text.split(
+        normalizedText.split(
             "\n"
         );
 
 
-    let recommendationMode =
-        false;
+    let currentField =
+        null;
 
 
-    let recommendationText =
-        "";
+    const recommendations =
+        [];
 
 
     lines.forEach(
@@ -3892,147 +3223,232 @@ function parseAnalysis(
                 line.trim();
 
 
-            if (
-                clean.startsWith(
-                    "SUMMARY:"
-                )
-            ) {
-
-                result.summary =
-                    clean.replace(
-                        "SUMMARY:",
-                        ""
-                    ).trim();
+            if (!clean) {
+                return;
             }
 
-            else if (
-                clean.startsWith(
-                    "CATEGORY:"
-                )
-            ) {
 
-                result.category =
-                    clean.replace(
-                        "CATEGORY:",
-                        ""
-                    ).trim();
-            }
-
-            else if (
-                clean.startsWith(
-                    "ATTACK_TYPE:"
-                )
-            ) {
-
-                result.attackType =
-                    clean.replace(
-                        "ATTACK_TYPE:",
-                        ""
-                    ).trim();
-            }
-
-            else if (
-                clean.startsWith(
-                    "SEVERITY:"
-                )
-            ) {
-
-                result.severity =
-                    clean.replace(
-                        "SEVERITY:",
-                        ""
-                    ).trim();
-            }
-
-            else if (
-                clean.startsWith(
-                    "TARGET:"
-                )
-            ) {
-
-                result.target =
-                    clean.replace(
-                        "TARGET:",
-                        ""
-                    ).trim();
-            }
-
-            else if (
-                clean.startsWith(
-                    "IMPACT:"
-                )
-            ) {
-
-                result.impact =
-                    clean.replace(
-                        "IMPACT:",
-                        ""
-                    ).trim();
-            }
-
-            else if (
-                clean.startsWith(
-                    "CONFIDENCE:"
-                )
-            ) {
-
-                result.confidence =
-                    clean.replace(
-                        "CONFIDENCE:",
-                        ""
-                    ).trim();
-            }
-
-            else if (
-                clean.startsWith(
-                    "RECOMMENDATIONS:"
-                )
-            ) {
-
-                recommendationMode =
-                    true;
+            const match =
+                clean.match(
+                    /^(SUMMARY|CATEGORY|ATTACK[\s_]*TYPE|SEVERITY|TARGET|IMPACT|CONFIDENCE|RECOMMENDATIONS)\s*:\s*(.*)$/i
+                );
 
 
-                const first =
-                    clean.replace(
-                        "RECOMMENDATIONS:",
-                        ""
-                    ).trim();
+            if (match) {
+
+                const field =
+                    match[1]
+                    .toUpperCase()
+                    .replace(
+                        /\s+/g,
+                        "_"
+                    );
 
 
-                if (first) {
+                const value =
+                    match[2]
+                    .trim();
 
-                    recommendationText +=
-                        first
-                        +
-                        "\n";
+
+                if (
+                    field ===
+                    "SUMMARY"
+                ) {
+
+                    result.summary =
+                        value
+                        ||
+                        "Unknown";
+
+
+                    currentField =
+                        "summary";
                 }
+
+                else if (
+                    field ===
+                    "CATEGORY"
+                ) {
+
+                    result.category =
+                        value
+                        ||
+                        "Unknown";
+
+
+                    currentField =
+                        "category";
+                }
+
+                else if (
+                    field ===
+                    "ATTACK_TYPE"
+                ) {
+
+                    result.attackType =
+                        value
+                        ||
+                        "Unknown";
+
+
+                    currentField =
+                        "attackType";
+                }
+
+                else if (
+                    field ===
+                    "SEVERITY"
+                ) {
+
+                    result.severity =
+                        value
+                        ||
+                        "Unknown";
+
+
+                    currentField =
+                        "severity";
+                }
+
+                else if (
+                    field ===
+                    "TARGET"
+                ) {
+
+                    result.target =
+                        value
+                        ||
+                        "Unknown";
+
+
+                    currentField =
+                        "target";
+                }
+
+                else if (
+                    field ===
+                    "IMPACT"
+                ) {
+
+                    result.impact =
+                        value
+                        ||
+                        "Unknown";
+
+
+                    currentField =
+                        "impact";
+                }
+
+                else if (
+                    field ===
+                    "CONFIDENCE"
+                ) {
+
+                    result.confidence =
+                        value
+                        ||
+                        "Unknown";
+
+
+                    currentField =
+                        "confidence";
+                }
+
+                else if (
+                    field ===
+                    "RECOMMENDATIONS"
+                ) {
+
+                    currentField =
+                        "recommendations";
+
+
+                    if (value) {
+
+                        recommendations.push(
+                            value
+                        );
+                    }
+                }
+
+
+                return;
+            }
+
+
+            if (
+                currentField
+                ===
+                "summary"
+                &&
+                result.summary
+                !==
+                "Unknown"
+            ) {
+
+                result.summary +=
+                    " "
+                    +
+                    clean;
             }
 
             else if (
-                recommendationMode
+                currentField
+                ===
+                "target"
                 &&
-                clean !== ""
+                result.target
+                !==
+                "Unknown"
             ) {
 
-                recommendationText +=
-                    clean
+                result.target +=
+                    " "
                     +
-                    "\n";
+                    clean;
+            }
+
+            else if (
+                currentField
+                ===
+                "impact"
+                &&
+                result.impact
+                !==
+                "Unknown"
+            ) {
+
+                result.impact +=
+                    " "
+                    +
+                    clean;
+            }
+
+            else if (
+                currentField
+                ===
+                "recommendations"
+            ) {
+
+                recommendations.push(
+                    clean
+                );
             }
         }
     );
 
 
     if (
-        recommendationText
-        .trim()
-        !==
-        ""
+        recommendations.length
+        >
+        0
     ) {
 
         result.recommendations =
-            recommendationText.trim();
+            recommendations.join(
+                "\n"
+            );
     }
 
 
@@ -4040,182 +3456,670 @@ function parseAnalysis(
 }
 
 
-/* BUILD ANALYSIS */
+/* FALLBACK ANALYSIS */
 
 
-function buildAnalysisHTML(
-    analysis,
-    riskData,
-    mitre
+function createFallbackAnalysis(
+    article
 ) {
 
-    return `
-    
-    <div class="badges">
-
-        <span class="badge badge-category">
-            ${escapeHtml(
-                analysis.category
-            )}
-        </span>
-
-        <span
-        class="badge
-        ${getSeverityClass(
-            analysis.severity
-        )}">
-            ${escapeHtml(
-                analysis.severity
-            )}
-        </span>
-
-        <span class="badge badge-info">
-            Confidence:
-            ${escapeHtml(
-                analysis.confidence
-            )}
-        </span>
-
-    </div>
+    const text =
+        (
+            (
+                article.title
+                ||
+                ""
+            )
+            +
+            " "
+            +
+            (
+                article.description
+                ||
+                ""
+            )
+        )
+        .toLowerCase();
 
 
-    <div class="risk-box">
-
-        <div class="risk-header">
-
-            <strong>
-                CyberWatch Risk Score
-            </strong>
-
-            <div class="risk-score">
-                ${riskData.score}/100
-            </div>
-
-        </div>
+    let severity =
+        "Medium";
 
 
-        <div class="risk-bar">
-
-            <div
-            class="risk-fill"
-            style="
-            width:
-            ${riskData.score}%
-            ">
-            </div>
-
-        </div>
-
-
-        <div class="risk-reasons">
-
-            ${riskData.reasons
-                .map(
-                    reason =>
-                        "• "
-                        +
-                        escapeHtml(
-                            reason
-                        )
-                )
-                .join(
-                    "<br>"
-                )
-            }
-
-        </div>
-
-    </div>
+    const hasCvss =
+        article.cvss_score
+        !==
+        null
+        &&
+        article.cvss_score
+        !==
+        undefined
+        &&
+        article.cvss_score
+        !==
+        "";
 
 
-    <div class="analysis-grid">
-
-        <div class="info-box">
-
-            <h4>
-                AI Summary
-            </h4>
-
-            ${escapeHtml(
-                analysis.summary
-            )}
-
-        </div>
+    const cvss =
+        hasCvss
+        ?
+        Number(
+            article.cvss_score
+        )
+        :
+        NaN;
 
 
-        <div class="info-box">
+    if (
+        Number.isFinite(
+            cvss
+        )
+    ) {
 
-            <h4>
-                Attack Type
-            </h4>
+        if (
+            cvss >= 9
+        ) {
 
-            ${escapeHtml(
-                analysis.attackType
-            )}
+            severity =
+                "Critical";
+        }
 
-        </div>
+        else if (
+            cvss >= 7
+        ) {
+
+            severity =
+                "High";
+        }
+
+        else if (
+            cvss >= 4
+        ) {
+
+            severity =
+                "Medium";
+        }
+
+        else {
+
+            severity =
+                "Low";
+        }
+    }
+
+    else if (
+        /remote code execution|arbitrary code execution|authentication bypass|maximum severity|critical vulnerability/
+        .test(
+            text
+        )
+    ) {
+
+        severity =
+            "Critical";
+    }
+
+    else if (
+        /zero[- ]day|actively exploited|ransomware|privilege escalation|credential theft|data breach|malware|botnet/
+        .test(
+            text
+        )
+    ) {
+
+        severity =
+            "High";
+    }
+
+    else if (
+        /minor|low severity|informational/
+        .test(
+            text
+        )
+    ) {
+
+        severity =
+            "Low";
+    }
 
 
-        <div class="info-box">
-
-            <h4>
-                Target
-            </h4>
-
-            ${escapeHtml(
-                analysis.target
-            )}
-
-        </div>
+    let attackType =
+        "Security Vulnerability";
 
 
-        <div class="info-box">
+    if (
+        text.includes(
+            "ransomware"
+        )
+    ) {
 
-            <h4>
-                Possible Impact
-            </h4>
+        attackType =
+            "Ransomware";
+    }
 
-            ${escapeHtml(
-                analysis.impact
-            )}
+    else if (
+        text.includes(
+            "phishing"
+        )
+    ) {
 
-        </div>
+        attackType =
+            "Phishing";
+    }
 
-    </div>
+    else if (
+        text.includes(
+            "ddos"
+        )
+        ||
+        text.includes(
+            "denial of service"
+        )
+    ) {
+
+        attackType =
+            "Denial of Service";
+    }
+
+    else if (
+        text.includes(
+            "remote code execution"
+        )
+        ||
+        text.includes(
+            "arbitrary code execution"
+        )
+    ) {
+
+        attackType =
+            "Remote Code Execution";
+    }
+
+    else if (
+        text.includes(
+            "privilege escalation"
+        )
+    ) {
+
+        attackType =
+            "Privilege Escalation";
+    }
+
+    else if (
+        text.includes(
+            "authentication bypass"
+        )
+    ) {
+
+        attackType =
+            "Authentication Bypass";
+    }
+
+    else if (
+        text.includes(
+            "malware"
+        )
+    ) {
+
+        attackType =
+            "Malware";
+    }
 
 
-    <div class="mitre-box">
+    return {
 
-        <strong>
-            MITRE ATT&CK — Likely Mapping
-        </strong>
+        summary:
+            article.description
+            ||
+            "Cybersecurity threat reported in the source article.",
 
-        <br><br>
+        category:
+            detectCategory(
+                text
+            ),
 
-        ${escapeHtml(
-            mitre
-        )}
+        attackType:
+            attackType,
 
-    </div>
+        severity:
+            severity,
 
+        target:
+            buildTarget(
+                article
+            ),
 
-    <div class="recommendations">
+        impact:
+            buildImpact(
+                text,
+                attackType
+            ),
 
-        <strong>
-            AI Defensive Recommendations
-        </strong>
+        confidence:
+            "Medium",
 
-${escapeHtml(
-    analysis.recommendations
-)}
-
-    </div>
-
-    `;
+        recommendations:
+            "- Review the original security advisory.\n"
+            +
+            "- Apply available security updates.\n"
+            +
+            "- Monitor affected systems for suspicious activity."
+    };
 }
 
 
-/* RISK */
+function completeAnalysisWithFallback(
+    analysis,
+    article
+) {
+
+    const fallback =
+        createFallbackAnalysis(
+            article
+        );
+
+
+    const isUnknown =
+        value => {
+
+            if (!value) {
+                return true;
+            }
+
+
+            const text =
+                String(
+                    value
+                )
+                .trim()
+                .toLowerCase();
+
+
+            return (
+                text === ""
+                ||
+                text === "unknown"
+                ||
+                text.includes(
+                    "temporarily unavailable"
+                )
+            );
+        };
+
+
+    if (
+        isUnknown(
+            analysis.summary
+        )
+    ) {
+
+        analysis.summary =
+            fallback.summary;
+    }
+
+
+    if (
+        isUnknown(
+            analysis.category
+        )
+    ) {
+
+        analysis.category =
+            fallback.category;
+    }
+
+
+    if (
+        isUnknown(
+            analysis.attackType
+        )
+    ) {
+
+        analysis.attackType =
+            fallback.attackType;
+    }
+
+
+    if (
+        isUnknown(
+            analysis.severity
+        )
+    ) {
+
+        analysis.severity =
+            fallback.severity;
+    }
+
+
+    if (
+        isUnknown(
+            analysis.target
+        )
+    ) {
+
+        analysis.target =
+            fallback.target;
+    }
+
+
+    if (
+        isUnknown(
+            analysis.impact
+        )
+    ) {
+
+        analysis.impact =
+            fallback.impact;
+    }
+
+
+    if (
+        isUnknown(
+            analysis.confidence
+        )
+    ) {
+
+        analysis.confidence =
+            fallback.confidence;
+    }
+
+
+    if (
+        isUnknown(
+            analysis.recommendations
+        )
+        ||
+        analysis.recommendations
+        ===
+        "No recommendations available."
+    ) {
+
+        analysis.recommendations =
+            fallback.recommendations;
+    }
+
+
+    return analysis;
+}
+
+
+function detectCategory(
+    text
+) {
+
+    if (
+        text.includes(
+            "ransomware"
+        )
+    ) {
+
+        return "Ransomware";
+    }
+
+
+    if (
+        text.includes(
+            "phishing"
+        )
+    ) {
+
+        return "Phishing";
+    }
+
+
+    if (
+        text.includes(
+            "data breach"
+        )
+    ) {
+
+        return "Data Breach";
+    }
+
+
+    if (
+        text.includes(
+            "ddos"
+        )
+        ||
+        text.includes(
+            "denial of service"
+        )
+    ) {
+
+        return "DDoS";
+    }
+
+
+    if (
+        text.includes(
+            "zero-day"
+        )
+        ||
+        text.includes(
+            "zero day"
+        )
+    ) {
+
+        return "Zero-Day";
+    }
+
+
+    if (
+        text.includes(
+            "malware"
+        )
+        ||
+        text.includes(
+            "trojan"
+        )
+        ||
+        text.includes(
+            "botnet"
+        )
+    ) {
+
+        return "Malware";
+    }
+
+
+    if (
+        text.includes(
+            "cloud"
+        )
+    ) {
+
+        return "Cloud Security";
+    }
+
+
+    if (
+        text.includes(
+            "android"
+        )
+        ||
+        text.includes(
+            "ios"
+        )
+        ||
+        text.includes(
+            "mobile"
+        )
+    ) {
+
+        return "Mobile Security";
+    }
+
+
+    return "Vulnerability";
+}
+
+
+function buildTarget(
+    article
+) {
+
+    const parts = [];
+
+
+    if (
+        article.vendor
+    ) {
+
+        parts.push(
+            article.vendor
+        );
+    }
+
+
+    if (
+        article.product
+    ) {
+
+        parts.push(
+            article.product
+        );
+    }
+
+
+    if (
+        parts.length > 0
+    ) {
+
+        return parts.join(
+            " "
+        );
+    }
+
+
+    const technology =
+        detectTechnology(
+            article.title,
+            article.description
+        );
+
+
+    if (
+        technology !== "Other"
+    ) {
+
+        return technology;
+    }
+
+
+    return (
+        "Systems or users described "
+        +
+        "in the article"
+    );
+}
+
+
+function buildImpact(
+    text,
+    attackType
+) {
+
+    if (
+        /remote code execution|arbitrary code execution/
+        .test(
+            text
+        )
+    ) {
+
+        return (
+            "Attackers may be able to execute code "
+            +
+            "on affected systems, potentially leading "
+            +
+            "to system compromise."
+        );
+    }
+
+
+    if (
+        text.includes(
+            "ransomware"
+        )
+    ) {
+
+        return (
+            "Affected systems may be encrypted, "
+            +
+            "disrupted, or used for extortion "
+            +
+            "and data theft."
+        );
+    }
+
+
+    if (
+        /credential theft|phishing/
+        .test(
+            text
+        )
+    ) {
+
+        return (
+            "Credentials or sensitive account "
+            +
+            "information may be stolen and abused."
+        );
+    }
+
+
+    if (
+        text.includes(
+            "data breach"
+        )
+    ) {
+
+        return (
+            "Sensitive information may be "
+            +
+            "exposed or stolen."
+        );
+    }
+
+
+    if (
+        /ddos|denial of service/
+        .test(
+            text
+        )
+    ) {
+
+        return (
+            "Services may become unavailable "
+            +
+            "or unstable."
+        );
+    }
+
+
+    if (
+        attackType
+        ===
+        "Privilege Escalation"
+    ) {
+
+        return (
+            "An attacker may gain higher privileges "
+            +
+            "and broader control of the affected system."
+        );
+    }
+
+
+    return (
+        "Successful exploitation could compromise "
+        +
+        "confidentiality, integrity, or availability "
+        +
+        "depending on the affected system."
+    );
+}
+
+
+/* RISK SCORE */
 
 
 function calculateRiskScore(
@@ -4226,112 +4130,150 @@ function calculateRiskScore(
 ) {
 
     let score = 20;
+
     const reasons = [];
 
-    const severity = (
-        analysis.severity || ""
-    ).toLowerCase();
 
-    const attack = (
-        analysis.attackType || ""
-    ).toLowerCase();
-
-    const text = (
-        (article.title || "")
-        +
-        " "
-        +
-        (article.description || "")
-    ).toLowerCase();
+    const severity =
+        (
+            analysis.severity
+            ||
+            ""
+        )
+        .toLowerCase();
 
 
-    // -------------------------
-    // 1. AI SEVERITY
-    // -------------------------
+    const text =
+        (
+            (
+                article.title
+                ||
+                ""
+            )
+            +
+            " "
+            +
+            (
+                article.description
+                ||
+                ""
+            )
+        )
+        .toLowerCase();
 
-    if (severity.includes("critical")) {
+
+    if (
+        severity.includes(
+            "critical"
+        )
+    ) {
 
         score = 88;
 
         reasons.push(
-            "AI classified severity as Critical"
+            "Severity classified as Critical"
         );
     }
 
-    else if (severity.includes("high")) {
+    else if (
+        severity.includes(
+            "high"
+        )
+    ) {
 
         score = 72;
 
         reasons.push(
-            "AI classified severity as High"
+            "Severity classified as High"
         );
     }
 
-    else if (severity.includes("medium")) {
+    else if (
+        severity.includes(
+            "medium"
+        )
+    ) {
 
         score = 52;
 
         reasons.push(
-            "AI classified severity as Medium"
+            "Severity classified as Medium"
         );
     }
 
-    else if (severity.includes("low")) {
+    else if (
+        severity.includes(
+            "low"
+        )
+    ) {
 
         score = 28;
 
         reasons.push(
-            "AI classified severity as Low"
+            "Severity classified as Low"
         );
     }
 
 
-    // -------------------------
-    // 2. OFFICIAL CVSS
-    // -------------------------
+    const hasCvss =
+        article.cvss_score
+        !==
+        null
+        &&
+        article.cvss_score
+        !==
+        undefined
+        &&
+        article.cvss_score
+        !==
+        "";
+
+
+    const cvss =
+        hasCvss
+        ?
+        Number(
+            article.cvss_score
+        )
+        :
+        NaN;
+
 
     if (
-        article.cvss_score !== null
-        &&
-        article.cvss_score !== undefined
+        Number.isFinite(
+            cvss
+        )
     ) {
 
-        const cvss =
-            Number(article.cvss_score);
-
-        if (!Number.isNaN(cvss)) {
-
-            let cvssRisk =
-                Math.round(cvss * 10);
-
-            score =
-                Math.max(
-                    score,
-                    cvssRisk
-                );
-
-            reasons.push(
-                "Official CVSS score: "
-                +
-                cvss
+        score =
+            Math.max(
+                score,
+                Math.round(
+                    cvss * 10
+                )
             );
-        }
+
+
+        reasons.push(
+            "Official CVSS score: "
+            +
+            cvss
+        );
     }
 
 
-    // -------------------------
-    // 3. KNOWN EXPLOITED
-    // -------------------------
-
-    if (article.known_exploited) {
+    if (
+        article.known_exploited
+    ) {
 
         score =
             Math.max(
                 score,
                 82
-            );
+            )
+            +
+            8;
 
-        score += 8;
 
         reasons.push(
             "Known exploited vulnerability"
@@ -4339,199 +4281,28 @@ function calculateRiskScore(
     }
 
 
-    // -------------------------
-    // 4. FALLBACK ANALYSIS
-    // -------------------------
-    // Used when Groq fails or returns Unknown
-
-
     if (
-        severity === ""
-        ||
-        severity.includes("unknown")
-    ) {
-
-        // Critical indicators
-
-        if (
-            text.includes("cvss 10")
-            ||
-            text.includes("cvss: 10")
-            ||
-            text.includes("cvss score: 10")
-            ||
-            text.includes("maximum severity")
-            ||
-            text.includes("critical vulnerability")
-            ||
-            text.includes("remote code execution")
-            ||
-            text.includes("arbitrary code execution")
-            ||
-            text.includes("authentication bypass")
-        ) {
-
-            score =
-                Math.max(
-                    score,
-                    88
-                );
-
-            reasons.push(
-                "Critical indicators detected from article"
-            );
-        }
-
-
-        // High indicators
-
-        else if (
-            text.includes("zero-day")
-            ||
-            text.includes("zero day")
-            ||
-            text.includes("actively exploited")
-            ||
-            text.includes("ransomware")
-            ||
-            text.includes("privilege escalation")
-            ||
-            text.includes("credential theft")
-            ||
-            text.includes("data breach")
-            ||
-            text.includes("malware")
-            ||
-            text.includes("botnet")
-        ) {
-
-            score =
-                Math.max(
-                    score,
-                    72
-                );
-
-            reasons.push(
-                "High-risk indicators detected from article"
-            );
-        }
-
-
-        // Medium indicators
-
-        else if (
-            text.includes("vulnerability")
-            ||
-            text.includes("security flaw")
-            ||
-            text.includes("denial of service")
-            ||
-            text.includes("ddos")
-            ||
-            text.includes("access control")
-            ||
-            text.includes("information disclosure")
-        ) {
-
-            score =
-                Math.max(
-                    score,
-                    52
-                );
-
-            reasons.push(
-                "Moderate security indicators detected"
-            );
-        }
-    }
-
-
-    // -------------------------
-    // 5. CVSS TEXT FALLBACK
-    // -------------------------
-
-    const cvssMatch =
-        text.match(
-            /cvss(?:\s+score)?(?:\s*:)?\s*(10(?:\.0)?|[0-9](?:\.[0-9])?)/
-        );
-
-    if (cvssMatch) {
-
-        const cvssFromText =
-            Number(
-                cvssMatch[1]
-            );
-
-        if (
-            !Number.isNaN(
-                cvssFromText
-            )
-        ) {
-
-            score =
-                Math.max(
-                    score,
-                    Math.round(
-                        cvssFromText
-                        *
-                        10
-                    )
-                );
-
-            reasons.push(
-                "CVSS detected in article: "
-                +
-                cvssFromText
-            );
-        }
-    }
-
-
-    // -------------------------
-    // 6. ATTACK TYPE
-    // -------------------------
-
-    if (
-        attack.includes("ransomware")
-        ||
-        attack.includes("zero-day")
-        ||
-        attack.includes("zero day")
+        /zero[- ]day|ransomware/
+        .test(
+            text
+        )
     ) {
 
         score += 7;
 
+
         reasons.push(
-            "High-impact attack type"
+            "High-impact threat indicator detected"
         );
     }
 
 
-    // Fallback attack detection
-
-    else if (
-        text.includes("ransomware")
-        ||
-        text.includes("zero-day")
-        ||
-        text.includes("zero day")
+    if (
+        cves.length > 0
     ) {
-
-        score += 7;
-
-        reasons.push(
-            "High-impact attack indicators detected"
-        );
-    }
-
-
-    // -------------------------
-    // 7. CVE
-    // -------------------------
-
-    if (cves.length > 0) {
 
         score += 4;
+
 
         reasons.push(
             "CVE detected"
@@ -4539,31 +4310,33 @@ function calculateRiskScore(
     }
 
 
-    // -------------------------
-    // 8. AI CONFIDENCE
-    // -------------------------
-
     if (
-        (analysis.confidence || "")
+        (
+            analysis.confidence
+            ||
+            ""
+        )
         .toLowerCase()
-        .includes("high")
+        .includes(
+            "high"
+        )
     ) {
 
         score += 3;
 
+
         reasons.push(
-            "High-confidence AI analysis"
+            "High-confidence analysis"
         );
     }
 
 
-    // -------------------------
-    // 9. WATCHLIST
-    // -------------------------
-
-    if (watchlistHit) {
+    if (
+        watchlistHit
+    ) {
 
         score += 3;
+
 
         reasons.push(
             "Matches Priority Watchlist"
@@ -4571,216 +4344,24 @@ function calculateRiskScore(
     }
 
 
-    // -------------------------
-    // 10. LIMIT
-    // -------------------------
-
-    if (score > 100) {
-        score = 100;
-    }
-
-    if (score < 0) {
-        score = 0;
-    }
+    score =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                score
+            )
+        );
 
 
     return {
-        score: score,
-        reasons: reasons
+
+        score:
+            score,
+
+        reasons:
+            reasons
     };
-}
-
-
-/* TECHNOLOGY DETECTION */
-
-
-function detectTechnology(
-    title,
-    description
-) {
-
-    const text =
-        (
-            (title || "")
-            +
-            " "
-            +
-            (description || "")
-        )
-        .toLowerCase();
-
-
-    const known = [
-        "android",
-        "windows",
-        "linux",
-        "ubuntu",
-        "debian",
-        "docker",
-        "kubernetes",
-        "cisco",
-        "fortinet",
-        "vmware",
-        "apache",
-        "wordpress",
-        "chrome",
-        "firefox",
-        "ios",
-        "iphone",
-        "ipad",
-        "macos",
-        "aws",
-        "azure",
-        "cloud",
-        "router",
-        "firewall",
-        "vpn",
-        "iot"
-    ];
-
-
-    for (
-        const item
-        of known
-    ) {
-
-        if (
-            text.includes(
-                item
-            )
-        ) {
-
-            return formatLabel(
-                item
-            );
-        }
-    }
-
-
-    return "Other";
-}
-
-
-/* CVE */
-
-
-function detectCVEs(
-    title,
-    description
-) {
-
-    const text =
-        (
-            (title || "")
-            +
-            " "
-            +
-            (description || "")
-        );
-
-
-    const matches =
-        text.match(
-            /CVE-\d{4}-\d{4,7}/gi
-        );
-
-
-    if (!matches) {
-        return [];
-    }
-
-
-    return [
-        ...new Set(
-            matches.map(
-                value =>
-                    value.toUpperCase()
-            )
-        )
-    ];
-}
-
-
-/* THREAT STATUS */
-
-
-function detectThreatStatus(
-    title,
-    description
-) {
-
-    const text =
-        (
-            (title || "")
-            +
-            " "
-            +
-            (description || "")
-        )
-        .toLowerCase();
-
-
-    if (
-        text.includes("patched")
-        ||
-        text.includes("patch available")
-        ||
-        text.includes("fix released")
-    ) {
-
-        return "Patched";
-    }
-
-
-    if (
-        text.includes("actively exploited")
-        ||
-        text.includes("active exploitation")
-        ||
-        text.includes("ongoing attack")
-    ) {
-
-        return "Active Threat";
-    }
-
-
-    if (
-        text.includes("attack")
-        ||
-        text.includes("breach")
-        ||
-        text.includes("compromised")
-    ) {
-
-        return "Reported";
-    }
-
-
-    return "Monitoring";
-}
-
-
-function getTimelineClass(
-    status
-) {
-
-    if (
-        status === "Active Threat"
-    ) {
-
-        return "badge-active";
-    }
-
-
-    if (
-        status === "Patched"
-    ) {
-
-        return "badge-patched";
-    }
-
-
-    return "badge-monitor";
 }
 
 
@@ -4794,13 +4375,31 @@ function getMitreMapping(
 
     const text =
         (
-            attackType
+            (
+                attackType
+                ||
+                ""
+            )
             +
             " "
             +
-            category
+            (
+                category
+                ||
+                ""
+            )
         )
         .toLowerCase();
+
+
+    if (
+        text.includes(
+            "phishing"
+        )
+    ) {
+
+        return "T1566 - Phishing";
+    }
 
 
     if (
@@ -4810,72 +4409,494 @@ function getMitreMapping(
     ) {
 
         return (
-            "T1486 — Data Encrypted for Impact"
+            "T1486 - Data Encrypted "
+            +
+            "for Impact"
         );
     }
 
 
     if (
         text.includes(
-            "phishing"
+            "credential"
         )
     ) {
 
         return (
-            "T1566 — Phishing"
+            "T1078 - Valid Accounts / "
+            +
+            "credential-related activity"
         );
     }
 
 
     if (
         text.includes(
-            "ddos"
+            "powershell"
         )
     ) {
 
-        return (
-            "T1498 — Network Denial of Service"
-        );
+        return "T1059.001 - PowerShell";
     }
 
 
     if (
         text.includes(
-            "account compromise"
-        )
-    ) {
-
-        return (
-            "T1078 — Valid Accounts"
-        );
-    }
-
-
-    if (
-        text.includes(
-            "zero-day"
+            "command"
         )
         ||
         text.includes(
-            "vulnerability exploitation"
+            "execution"
         )
     ) {
 
         return (
-            "T1190 — Exploit Public-Facing Application"
+            "T1059 - Command and "
+            +
+            "Scripting Interpreter"
         );
     }
 
 
     return (
-        "No reliable MITRE ATT&CK mapping "
+        "No reliable MITRE ATT&CK mapping identified "
         +
-        "identified from available article data."
+        "from available article data."
     );
 }
 
 
-/* SEVERITY FILTER */
+/* BUILD ANALYSIS HTML */
+
+
+function buildAnalysisHTML(
+    analysis,
+    riskData,
+    mitre
+) {
+
+    const severity =
+        (
+            analysis.severity
+            ||
+            "Unknown"
+        )
+        .toLowerCase();
+
+
+    let badgeClass =
+        "badge-info";
+
+
+    if (
+        severity.includes(
+            "critical"
+        )
+    ) {
+
+        badgeClass =
+            "badge-critical";
+    }
+
+    else if (
+        severity.includes(
+            "high"
+        )
+    ) {
+
+        badgeClass =
+            "badge-high";
+    }
+
+    else if (
+        severity.includes(
+            "medium"
+        )
+    ) {
+
+        badgeClass =
+            "badge-medium";
+    }
+
+    else if (
+        severity.includes(
+            "low"
+        )
+    ) {
+
+        badgeClass =
+            "badge-low";
+    }
+
+
+    const reasons =
+        riskData.reasons.length
+        >
+        0
+
+        ?
+
+        riskData.reasons.map(
+            reason =>
+                "• "
+                +
+                escapeHtml(
+                    reason
+                )
+        )
+        .join(
+            "<br>"
+        )
+
+        :
+
+        "• General cybersecurity risk detected";
+
+
+    return `
+    
+    <div class="badges">
+
+    <span class="badge ${badgeClass}">
+    ${escapeHtml(
+        analysis.severity
+    )}
+    </span>
+
+    <span class="badge badge-info">
+
+    Confidence:
+    ${escapeHtml(
+        analysis.confidence
+    )}
+
+    </span>
+
+    </div>
+
+
+    <div class="analysis-grid">
+
+
+    <div class="info-box">
+
+    <h4>
+    AI Summary
+    </h4>
+
+    ${escapeHtml(
+        analysis.summary
+    )}
+
+    </div>
+
+
+    <div class="info-box">
+
+    <h4>
+    Attack Type
+    </h4>
+
+    ${escapeHtml(
+        analysis.attackType
+    )}
+
+    </div>
+
+
+    <div class="info-box">
+
+    <h4>
+    Target
+    </h4>
+
+    ${escapeHtml(
+        analysis.target
+    )}
+
+    </div>
+
+
+    <div class="info-box">
+
+    <h4>
+    Possible Impact
+    </h4>
+
+    ${escapeHtml(
+        analysis.impact
+    )}
+
+    </div>
+
+
+    </div>
+
+
+    <div class="mitre-box">
+
+    <strong>
+    MITRE ATT&CK — Likely Mapping
+    </strong>
+
+    <br><br>
+
+    ${escapeHtml(
+        mitre
+    )}
+
+    </div>
+
+
+    <div class="recommendations">
+
+    <strong>
+    Recommendations
+    </strong>
+
+    <br><br>
+
+    ${escapeHtml(
+        analysis.recommendations
+    )}
+
+    </div>
+
+
+    <div class="risk-box">
+
+
+    <div class="risk-header">
+
+    <strong>
+    CyberWatch Risk Score
+    </strong>
+
+    <span class="risk-score">
+
+    ${riskData.score}/100
+
+    </span>
+
+    </div>
+
+
+    <div class="risk-bar">
+
+    <div
+    class="risk-fill"
+    style="width:${riskData.score}%">
+    </div>
+
+    </div>
+
+
+    <div class="risk-reasons">
+
+    ${reasons}
+
+    </div>
+
+
+    </div>
+
+    `;
+}
+
+
+function buildAnalysisContextFromParts(
+    analysis
+) {
+
+    return (
+
+        "SUMMARY: "
+        +
+        analysis.summary
+        +
+        "\n"
+
+        +
+        "CATEGORY: "
+        +
+        analysis.category
+        +
+        "\n"
+
+        +
+        "ATTACK_TYPE: "
+        +
+        analysis.attackType
+        +
+        "\n"
+
+        +
+        "SEVERITY: "
+        +
+        analysis.severity
+        +
+        "\n"
+
+        +
+        "TARGET: "
+        +
+        analysis.target
+        +
+        "\n"
+
+        +
+        "IMPACT: "
+        +
+        analysis.impact
+        +
+        "\n"
+
+        +
+        "CONFIDENCE: "
+        +
+        analysis.confidence
+        +
+        "\n"
+
+        +
+        "RECOMMENDATIONS:\n"
+        +
+        analysis.recommendations
+    );
+}
+
+
+/* STATS */
+
+
+function updateStats() {
+
+    const valid =
+        analyzedThreatData.filter(
+            Boolean
+        );
+
+
+    document
+        .getElementById(
+            "analyzedThreats"
+        )
+        .innerText =
+        valid.length;
+
+
+    document
+        .getElementById(
+            "criticalThreats"
+        )
+        .innerText =
+        valid.filter(
+            item =>
+                (
+                    item.analysis.severity
+                    ||
+                    ""
+                )
+                .toLowerCase()
+                ===
+                "critical"
+        )
+        .length;
+
+
+    document
+        .getElementById(
+            "highThreats"
+        )
+        .innerText =
+        valid.filter(
+            item =>
+                (
+                    item.analysis.severity
+                    ||
+                    ""
+                )
+                .toLowerCase()
+                ===
+                "high"
+        )
+        .length;
+}
+
+
+/* TOP THREAT */
+
+
+function updateTopThreat() {
+
+    const valid =
+        analyzedThreatData.filter(
+            Boolean
+        );
+
+
+    if (
+        valid.length === 0
+    ) {
+
+        document
+            .getElementById(
+                "topThreat"
+            )
+            .innerText =
+            "Run a scan to identify the highest-risk threat.";
+
+
+        return;
+    }
+
+
+    const top =
+        [
+            ...valid
+        ]
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.risk
+                -
+                a.risk
+        )[0];
+
+
+    document
+        .getElementById(
+            "topThreat"
+        )
+        .innerHTML =
+        `
+
+        <h3>
+        ${escapeHtml(
+            top.article.title
+        )}
+        </h3>
+
+        <div class="top-risk">
+
+        Risk Score:
+        ${top.risk}/100
+
+        </div>
+
+        <div>
+        ${escapeHtml(
+            top.analysis.summary
+        )}
+        </div>
+
+        `;
+}
+
+
+/* FILTERS */
 
 
 function setSeverityFilter(
@@ -4910,47 +4931,43 @@ function setSeverityFilter(
 
 function applySeverityFilter() {
 
-    const cards =
-        document.querySelectorAll(
+    let shown = 0;
+
+
+    document
+        .querySelectorAll(
             ".threat-card"
-        );
+        )
+        .forEach(
+            card => {
+
+                const show =
+                    (
+                        selectedSeverityFilter
+                        ===
+                        "all"
+                    )
+                    ||
+                    (
+                        card.dataset.severity
+                        ===
+                        selectedSeverityFilter
+                    );
 
 
-    let visible = 0;
+                card.style.display =
+                    show
+                    ?
+                    "block"
+                    :
+                    "none";
 
 
-    cards.forEach(
-        card => {
-
-            const severity =
-                card.dataset.severity
-                ||
-                "unknown";
-
-
-            const match =
-                selectedSeverityFilter
-                ===
-                "all"
-                ||
-                severity.includes(
-                    selectedSeverityFilter
-                );
-
-
-            card.style.display =
-                match
-                ?
-                "block"
-                :
-                "none";
-
-
-            if (match) {
-                visible++;
+                if (show) {
+                    shown++;
+                }
             }
-        }
-    );
+        );
 
 
     document
@@ -4958,115 +4975,35 @@ function applySeverityFilter() {
             "filterCount"
         )
         .innerText =
-        "Showing "
-        +
-        visible
-        +
-        " of "
-        +
-        cards.length
-        +
-        " threats";
-}
-
-
-/* STATS */
-
-
-function updateSeverityStats(
-    severity
-) {
-
-    const value =
-        severity.toLowerCase();
-
-
-    if (
-        value.includes(
-            "critical"
+        (
+            selectedSeverityFilter
+            ===
+            "all"
         )
-    ) {
 
-        criticalCount++;
-    }
+        ?
 
-
-    if (
-        value.includes(
-            "high"
+        (
+            "Showing "
+            +
+            shown
+            +
+            " threats"
         )
-    ) {
 
-        highCount++;
-    }
+        :
 
-
-    document
-        .getElementById(
-            "criticalThreats"
-        )
-        .innerText =
-        criticalCount;
-
-
-    document
-        .getElementById(
-            "highThreats"
-        )
-        .innerText =
-        highCount;
-}
-
-
-function getSeverityClass(
-    severity
-) {
-
-    const value =
-        severity.toLowerCase();
-
-
-    if (
-        value.includes(
-            "critical"
-        )
-    ) {
-
-        return "badge-critical";
-    }
-
-
-    if (
-        value.includes(
-            "high"
-        )
-    ) {
-
-        return "badge-high";
-    }
-
-
-    if (
-        value.includes(
-            "medium"
-        )
-    ) {
-
-        return "badge-medium";
-    }
-
-
-    if (
-        value.includes(
-            "low"
-        )
-    ) {
-
-        return "badge-low";
-    }
-
-
-    return "badge-info";
+        (
+            "Showing "
+            +
+            shown
+            +
+            " "
+            +
+            selectedSeverityFilter
+            +
+            " threats"
+        );
 }
 
 
@@ -5090,16 +5027,14 @@ function addWatchlistItem() {
     }
 
 
-    const exists =
-        watchlist.some(
+    if (
+        !watchlist.some(
             item =>
                 item.toLowerCase()
                 ===
                 value.toLowerCase()
-        );
-
-
-    if (!exists) {
+        )
+    ) {
 
         watchlist.push(
             value
@@ -5111,7 +5046,6 @@ function addWatchlistItem() {
 
 
     saveWatchlist();
-
 
     renderWatchlist();
 }
@@ -5129,7 +5063,6 @@ function removeWatchlistItem(
 
     saveWatchlist();
 
-
     renderWatchlist();
 }
 
@@ -5137,7 +5070,9 @@ function removeWatchlistItem(
 function saveWatchlist() {
 
     localStorage.setItem(
+
         "cyberwatch_watchlist",
+
         JSON.stringify(
             watchlist
         )
@@ -5149,18 +5084,23 @@ function loadWatchlist() {
 
     try {
 
-        const saved =
-            localStorage.getItem(
-                "cyberwatch_watchlist"
+        watchlist =
+            JSON.parse(
+                localStorage.getItem(
+                    "cyberwatch_watchlist"
+                )
+                ||
+                "[]"
             );
 
 
-        if (saved) {
+        if (
+            !Array.isArray(
+                watchlist
+            )
+        ) {
 
-            watchlist =
-                JSON.parse(
-                    saved
-                );
+            watchlist = [];
         }
     }
 
@@ -5224,104 +5164,172 @@ function renderWatchlist() {
 }
 
 
-function detectWatchlistHit(
-    title,
-    description
+/* ASK AI */
+
+
+function toggleAskAI(
+    index
 ) {
 
-    const text =
-        (
-            (title || "")
+    document
+        .getElementById(
+            "askPanel-"
             +
-            " "
-            +
-            (description || "")
+            index
         )
-        .toLowerCase();
-
-
-    return watchlist.some(
-        item =>
-            text.includes(
-                item.toLowerCase()
-            )
-    );
+        .classList.toggle(
+            "open"
+        );
 }
 
 
-/* TOP THREAT */
+async function askThreatAI(
+    index
+) {
+
+    const threat =
+        analyzedThreatData[
+            index
+        ];
 
 
-function updateTopThreat() {
-
-    const valid =
-        analyzedThreatData
-        .filter(
-            item =>
-                item
+    const input =
+        document.getElementById(
+            "askInput-"
+            +
+            index
         );
 
 
-    if (
-        valid.length === 0
-    ) {
+    const answer =
+        document.getElementById(
+            "askAnswer-"
+            +
+            index
+        );
+
+
+    const button =
+        document.getElementById(
+            "askButton-"
+            +
+            index
+        );
+
+
+    const question =
+        input.value.trim();
+
+
+    answer.className =
+        "ask-answer visible";
+
+
+    if (!question) {
+
+        answer.innerText =
+            "Please type a question first.";
+
 
         return;
     }
 
 
-    const top =
-        [
-            ...valid
-        ]
-        .sort(
-            (
-                a,
-                b
-            ) =>
-                b.risk
-                -
-                a.risk
-        )[0];
+    if (!threat) {
+
+        answer.innerText =
+            "Wait for the article analysis to finish first.";
 
 
-    document
-        .getElementById(
-            "topThreat"
-        )
-        .innerHTML =
-        `
+        return;
+    }
 
-        <div
-        class="top-threat-content">
 
-        <h3>
+    button.disabled = true;
 
-        ${escapeHtml(
-            top.article.title
-        )}
 
-        </h3>
+    answer.innerText =
+        "CyberWatch AI is thinking...";
 
-        <div
-        class="top-risk">
 
-        Risk Score:
-        ${top.risk}/100
+    try {
 
-        </div>
+        const response =
+            await fetch(
 
-        <div>
+                "/ask",
 
-        ${escapeHtml(
-            top.analysis.summary
-        )}
+                {
 
-        </div>
+                    method:
+                        "POST",
 
-        </div>
+                    headers: {
 
-        `;
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            title:
+                                threat.article.title,
+
+                            description:
+                                threat.article.description,
+
+                            analysis:
+                                threat.analysisText
+                                ||
+                                buildAnalysisContextFromParts(
+                                    threat.analysis
+                                ),
+
+                            question:
+                                question
+                        })
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.status !== "ok"
+        ) {
+
+            throw new Error(
+                data.message
+                ||
+                "Ask AI failed."
+            );
+        }
+
+
+        answer.innerText =
+            data.answer
+            ||
+            "No answer returned.";
+    }
+
+    catch (
+        error
+    ) {
+
+        answer.innerText =
+            "Ask AI failed: "
+            +
+            error.message;
+    }
+
+    finally {
+
+        button.disabled =
+            false;
+    }
 }
 
 
@@ -5403,8 +5411,93 @@ async function sendEmail(
 
         throw new Error(
             data.message
+            ||
+            "Email failed."
         );
     }
+}
+
+
+function buildThreatEmail(
+    threat
+) {
+
+    return (
+
+        "TITLE\n"
+        +
+        threat.article.title
+        +
+        "\n\n"
+
+        +
+        "SOURCE\n"
+        +
+        threat.article.source
+        +
+        "\n\n"
+
+        +
+        "RISK SCORE\n"
+        +
+        threat.risk
+        +
+        "/100\n\n"
+
+        +
+        "SEVERITY\n"
+        +
+        threat.analysis.severity
+        +
+        "\n\n"
+
+        +
+        "ATTACK TYPE\n"
+        +
+        threat.analysis.attackType
+        +
+        "\n\n"
+
+        +
+        "TARGET\n"
+        +
+        threat.analysis.target
+        +
+        "\n\n"
+
+        +
+        "SUMMARY\n"
+        +
+        threat.analysis.summary
+        +
+        "\n\n"
+
+        +
+        "IMPACT\n"
+        +
+        threat.analysis.impact
+        +
+        "\n\n"
+
+        +
+        "MITRE ATT&CK\n"
+        +
+        threat.mitre
+        +
+        "\n\n"
+
+        +
+        "RECOMMENDATIONS\n"
+        +
+        threat.analysis.recommendations
+        +
+        "\n\n"
+
+        +
+        "ORIGINAL SOURCE\n"
+        +
+        threat.article.url
+    );
 }
 
 
@@ -5412,13 +5505,8 @@ async function emailThreat(
     index
 ) {
 
-    const recipient =
+    const email =
         getRecipientEmail();
-
-
-    if (!recipient) {
-        return;
-    }
 
 
     const threat =
@@ -5427,10 +5515,15 @@ async function emailThreat(
         ];
 
 
+    if (!email) {
+        return;
+    }
+
+
     if (!threat) {
 
         showEmailMessage(
-            "Wait for AI analysis to finish.",
+            "Wait for analysis to finish.",
             false
         );
 
@@ -5441,15 +5534,9 @@ async function emailThreat(
 
     try {
 
-        showEmailMessage(
-            "Sending threat report...",
-            true
-        );
-
-
         await sendEmail(
 
-            recipient,
+            email,
 
             "CyberWatch AI - "
             +
@@ -5485,25 +5572,23 @@ async function emailThreat(
 
 async function emailTopThreat() {
 
-    const recipient =
+    const email =
         getRecipientEmail();
 
 
-    if (!recipient) {
+    const threats =
+        analyzedThreatData.filter(
+            Boolean
+        );
+
+
+    if (!email) {
         return;
     }
 
 
-    const valid =
-        analyzedThreatData
-        .filter(
-            item =>
-                item
-        );
-
-
     if (
-        valid.length === 0
+        threats.length === 0
     ) {
 
         showEmailMessage(
@@ -5518,7 +5603,7 @@ async function emailTopThreat() {
 
     const top =
         [
-            ...valid
+            ...threats
         ]
         .sort(
             (
@@ -5535,7 +5620,7 @@ async function emailTopThreat() {
 
         await sendEmail(
 
-            recipient,
+            email,
 
             "CyberWatch AI - Top Threat",
 
@@ -5567,21 +5652,19 @@ async function emailTopThreat() {
 
 async function emailFullReport() {
 
-    const recipient =
+    const email =
         getRecipientEmail();
 
 
-    if (!recipient) {
+    const threats =
+        analyzedThreatData.filter(
+            Boolean
+        );
+
+
+    if (!email) {
         return;
     }
-
-
-    const threats =
-        analyzedThreatData
-        .filter(
-            item =>
-                item
-        );
 
 
     if (
@@ -5599,14 +5682,17 @@ async function emailFullReport() {
 
 
     let content =
-    `CYBERWATCH AI
-FULL THREAT INTELLIGENCE REPORT
-
-Threats analyzed:
-${threats.length}
-
-========================================
-`;
+        "CYBERWATCH AI\n"
+        +
+        "FULL THREAT INTELLIGENCE REPORT\n\n"
+        +
+        "Threats analyzed: "
+        +
+        threats.length
+        +
+        "\n\n"
+        +
+        "========================================\n";
 
 
     threats.forEach(
@@ -5616,16 +5702,26 @@ ${threats.length}
         ) => {
 
             content +=
-            `
 
-THREAT ${index + 1}
+                "\nTHREAT "
+                +
+                (
+                    index
+                    +
+                    1
+                )
+                +
+                "\n\n"
 
-${buildThreatEmail(
-    threat
-)}
+                +
+                buildThreatEmail(
+                    threat
+                )
 
-========================================
-`;
+                +
+                "\n\n"
+                +
+                "========================================\n";
         }
     );
 
@@ -5634,7 +5730,7 @@ ${buildThreatEmail(
 
         await sendEmail(
 
-            recipient,
+            email,
 
             "CyberWatch AI - Full Threat Report",
 
@@ -5662,53 +5758,6 @@ ${buildThreatEmail(
 }
 
 
-function buildThreatEmail(
-    threat
-) {
-
-    return `
-TITLE
-${threat.article.title}
-
-SOURCE
-${threat.article.source}
-
-RISK SCORE
-${threat.risk}/100
-
-SEVERITY
-${threat.analysis.severity}
-
-ATTACK TYPE
-${threat.analysis.attackType}
-
-TECHNOLOGY
-${threat.technology}
-
-STATUS
-${threat.timeline}
-
-TARGET
-${threat.analysis.target}
-
-SUMMARY
-${threat.analysis.summary}
-
-IMPACT
-${threat.analysis.impact}
-
-MITRE ATT&CK
-${threat.mitre}
-
-RECOMMENDATIONS
-${threat.analysis.recommendations}
-
-ORIGINAL SOURCE
-${threat.article.url}
-`;
-}
-
-
 function showEmailMessage(
     message,
     success
@@ -5728,190 +5777,13 @@ function showEmailMessage(
         success
 
         ?
+
         "email-message email-success"
 
         :
+
         "email-message email-error";
 }
-
-
-/* RESET */
-
-
-function resetStats() {
-
-    analyzedThreatData = [];
-
-    analyzedCount = 0;
-
-    criticalCount = 0;
-
-    highCount = 0;
-
-
-    document
-        .getElementById(
-            "totalThreats"
-        )
-        .innerText =
-        "0";
-
-
-    document
-        .getElementById(
-            "criticalThreats"
-        )
-        .innerText =
-        "0";
-
-
-    document
-        .getElementById(
-            "highThreats"
-        )
-        .innerText =
-        "0";
-
-
-    document
-        .getElementById(
-            "analyzedThreats"
-        )
-        .innerText =
-        "0";
-}
-
-
-/* HELPERS */
-
-
-function formatDate(
-    value
-) {
-
-    if (!value) {
-        return "Unknown date";
-    }
-
-
-    return new Date(
-        value
-    )
-    .toLocaleString();
-}
-
-
-function formatLabel(
-    value
-) {
-
-    if (!value) {
-        return "Other";
-    }
-
-
-    if (
-        value.toLowerCase()
-        ===
-        "all"
-    ) {
-
-        return "All";
-    }
-
-
-    return String(
-        value
-    )
-    .split(" ")
-    .filter(Boolean)
-    .map(
-        word =>
-            word.charAt(0)
-            .toUpperCase()
-            +
-            word.slice(1)
-    )
-    .join(" ");
-}
-
-
-function sanitizeUrl(
-    value
-) {
-
-    try {
-
-        const url =
-            new URL(
-                value
-            );
-
-
-        if (
-            url.protocol === "http:"
-            ||
-            url.protocol === "https:"
-        ) {
-
-            return url.href;
-        }
-    }
-
-    catch {
-
-        return "#";
-    }
-
-
-    return "#";
-}
-
-
-function escapeHtml(
-    value
-) {
-
-    if (
-        value === null
-        ||
-        value === undefined
-    ) {
-
-        return "";
-    }
-
-
-    return String(
-        value
-    )
-
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-
-    .replace(
-        /</g,
-        "&lt;"
-    )
-
-    .replace(
-        />/g,
-        "&gt;"
-    )
-
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-
-    .replace(
-        /'/g,
-        "&#039;"
-    );
-}
-
 
 </script>
 
