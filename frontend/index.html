@@ -1330,6 +1330,10 @@ let selectedSeverityFilter = "all";
 
 let analyzedThreatData = [];
 
+let currentScanArticles = [];
+
+let visibleThreatArticleCount = 0;
+
 let watchlist = [];
 
 
@@ -2112,6 +2116,10 @@ async function scanThreats() {
 
     analyzedThreatData = [];
 
+    currentScanArticles = [];
+
+    visibleThreatArticleCount = 0;
+
     updateStats();
 
 
@@ -2225,7 +2233,7 @@ async function scanThreats() {
 
         params.set(
             "limit",
-            "20"
+            "30"
         );
 
 
@@ -2315,6 +2323,21 @@ async function scanThreats() {
             [];
 
 
+        currentScanArticles =
+            articles;
+
+
+        const initialArticles =
+            articles.slice(
+                0,
+                20
+            );
+
+
+        visibleThreatArticleCount =
+            initialArticles.length;
+
+
         document
             .getElementById(
                 "totalThreats"
@@ -2343,7 +2366,7 @@ async function scanThreats() {
         }
 
 
-        articles.forEach(
+        initialArticles.forEach(
             (
                 article,
                 index
@@ -2358,32 +2381,107 @@ async function scanThreats() {
 
 
         status.innerText =
-            articles.length
+            initialArticles.length
             +
-            " results found. AI analysis running...";
+            (
+                articles.length
+                >
+                initialArticles.length
+                ?
+                " of "
+                +
+                articles.length
+                +
+                " unique results shown. "
+                :
+                " results found. "
+            )
+            +
+            "AI analysis running...";
 
 
         for (
             let i = 0;
-            i < articles.length;
+            i < initialArticles.length;
             i++
         ) {
 
             await analyzeArticle(
-                articles[i],
+                initialArticles[i],
                 i
             );
         }
 
 
-        status.innerText =
-            "Scan complete. "
-            +
-            analyzedThreatData
-                .filter(Boolean)
-                .length
-            +
-            " articles analyzed.";
+        if (
+            articles.length
+            >
+            visibleThreatArticleCount
+        ) {
+
+            const remainingCount =
+                articles.length
+                -
+                visibleThreatArticleCount;
+
+
+            const loadMoreButton =
+                document.createElement(
+                    "button"
+                );
+
+
+            loadMoreButton.id =
+                "loadMoreResultsButton";
+
+
+            loadMoreButton.className =
+                "standard-button";
+
+
+            loadMoreButton.innerText =
+                "Analyze "
+                +
+                remainingCount
+                +
+                " more unique articles";
+
+
+            loadMoreButton.onclick =
+                () =>
+                    analyzeRemainingArticles(
+                        loadMoreButton
+                    );
+
+
+            results.appendChild(
+                loadMoreButton
+            );
+
+
+            status.innerText =
+                visibleThreatArticleCount
+                +
+                " of "
+                +
+                articles.length
+                +
+                " unique articles analyzed. "
+                +
+                "More are ready when you want them.";
+        }
+
+        else {
+
+            status.innerText =
+                "Scan complete. "
+                +
+                analyzedThreatData
+                    .filter(Boolean)
+                    .length
+                +
+                " articles analyzed.";
+        }
     }
 
     catch (
@@ -2960,6 +3058,97 @@ function createArticleCard(
         .appendChild(
             card
         );
+}
+
+
+
+async function analyzeRemainingArticles(
+    button
+) {
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
+    const startIndex =
+        visibleThreatArticleCount;
+
+
+    const remainingArticles =
+        currentScanArticles.slice(
+            startIndex
+        );
+
+
+    if (
+        remainingArticles.length === 0
+    ) {
+
+        button.remove();
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+    button.innerText =
+        "Loading more articles...";
+
+
+    button.remove();
+
+
+    remainingArticles.forEach(
+        (
+            article,
+            offset
+        ) => {
+
+            createArticleCard(
+                article,
+                startIndex + offset
+            );
+        }
+    );
+
+
+    status.innerText =
+        "Analyzing "
+        +
+        remainingArticles.length
+        +
+        " additional articles...";
+
+
+    for (
+        let offset = 0;
+        offset < remainingArticles.length;
+        offset++
+    ) {
+
+        await analyzeArticle(
+            remainingArticles[
+                offset
+            ],
+            startIndex + offset
+        );
+    }
+
+
+    visibleThreatArticleCount =
+        currentScanArticles.length;
+
+
+    status.innerText =
+        "Scan complete. "
+        +
+        analyzedThreatData
+            .filter(Boolean)
+            .length
+        +
+        " articles analyzed.";
 }
 
 
