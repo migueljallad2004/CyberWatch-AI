@@ -968,69 +968,93 @@ onclick="setAllTechnologies()">
 All
 </button>
 
-<button
-class="quick-button"
-onclick="quickAddTechnology('Android')">
-Android
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddTechnology('Windows')">
-Windows
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddTechnology('Linux')">
-Linux
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddTechnology('iOS')">
-iOS
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddTechnology('Cloud')">
-Cloud
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddTechnology('Network')">
-Network
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddTechnology('Docker')">
-Docker
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddTechnology('Cisco')">
-Cisco
-</button>
-
 </div>
 
 
 <div class="add-row">
 
-<input
-class="text-input"
-id="technologyInput"
-placeholder="Or type your own technology..."
-onkeydown="
-if(event.key === 'Enter') {
-    event.preventDefault();
-    addTechnology();
-}
-">
+<select
+class="source-select"
+id="technologySelect">
+
+<option value="">
+Choose Technology
+</option>
+
+<option value="Microsoft Windows 11 Enterprise">
+Microsoft Windows 11 Enterprise
+</option>
+
+<option value="FortiOS">
+FortiOS
+</option>
+
+<option value="Cisco Adaptive Security Appliance">
+Cisco Adaptive Security Appliance
+</option>
+
+<option value="Blue Coat Appliance">
+Blue Coat Appliance
+</option>
+
+<option value="Microsoft Windows Server 2016">
+Microsoft Windows Server 2016
+</option>
+
+<option value="CISCO IOS">
+CISCO IOS
+</option>
+
+<option value="Dell iDRAC unknown">
+Dell iDRAC unknown
+</option>
+
+<option value="VMware ESXi">
+VMware ESXi
+</option>
+
+<option value="F5 Networks BIG-IP">
+F5 Networks BIG-IP
+</option>
+
+<option value="Microsoft Windows Server 2019">
+Microsoft Windows Server 2019
+</option>
+
+<option value="Microsoft Windows Server 2022">
+Microsoft Windows Server 2022
+</option>
+
+<option value="Microsoft Windows Server 2012 R2 Standard">
+Microsoft Windows Server 2012 R2 Standard
+</option>
+
+<option value="Microsoft Windows Server 2008 R2">
+Microsoft Windows Server 2008 R2
+</option>
+
+<option value="Linux Kernel on Red Hat Enterprise Linux Server">
+Linux Kernel on Red Hat Enterprise Linux Server
+</option>
+
+<option value="Microsoft Windows Server 2025 Standard Build 26100">
+Microsoft Windows Server 2025 Standard Build 26100
+</option>
+
+<option value="Linux Kernel on Ubuntu">
+Linux Kernel on Ubuntu
+</option>
+
+<option value="Windows 11">
+Windows 11
+</option>
+
+<option value="Microsoft Windows">
+Microsoft Windows
+</option>
+
+</select>
+
 
 <button
 class="add-button"
@@ -1690,14 +1714,14 @@ function quickAddTechnology(
 
 function addTechnology() {
 
-    const input =
+    const select =
         document.getElementById(
-            "technologyInput"
+            "technologySelect"
         );
 
 
     const value =
-        input.value.trim();
+        select.value.trim();
 
 
     if (!value) {
@@ -1722,7 +1746,7 @@ function addTechnology() {
     }
 
 
-    input.value = "";
+    select.value = "";
 }
 
 
@@ -2581,78 +2605,143 @@ function detectTechnology(
     const technologies = [
 
         [
-            "android",
-            "Android"
+            [
+                "windows server 2025",
+                "server 2025",
+                "build 26100"
+            ],
+            "Microsoft Windows Server 2025 Standard Build 26100"
         ],
 
         [
-            "windows",
-            "Windows"
+            [
+                "windows server 2022"
+            ],
+            "Microsoft Windows Server 2022"
         ],
 
         [
-            "linux",
-            "Linux"
+            [
+                "windows server 2019"
+            ],
+            "Microsoft Windows Server 2019"
         ],
 
         [
-            "ios",
-            "iOS"
+            [
+                "windows server 2016"
+            ],
+            "Microsoft Windows Server 2016"
         ],
 
         [
-            "iphone",
-            "iOS"
+            [
+                "windows server 2012 r2"
+            ],
+            "Microsoft Windows Server 2012 R2 Standard"
         ],
 
         [
-            "vmware",
-            "VMware"
+            [
+                "windows server 2008 r2"
+            ],
+            "Microsoft Windows Server 2008 R2"
         ],
 
         [
-            "cisco",
-            "Cisco"
+            [
+                "windows 11 enterprise"
+            ],
+            "Microsoft Windows 11 Enterprise"
         ],
 
         [
-            "docker",
-            "Docker"
+            [
+                "fortios",
+                "fortinet operating system"
+            ],
+            "FortiOS"
         ],
 
         [
-            "kubernetes",
-            "Kubernetes"
+            [
+                "adaptive security appliance",
+                "cisco asa"
+            ],
+            "Cisco Adaptive Security Appliance"
         ],
 
         [
-            "fortinet",
-            "Fortinet"
+            [
+                "blue coat",
+                "proxysg",
+                "proxy sg"
+            ],
+            "Blue Coat Appliance"
         ],
 
         [
-            "chrome",
-            "Chrome"
+            [
+                "cisco ios",
+                "ios xe",
+                "ios xr"
+            ],
+            "CISCO IOS"
         ],
 
         [
-            "microsoft",
-            "Microsoft"
+            [
+                "idrac",
+                "integrated dell remote access controller"
+            ],
+            "Dell iDRAC unknown"
         ],
 
         [
-            "sap",
-            "SAP"
+            [
+                "vmware esxi",
+                "esxi"
+            ],
+            "VMware ESXi"
         ],
 
         [
-            "cloud",
-            "Cloud"
+            [
+                "big-ip",
+                "big ip",
+                "f5 networks"
+            ],
+            "F5 Networks BIG-IP"
         ],
 
         [
-            "vpn",
-            "VPN"
+            [
+                "red hat enterprise linux",
+                "rhel"
+            ],
+            "Linux Kernel on Red Hat Enterprise Linux Server"
+        ],
+
+        [
+            [
+                "ubuntu"
+            ],
+            "Linux Kernel on Ubuntu"
+        ],
+
+        [
+            [
+                "windows 11"
+            ],
+            "Windows 11"
+        ],
+
+        [
+            [
+                "microsoft windows",
+                "windows"
+            ],
+            "Microsoft Windows"
         ]
 
     ];
@@ -2664,8 +2753,11 @@ function detectTechnology(
     ) {
 
         if (
-            text.includes(
-                pair[0]
+            pair[0].some(
+                alias =>
+                    text.includes(
+                        alias
+                    )
             )
         ) {
 
