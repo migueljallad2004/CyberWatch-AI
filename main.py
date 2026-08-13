@@ -367,6 +367,127 @@ def strip_html(value):
     return value.strip()
 
 
+TECHNOLOGY_SEARCH_ALIASES = {
+    "microsoft windows 11 enterprise": [
+        "windows 11 enterprise",
+        "microsoft windows 11",
+        "windows 11"
+    ],
+    "fortios": [
+        "fortios",
+        "fortinet operating system",
+        "fortinet"
+    ],
+    "cisco adaptive security appliance": [
+        "cisco adaptive security appliance",
+        "adaptive security appliance",
+        "cisco asa"
+    ],
+    "blue coat appliance": [
+        "blue coat appliance",
+        "blue coat",
+        "proxysg",
+        "proxy sg"
+    ],
+    "microsoft windows server 2016": [
+        "microsoft windows server 2016",
+        "windows server 2016"
+    ],
+    "cisco ios": [
+        "cisco ios",
+        "ios xe",
+        "ios xr"
+    ],
+    "dell idrac unknown": [
+        "dell idrac",
+        "idrac",
+        "integrated dell remote access controller"
+    ],
+    "vmware esxi": [
+        "vmware esxi",
+        "esxi"
+    ],
+    "f5 networks big-ip": [
+        "f5 networks big-ip",
+        "f5 big-ip",
+        "big-ip",
+        "big ip"
+    ],
+    "microsoft windows server 2019": [
+        "microsoft windows server 2019",
+        "windows server 2019"
+    ],
+    "microsoft windows server 2022": [
+        "microsoft windows server 2022",
+        "windows server 2022"
+    ],
+    "microsoft windows server 2012 r2 standard": [
+        "microsoft windows server 2012 r2 standard",
+        "windows server 2012 r2"
+    ],
+    "microsoft windows server 2008 r2": [
+        "microsoft windows server 2008 r2",
+        "windows server 2008 r2"
+    ],
+    "linux kernel on red hat enterprise linux server": [
+        "linux kernel on red hat enterprise linux server",
+        "red hat enterprise linux",
+        "rhel"
+    ],
+    "microsoft windows server 2025 standard build 26100": [
+        "microsoft windows server 2025 standard build 26100",
+        "windows server 2025",
+        "server 2025",
+        "build 26100"
+    ],
+    "linux kernel on ubuntu": [
+        "linux kernel on ubuntu",
+        "ubuntu"
+    ],
+    "windows 11": [
+        "windows 11"
+    ],
+    "microsoft windows": [
+        "microsoft windows",
+        "windows"
+    ]
+}
+
+
+def expand_platform_terms(
+    platforms
+):
+    expanded = []
+
+    for platform in platforms:
+        normalized = (
+            platform
+            .strip()
+            .lower()
+        )
+
+        aliases = (
+            TECHNOLOGY_SEARCH_ALIASES.get(
+                normalized,
+                [
+                    normalized
+                ]
+            )
+        )
+
+        for alias in aliases:
+            if (
+                alias
+                and
+                alias not in expanded
+            ):
+                expanded.append(
+                    alias
+                )
+
+    return expanded
+
+
 def matches_filters(
     title,
     description,
@@ -395,9 +516,16 @@ def matches_filters(
 
     if platforms:
 
+        platform_terms = (
+            expand_platform_terms(
+                platforms
+            )
+        )
+
+
         platform_match = any(
-            item.lower() in text
-            for item in platforms
+            term in text
+            for term in platform_terms
         )
 
 
@@ -504,12 +632,19 @@ def build_newsapi_query(
 
     if platforms:
 
+        platform_terms = (
+            expand_platform_terms(
+                platforms
+            )
+        )
+
+
         platform_query = (
             "("
             +
             " OR ".join(
                 f'"{item}"'
-                for item in platforms
+                for item in platform_terms
             )
             +
             ")"
