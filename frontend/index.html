@@ -729,6 +729,57 @@ header { background: linear-gradient(115deg, #0b1f3a 0%, #123c69 62%, #0e7490 10
 .logout-button { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 10px 15px; cursor: pointer; font-weight: 700; transition: .2s ease; }
 .logout-button:hover { background: rgba(255,255,255,.22); transform: translateY(-1px); }
 @media(max-width: 800px) { .header-actions { width: 100%; justify-content: space-between; } }
+
+.alert-settings-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.alert-option-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.alert-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 15px;
+    border: 1px solid #2d5d72;
+    border-radius: 12px;
+    background: #0d2430;
+    color: #dff7ff;
+    cursor: pointer;
+}
+
+.alert-option input {
+    width: 19px;
+    height: 19px;
+    accent-color: #22c7de;
+}
+
+.alert-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.alert-message {
+    min-height: 22px;
+    margin-top: 12px;
+    font-weight: 700;
+}
+
+@media (max-width: 760px) {
+    .alert-settings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 </style>
 </head>
 
@@ -1132,9 +1183,59 @@ Send a report to yourself or up to 50 people. Separate addresses with commas, se
 <div class="email-actions">
 <button class="standard-button" onclick="emailTopThreat()">📧 Send Top Threat</button>
 <button class="standard-button secondary-action" onclick="emailFullReport()">📄 Send Full Report</button>
+<button class="standard-button" onclick="exportReportToPdf()">⬇ Export PDF</button>
 </div>
 
 <div id="emailMessage" class="email-message" role="status"></div>
+
+</div>
+
+
+
+
+<div class="panel alert-panel">
+
+<h2>
+🔔 Automatic Alerts &amp; Refresh
+</h2>
+
+<p class="panel-description">
+Automatically email newly detected high-risk threats after a scan, and optionally rerun the current scan every 30 minutes while this dashboard is open.
+</p>
+
+<div class="alert-settings-grid">
+<div>
+<label class="field-label" for="alertRecipients">Alert recipients</label>
+<textarea class="email-input email-recipients" id="alertRecipients" rows="2" placeholder="you@example.com, teammate@example.com"></textarea>
+<div class="field-help">Recipients are hidden from each other. Previously alerted article links are not sent again.</div>
+</div>
+<div>
+<label class="field-label" for="alertSeverity">Minimum severity</label>
+<select class="source-select" id="alertSeverity">
+<option value="high" selected>High and Critical</option>
+<option value="critical">Critical only</option>
+</select>
+</div>
+</div>
+
+<div class="alert-option-row">
+<label class="alert-option">
+<input id="autoAlertsEnabled" type="checkbox">
+<span>Send automatic email alerts after scans</span>
+</label>
+<label class="alert-option">
+<input id="autoRefreshEnabled" type="checkbox">
+<span>Refresh the scan every 30 minutes</span>
+</label>
+</div>
+
+<div class="alert-actions">
+<button class="standard-button" onclick="saveAlertSettings()">Save Alert Settings</button>
+<button class="standard-button secondary-action" onclick="runAutoRefreshNow()">↻ Refresh Now</button>
+</div>
+
+<div id="alertSettingsMessage" class="alert-message" role="status"></div>
+<div id="refreshCountdown" class="field-help">Auto-refresh is off.</div>
 
 </div>
 
@@ -1267,6 +1368,15 @@ let visibleThreatArticleCount = 0;
 
 let watchlist = [];
 
+let autoRefreshTimer = null;
+let refreshCountdownTimer = null;
+let nextAutoRefreshAt = null;
+let automaticAlertRunInProgress = false;
+
+const AUTO_REFRESH_INTERVAL_MS = 30 * 60 * 1000;
+const AUTO_ALERT_STORAGE_KEY = "cyberwatchAutoAlertSettings";
+const AUTO_ALERT_SENT_KEY = "cyberwatchSentAlertIds";
+
 
 const sourceNames = {
 
@@ -1296,6 +1406,8 @@ function() {
     setDefaultDates();
 
     loadWatchlist();
+
+    loadAlertSettings();
 
     renderAttackTags();
 
@@ -2343,6 +2455,8 @@ async function scanThreats() {
             );
         }
 
+        await processAutomaticAlerts();
+
 
         if (
             articles.length
@@ -3134,6 +3248,8 @@ async function analyzeRemainingArticles(
             startIndex + offset
         );
     }
+
+    await processAutomaticAlerts();
 
 
     visibleThreatArticleCount =
@@ -5589,6 +5705,485 @@ async function logoutUser() {
     } finally {
         window.location.href = "/login";
     }
+}
+
+
+/* AUTOMATIC ALERTS AND 30-MINUTE REFRESH */
+
+function parseRecipientAddresses(raw) {
+    return [...new Set(
+        String(raw || "")
+            .split(/[;,\n]+/)
+            .map(item => item.trim())
+            .filter(Boolean)
+    )];
+}
+
+function getStoredAlertSettings() {
+    const defaults = {
+        enabled: false,
+        autoRefresh: false,
+        severity: "high",
+        recipients: []
+    };
+
+    try {
+        const saved = JSON.parse(
+            localStorage.getItem(AUTO_ALERT_STORAGE_KEY) || "{}"
+        );
+        return {
+            ...defaults,
+            ...saved,
+            recipients: Array.isArray(saved.recipients)
+                ? saved.recipients
+                : []
+        };
+    } catch (error) {
+        return defaults;
+    }
+}
+
+function loadAlertSettings() {
+    const settings = getStoredAlertSettings();
+
+    document.getElementById("alertRecipients").value =
+        settings.recipients.join(", ");
+
+    document.getElementById("alertSeverity").value =
+        settings.severity === "critical" ? "critical" : "high";
+
+    document.getElementById("autoAlertsEnabled").checked =
+        Boolean(settings.enabled);
+
+    document.getElementById("autoRefreshEnabled").checked =
+        Boolean(settings.autoRefresh);
+
+    configureAutoRefresh(Boolean(settings.autoRefresh));
+}
+
+function showAlertSettingsMessage(message, success) {
+    const box = document.getElementById("alertSettingsMessage");
+    box.innerText = message;
+    box.style.color = success ? "#7ee8b7" : "#ff9c9c";
+}
+
+function saveAlertSettings() {
+    const recipients = parseRecipientAddresses(
+        document.getElementById("alertRecipients").value
+    );
+    const enabled =
+        document.getElementById("autoAlertsEnabled").checked;
+    const autoRefresh =
+        document.getElementById("autoRefreshEnabled").checked;
+    const severity =
+        document.getElementById("alertSeverity").value;
+
+    if (enabled && recipients.length === 0) {
+        showAlertSettingsMessage(
+            "Add at least one recipient before enabling email alerts.",
+            false
+        );
+        return;
+    }
+
+    if (recipients.length > 50) {
+        showAlertSettingsMessage(
+            "You can use a maximum of 50 alert recipients.",
+            false
+        );
+        return;
+    }
+
+    const invalid = recipients.filter(item => !isValidEmail(item));
+    if (invalid.length) {
+        showAlertSettingsMessage(
+            "Check these addresses: " + invalid.join(", "),
+            false
+        );
+        return;
+    }
+
+    const settings = {
+        enabled,
+        autoRefresh,
+        severity: severity === "critical" ? "critical" : "high",
+        recipients
+    };
+
+    localStorage.setItem(
+        AUTO_ALERT_STORAGE_KEY,
+        JSON.stringify(settings)
+    );
+
+    configureAutoRefresh(autoRefresh);
+
+    showAlertSettingsMessage(
+        "Alert settings saved. " +
+        (autoRefresh
+            ? "The next scan refresh is scheduled in 30 minutes."
+            : "Automatic scan refresh is off."),
+        true
+    );
+}
+
+function configureAutoRefresh(enabled) {
+    if (autoRefreshTimer) {
+        clearInterval(autoRefreshTimer);
+        autoRefreshTimer = null;
+    }
+
+    if (refreshCountdownTimer) {
+        clearInterval(refreshCountdownTimer);
+        refreshCountdownTimer = null;
+    }
+
+    nextAutoRefreshAt = null;
+
+    if (!enabled) {
+        updateRefreshCountdown();
+        return;
+    }
+
+    nextAutoRefreshAt = Date.now() + AUTO_REFRESH_INTERVAL_MS;
+
+    autoRefreshTimer = setInterval(
+        runAutomaticRefresh,
+        AUTO_REFRESH_INTERVAL_MS
+    );
+
+    refreshCountdownTimer = setInterval(
+        updateRefreshCountdown,
+        30000
+    );
+
+    updateRefreshCountdown();
+}
+
+function updateRefreshCountdown() {
+    const box = document.getElementById("refreshCountdown");
+    if (!box) return;
+
+    if (!nextAutoRefreshAt) {
+        box.innerText = "Auto-refresh is off.";
+        return;
+    }
+
+    const remaining = Math.max(0, nextAutoRefreshAt - Date.now());
+    const minutes = Math.max(1, Math.ceil(remaining / 60000));
+    box.innerText = "Next automatic scan refresh in about " +
+        minutes + (minutes === 1 ? " minute." : " minutes.");
+}
+
+async function runAutomaticRefresh() {
+    const button = document.getElementById("scanButton");
+    nextAutoRefreshAt = Date.now() + AUTO_REFRESH_INTERVAL_MS;
+    updateRefreshCountdown();
+
+    if (button && button.disabled) {
+        return;
+    }
+
+    await scanThreats();
+}
+
+async function runAutoRefreshNow() {
+    const button = document.getElementById("scanButton");
+    if (button && button.disabled) {
+        showAlertSettingsMessage(
+            "A scan is already running.",
+            false
+        );
+        return;
+    }
+
+    showAlertSettingsMessage(
+        "Refreshing the current scan now...",
+        true
+    );
+
+    await runAutomaticRefresh();
+}
+
+function getSentAlertIds() {
+    try {
+        const saved = JSON.parse(
+            localStorage.getItem(AUTO_ALERT_SENT_KEY) || "[]"
+        );
+        return new Set(Array.isArray(saved) ? saved : []);
+    } catch (error) {
+        return new Set();
+    }
+}
+
+function threatAlertId(threat) {
+    const article = threat.article || {};
+    return String(
+        article.url ||
+        [
+            article.title || "",
+            article.source || "",
+            article.published_at || ""
+        ].join("|")
+    );
+}
+
+function threatMeetsAlertThreshold(threat, threshold) {
+    const severity = String(
+        threat.analysis && threat.analysis.severity || ""
+    ).toLowerCase();
+
+    if (threshold === "critical") {
+        return severity === "critical";
+    }
+
+    return severity === "critical" || severity === "high";
+}
+
+async function processAutomaticAlerts() {
+    if (automaticAlertRunInProgress) return;
+
+    const settings = getStoredAlertSettings();
+    if (!settings.enabled || !settings.recipients.length) return;
+
+    const sentIds = getSentAlertIds();
+    const threats = analyzedThreatData
+        .filter(Boolean)
+        .filter(threat =>
+            threatMeetsAlertThreshold(threat, settings.severity)
+        )
+        .filter(threat => !sentIds.has(threatAlertId(threat)));
+
+    if (!threats.length) {
+        showAlertSettingsMessage(
+            "No new " +
+            (settings.severity === "critical"
+                ? "critical"
+                : "high or critical") +
+            " threats need an alert.",
+            true
+        );
+        return;
+    }
+
+    automaticAlertRunInProgress = true;
+
+    const content = [
+        "CYBERWATCH AI AUTOMATIC THREAT ALERT",
+        "",
+        "New threats: " + threats.length,
+        "",
+        threats.map((threat, index) =>
+            "ALERT " + (index + 1) + "\n\n" +
+            buildThreatEmail(threat)
+        ).join("\n\n========================================\n\n")
+    ].join("\n");
+
+    try {
+        await sendEmail(
+            {
+                recipients: settings.recipients,
+                subject: "",
+                message:
+                    "CyberWatch AI detected new threats matching your automatic alert settings.",
+                attachReport: true
+            },
+            "CyberWatch AI - Automatic Threat Alert",
+            content
+        );
+
+        threats.forEach(threat =>
+            sentIds.add(threatAlertId(threat))
+        );
+
+        localStorage.setItem(
+            AUTO_ALERT_SENT_KEY,
+            JSON.stringify([...sentIds].slice(-500))
+        );
+
+        showAlertSettingsMessage(
+            "Automatic alert sent for " + threats.length +
+            (threats.length === 1 ? " new threat." : " new threats."),
+            true
+        );
+    } catch (error) {
+        showAlertSettingsMessage(
+            "Automatic alert failed: " + error.message,
+            false
+        );
+    } finally {
+        automaticAlertRunInProgress = false;
+    }
+}
+
+
+/* PDF EXPORT */
+
+function pdfSafeText(value) {
+    return String(value == null ? "" : value)
+        .normalize("NFKD")
+        .replace(/[^\x20-\x7E\n]/g, "")
+        .replace(/\t/g, "    ");
+}
+
+function wrapPdfLine(value, width) {
+    const words = pdfSafeText(value).split(/\s+/).filter(Boolean);
+    if (!words.length) return [""];
+
+    const lines = [];
+    let line = "";
+
+    words.forEach(word => {
+        const candidate = line ? line + " " + word : word;
+        if (candidate.length <= width) {
+            line = candidate;
+        } else {
+            if (line) lines.push(line);
+            line = word;
+        }
+    });
+
+    if (line) lines.push(line);
+    return lines;
+}
+
+function escapePdfText(value) {
+    const slash = String.fromCharCode(92);
+    return String(value)
+        .split(slash).join(slash + slash)
+        .split("(").join(slash + "(")
+        .split(")").join(slash + ")");
+}
+
+function buildSimplePdf(lines) {
+    const pageLines = [];
+    const maxLines = 54;
+    const nl = String.fromCharCode(10);
+
+    for (let index = 0; index < lines.length; index += maxLines) {
+        pageLines.push(lines.slice(index, index + maxLines));
+    }
+
+    if (!pageLines.length) pageLines.push(["CyberWatch AI"]);
+
+    const pageCount = pageLines.length;
+    const fontObject = 3 + pageCount * 2;
+    const objects = [];
+
+    objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+
+    const pageReferences = pageLines.map((_, index) =>
+        (3 + index * 2) + " 0 R"
+    ).join(" ");
+
+    objects[2] =
+        "<< /Type /Pages /Count " + pageCount +
+        " /Kids [" + pageReferences + "] >>";
+
+    pageLines.forEach((page, index) => {
+        const pageObject = 3 + index * 2;
+        const contentObject = pageObject + 1;
+
+        objects[pageObject] =
+            "<< /Type /Page /Parent 2 0 R " +
+            "/MediaBox [0 0 612 792] " +
+            "/Resources << /Font << /F1 " +
+            fontObject + " 0 R >> >> " +
+            "/Contents " + contentObject + " 0 R >>";
+
+        const commands = [
+            "BT",
+            "/F1 10 Tf",
+            "12 TL",
+            "48 748 Td",
+            ...page.map(line =>
+                "(" + escapePdfText(line) + ") Tj T*"
+            ),
+            "ET"
+        ].join(nl);
+
+        objects[contentObject] =
+            "<< /Length " + commands.length + " >>" + nl +
+            "stream" + nl + commands + nl + "endstream";
+    });
+
+    objects[fontObject] =
+        "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+
+    let pdf = "%PDF-1.4" + nl;
+    const offsets = [0];
+    const encoder = new TextEncoder();
+
+    for (let index = 1; index < objects.length; index++) {
+        offsets[index] = encoder.encode(pdf).length;
+        pdf += index + " 0 obj" + nl +
+            objects[index] + nl + "endobj" + nl;
+    }
+
+    const xrefOffset = encoder.encode(pdf).length;
+    pdf += "xref" + nl + "0 " + objects.length + nl;
+    pdf += "0000000000 65535 f " + nl;
+
+    for (let index = 1; index < objects.length; index++) {
+        pdf += String(offsets[index]).padStart(10, "0") +
+            " 00000 n " + nl;
+    }
+
+    pdf += "trailer" + nl + "<< /Size " + objects.length +
+        " /Root 1 0 R >>" + nl + "startxref" + nl +
+        xrefOffset + nl + "%%EOF";
+
+    return new Blob([pdf], { type: "application/pdf" });
+}
+
+function exportReportToPdf() {
+    const threats = analyzedThreatData.filter(Boolean);
+
+    if (!threats.length) {
+        showEmailMessage(
+            "Run a scan and wait for analysis before exporting a PDF.",
+            false
+        );
+        return;
+    }
+
+    const rawLines = [
+        "CYBERWATCH AI",
+        "THREAT INTELLIGENCE REPORT",
+        "",
+        "Generated: " + new Date().toLocaleString(),
+        "Threats analyzed: " + threats.length,
+        "",
+        ...threats.flatMap((threat, index) => [
+            "THREAT " + (index + 1),
+            "",
+            ...buildThreatEmail(threat).split("\n"),
+            "",
+            "------------------------------------------------------------",
+            ""
+        ])
+    ];
+
+    const lines = rawLines.flatMap(line => wrapPdfLine(line, 92));
+    const blob = buildSimplePdf(lines);
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download =
+        "CyberWatch-AI-report-" +
+        new Date().toISOString().slice(0, 10) +
+        ".pdf";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    showEmailMessage(
+        "PDF report downloaded successfully.",
+        true
+    );
 }
 
 
