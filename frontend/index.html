@@ -737,6 +737,24 @@ header { background: linear-gradient(115deg, #0b1f3a 0%, #123c69 62%, #0e7490 10
     margin-top: 18px;
 }
 
+.alert-filter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 18px;
+}
+
+.alert-filter-entry {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: stretch;
+}
+
+.alert-filter-entry .add-button {
+    min-width: 78px;
+}
+
 .alert-option-row {
     display: flex;
     flex-wrap: wrap;
@@ -775,7 +793,8 @@ header { background: linear-gradient(115deg, #0b1f3a 0%, #123c69 62%, #0e7490 10
 }
 
 @media (max-width: 760px) {
-    .alert-settings-grid {
+    .alert-settings-grid,
+    .alert-filter-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -1218,6 +1237,42 @@ Automatically email newly detected high-risk threats after a scan, and optionall
 </div>
 </div>
 
+
+<div class="alert-filter-grid">
+<div>
+<label class="field-label" for="alertAttackInput">Alert Attack Types</label>
+<div class="alert-filter-entry">
+<input
+class="email-input"
+id="alertAttackInput"
+list="attackTypeOptions"
+placeholder="Type an attack type..."
+onkeydown="if(event.key === 'Enter'){event.preventDefault();addAlertFilter('attack');}"
+>
+<button class="add-button" onclick="addAlertFilter('attack')">+ Add</button>
+</div>
+<div class="field-help">Add one or more custom attack types. Leave empty for all attack types.</div>
+<div id="alertAttackTags" class="selected-tags"></div>
+</div>
+
+<div>
+<label class="field-label" for="alertTechnologyInput">Alert Technology / Platform</label>
+<div class="alert-filter-entry">
+<input
+class="email-input"
+id="alertTechnologyInput"
+list="technologyOptions"
+placeholder="Type a technology or platform..."
+onkeydown="if(event.key === 'Enter'){event.preventDefault();addAlertFilter('technology');}"
+>
+<button class="add-button" onclick="addAlertFilter('technology')">+ Add</button>
+</div>
+<div class="field-help">Add one or more custom technologies. Leave empty for all platforms.</div>
+<div id="alertTechnologyTags" class="selected-tags"></div>
+</div>
+</div>
+
+
 <div class="alert-option-row">
 <label class="alert-option">
 <input id="autoAlertsEnabled" type="checkbox">
@@ -1372,6 +1427,8 @@ let autoRefreshTimer = null;
 let refreshCountdownTimer = null;
 let nextAutoRefreshAt = null;
 let automaticAlertRunInProgress = false;
+let alertAttackTypes = [];
+let alertTechnologies = [];
 
 const AUTO_REFRESH_INTERVAL_MS = 30 * 60 * 1000;
 const AUTO_ALERT_STORAGE_KEY = "cyberwatchAutoAlertSettings";
@@ -5719,12 +5776,93 @@ function parseRecipientAddresses(raw) {
     )];
 }
 
+
+function normalizeAlertFilterValues(values) {
+    if (!Array.isArray(values)) return [];
+
+    return [...new Set(
+        values
+            .map(value => String(value || "").trim())
+            .filter(Boolean)
+    )];
+}
+
+function addAlertFilter(kind) {
+    const isAttack = kind === "attack";
+    const input = document.getElementById(
+        isAttack ? "alertAttackInput" : "alertTechnologyInput"
+    );
+    const value = input.value.trim();
+
+    if (!value) return;
+
+    const target = isAttack ? alertAttackTypes : alertTechnologies;
+    const exists = target.some(
+        item => item.toLowerCase() === value.toLowerCase()
+    );
+
+    if (!exists) target.push(value);
+
+    input.value = "";
+    renderAlertFilterTags();
+}
+
+function removeAlertFilter(kind, index) {
+    if (kind === "attack") {
+        alertAttackTypes.splice(index, 1);
+    } else {
+        alertTechnologies.splice(index, 1);
+    }
+
+    renderAlertFilterTags();
+}
+
+function renderAlertFilterTags() {
+    const render = (containerId, items, kind) => {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        items.forEach((item, index) => {
+            const tag = document.createElement("div");
+            const label = document.createElement("span");
+            const remove = document.createElement("button");
+
+            tag.className = "selected-tag";
+            label.innerText = item;
+            remove.className = "remove-tag";
+            remove.type = "button";
+            remove.innerText = "×";
+            remove.setAttribute("aria-label", "Remove " + item);
+            remove.onclick = () => removeAlertFilter(kind, index);
+
+            tag.appendChild(label);
+            tag.appendChild(remove);
+            container.appendChild(tag);
+        });
+
+        if (!items.length) {
+            const empty = document.createElement("div");
+            empty.className = "field-help";
+            empty.innerText = kind === "attack"
+                ? "All attack types will trigger alerts."
+                : "All technologies and platforms will trigger alerts.";
+            container.appendChild(empty);
+        }
+    };
+
+    render("alertAttackTags", alertAttackTypes, "attack");
+    render("alertTechnologyTags", alertTechnologies, "technology");
+}
+
+
 function getStoredAlertSettings() {
     const defaults = {
         enabled: false,
         autoRefresh: false,
         severity: "high",
-        recipients: []
+        recipients: [],
+        attackTypes: [],
+        technologies: []
     };
 
     try {
@@ -5736,7 +5874,9 @@ function getStoredAlertSettings() {
             ...saved,
             recipients: Array.isArray(saved.recipients)
                 ? saved.recipients
-                : []
+                : [],
+            attackTypes: normalizeAlertFilterValues(saved.attackTypes),
+            technologies: normalizeAlertFilterValues(saved.technologies)
         };
     } catch (error) {
         return defaults;
@@ -5751,6 +5891,10 @@ function loadAlertSettings() {
 
     document.getElementById("alertSeverity").value =
         settings.severity === "critical" ? "critical" : "high";
+
+    alertAttackTypes = normalizeAlertFilterValues(settings.attackTypes);
+    alertTechnologies = normalizeAlertFilterValues(settings.technologies);
+    renderAlertFilterTags();
 
     document.getElementById("autoAlertsEnabled").checked =
         Boolean(settings.enabled);
@@ -5807,7 +5951,9 @@ function saveAlertSettings() {
         enabled,
         autoRefresh,
         severity: severity === "critical" ? "critical" : "high",
-        recipients
+        recipients,
+        attackTypes: [...alertAttackTypes],
+        technologies: [...alertTechnologies]
     };
 
     localStorage.setItem(
@@ -5939,6 +6085,49 @@ function threatMeetsAlertThreshold(threat, threshold) {
     return severity === "critical" || severity === "high";
 }
 
+
+function threatMatchesAlertFilters(threat, settings) {
+    const article = threat.article || {};
+    const analysis = threat.analysis || {};
+
+    const attackText = [
+        analysis.attackType,
+        analysis.category,
+        analysis.summary,
+        article.title,
+        article.description
+    ].filter(Boolean).join(" ").toLowerCase();
+
+    const technologyText = [
+        threat.technology,
+        analysis.target,
+        analysis.summary,
+        article.title,
+        article.description
+    ].filter(Boolean).join(" ").toLowerCase();
+
+    const attackTypes = normalizeAlertFilterValues(
+        settings.attackTypes
+    );
+    const technologies = normalizeAlertFilterValues(
+        settings.technologies
+    );
+
+    const attackMatches =
+        !attackTypes.length ||
+        attackTypes.some(value =>
+            attackText.includes(value.toLowerCase())
+        );
+
+    const technologyMatches =
+        !technologies.length ||
+        technologies.some(value =>
+            technologyText.includes(value.toLowerCase())
+        );
+
+    return attackMatches && technologyMatches;
+}
+
 async function processAutomaticAlerts() {
     if (automaticAlertRunInProgress) return;
 
@@ -5951,6 +6140,9 @@ async function processAutomaticAlerts() {
         .filter(threat =>
             threatMeetsAlertThreshold(threat, settings.severity)
         )
+        .filter(threat =>
+            threatMatchesAlertFilters(threat, settings)
+        )
         .filter(threat => !sentIds.has(threatAlertId(threat)));
 
     if (!threats.length) {
@@ -5959,7 +6151,7 @@ async function processAutomaticAlerts() {
             (settings.severity === "critical"
                 ? "critical"
                 : "high or critical") +
-            " threats need an alert.",
+            " threats matching your selected attack type and technology filters need an alert.",
             true
         );
         return;
