@@ -860,65 +860,14 @@ Clear All
 </div>
 
 
-<div class="quick-buttons">
-
-<button
-class="quick-button all-button"
-onclick="setAllAttackTypes()">
-All
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddAttack('Ransomware')">
-Ransomware
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddAttack('Malware')">
-Malware
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddAttack('Phishing')">
-Phishing
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddAttack('Data Breach')">
-Data Breach
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddAttack('Zero-Day')">
-Zero-Day
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddAttack('DDoS')">
-DDoS
-</button>
-
-<button
-class="quick-button"
-onclick="quickAddAttack('SQL Injection')">
-SQL Injection
-</button>
-
-</div>
-
-
 <div class="add-row">
 
 <input
 class="text-input"
 id="attackInput"
-placeholder="Or type your own attack..."
+list="attackTypeOptions"
+placeholder="Type an attack type..."
+autocomplete="off"
 onkeydown="
 if(event.key === 'Enter') {
     event.preventDefault();
@@ -926,12 +875,26 @@ if(event.key === 'Enter') {
 }
 ">
 
+<datalist id="attackTypeOptions">
+<option value="Ransomware"></option>
+<option value="Malware"></option>
+<option value="Phishing"></option>
+<option value="Data Breach"></option>
+<option value="Zero-Day"></option>
+<option value="DDoS"></option>
+<option value="SQL Injection"></option>
+</datalist>
+
 <button
 class="add-button"
 onclick="addAttackType()">
 + Add
 </button>
 
+</div>
+
+<div class="field-help">
+Start typing or choose a suggestion. Leave empty to search all attack types.
 </div>
 
 
@@ -960,101 +923,41 @@ Clear All
 </div>
 
 
-<div class="quick-buttons">
-
-<button
-class="quick-button all-button"
-onclick="setAllTechnologies()">
-All
-</button>
-
-</div>
-
-
 <div class="add-row">
 
-<select
-class="source-select"
-id="technologySelect">
+<input
+class="text-input"
+id="technologyInput"
+list="technologyOptions"
+placeholder="Type a technology or platform..."
+autocomplete="off"
+onkeydown="
+if(event.key === 'Enter') {
+    event.preventDefault();
+    addTechnology();
+}
+">
 
-<option value="">
-Choose Technology
-</option>
-
-<option value="Microsoft Windows 11 Enterprise">
-Microsoft Windows 11 Enterprise
-</option>
-
-<option value="FortiOS">
-FortiOS
-</option>
-
-<option value="Cisco Adaptive Security Appliance">
-Cisco Adaptive Security Appliance
-</option>
-
-<option value="Blue Coat Appliance">
-Blue Coat Appliance
-</option>
-
-<option value="Microsoft Windows Server 2016">
-Microsoft Windows Server 2016
-</option>
-
-<option value="CISCO IOS">
-CISCO IOS
-</option>
-
-<option value="Dell iDRAC unknown">
-Dell iDRAC unknown
-</option>
-
-<option value="VMware ESXi">
-VMware ESXi
-</option>
-
-<option value="F5 Networks BIG-IP">
-F5 Networks BIG-IP
-</option>
-
-<option value="Microsoft Windows Server 2019">
-Microsoft Windows Server 2019
-</option>
-
-<option value="Microsoft Windows Server 2022">
-Microsoft Windows Server 2022
-</option>
-
-<option value="Microsoft Windows Server 2012 R2 Standard">
-Microsoft Windows Server 2012 R2 Standard
-</option>
-
-<option value="Microsoft Windows Server 2008 R2">
-Microsoft Windows Server 2008 R2
-</option>
-
-<option value="Linux Kernel on Red Hat Enterprise Linux Server">
-Linux Kernel on Red Hat Enterprise Linux Server
-</option>
-
-<option value="Microsoft Windows Server 2025 Standard Build 26100">
-Microsoft Windows Server 2025 Standard Build 26100
-</option>
-
-<option value="Linux Kernel on Ubuntu">
-Linux Kernel on Ubuntu
-</option>
-
-<option value="Windows 11">
-Windows 11
-</option>
-
-<option value="Microsoft Windows">
-Microsoft Windows
-</option>
-
-</select>
-
+<datalist id="technologyOptions">
+<option value="Microsoft Windows 11 Enterprise"></option>
+<option value="FortiOS"></option>
+<option value="Cisco Adaptive Security Appliance"></option>
+<option value="Blue Coat Appliance"></option>
+<option value="Microsoft Windows Server 2016"></option>
+<option value="CISCO IOS"></option>
+<option value="Dell iDRAC unknown"></option>
+<option value="VMware ESXi"></option>
+<option value="F5 Networks BIG-IP"></option>
+<option value="Microsoft Windows Server 2019"></option>
+<option value="Microsoft Windows Server 2022"></option>
+<option value="Microsoft Windows Server 2012 R2 Standard"></option>
+<option value="Microsoft Windows Server 2008 R2"></option>
+<option value="Linux Kernel on Red Hat Enterprise Linux Server"></option>
+<option value="Microsoft Windows Server 2025 Standard Build 26100"></option>
+<option value="Linux Kernel on Ubuntu"></option>
+<option value="Windows 11"></option>
+<option value="Microsoft Windows"></option>
+</datalist>
 
 <button
 class="add-button"
@@ -1062,6 +965,10 @@ onclick="addTechnology()">
 + Add
 </button>
 
+</div>
+
+<div class="field-help">
+Start typing or choose an inventory suggestion. Custom technologies are accepted.
 </div>
 
 
@@ -1714,14 +1621,14 @@ function quickAddTechnology(
 
 function addTechnology() {
 
-    const select =
+    const input =
         document.getElementById(
-            "technologySelect"
+            "technologyInput"
         );
 
 
     const value =
-        select.value.trim();
+        input.value.trim();
 
 
     if (!value) {
@@ -1746,7 +1653,7 @@ function addTechnology() {
     }
 
 
-    select.value = "";
+    input.value = "";
 }
 
 
