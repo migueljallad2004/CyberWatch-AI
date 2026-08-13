@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 from ai import analyze_article, answer_threat_question
 
 from datetime import datetime, timezone, timedelta
+from difflib import SequenceMatcher
+from html import unescape
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 import feedparser
 import resend
 import requests
@@ -1336,75 +1339,448 @@ def fetch_nvd(
     return results
 
 
-def remove_duplicates(
-    articles
+TRACKING_QUERY_KEYS = {
+    "fbclid",
+    "gclid",
+    "mc_cid",
+    "mc_eid",
+    "msclkid",
+    "ref",
+    "referrer"
+}
+
+
+TITLE_STOP_WORDS = {
+    "a",
+    "an",
+    "and",
+    "are",
+    "as",
+    "at",
+    "by",
+    "for",
+    "from",
+    "in",
+    "into",
+    "is",
+    "of",
+    "on",
+    "or",
+    "the",
+    "to",
+    "with"
+}
+
+
+def canonical_article_url(
+    value
 ):
+    url = (
+        value
+        or
+        ""
+    ).strip()
 
-    unique = []
+    if not url:
+        return ""
 
-    seen_urls = set()
+    try:
+        parts = urlsplit(
+            url
+        )
 
-    seen_titles = set()
+        if not parts.netloc:
+            return (
+                url
+                .split("#", 1)[0]
+                .rstrip("/")
+                .lower()
+            )
+
+        hostname = (
+            parts.netloc
+            .lower()
+        )
+
+        if hostname.startswith(
+            "www."
+        ):
+            hostname = hostname[4:]
+
+        path = re.sub(
+            r"/+",
+            "/",
+            parts.path or "/"
+        )
+
+        if path != "/":
+            path = path.rstrip("/")
+
+        clean_query = []
+
+        for key, query_value in parse_qsl(
+            parts.query,
+            keep_blank_values=True
+        ):
+            normalized_key = key.lower()
+
+            if (
+                normalized_key.startswith(
+                    "utm_"
+                )
+                or
+                normalized_key in TRACKING_QUERY_KEYS
+            ):
+                continue
+
+            clean_query.append(
+                (
+                    key,
+                    query_value
+                )
+            )
+
+        clean_query.sort()
+
+        return urlunsplit(
+            (
+                parts.scheme.lower(),
+                hostname,
+                path,
+                urlencode(
+                    clean_query,
+                    doseq=True
+                ),
+                ""
+            )
+        )
+
+    except Exception:
+        return (
+            url
+            .split("#", 1)[0]
+            .rstrip("/")
+            .lower()
+        )
 
 
-    for article in articles:
+def normalize_article_title(
+    value
+):
+    title = unescape(
+        value
+        or
+        ""
+    ).lower()
 
-        title = (
-            article.get(
+    title = re.sub(
+        r"\bcve\s*[-:]?\s*(\d{4})"
+        r"\s*[-:]?\s*(\d{4,7})\b",
+        r"cve-\1-\2",
+        title
+    )
+
+    title = re.sub(
+        (
+            r"\s+[|–—-]\s+"
+            r"(the hacker news|bleepingcomputer|"
+            r"cisa|nvd|newsapi)\s*$"
+        ),
+        "",
+        title
+    )
+
+    title = re.sub(
+        r"[^a-z0-9]+",
+        " ",
+        title
+    )
+
+    return " ".join(
+        title.split()
+    )
+
+
+def stem_title_token(
+    token
+):
+    if (
+        token.startswith(
+            "cve"
+        )
+        or
+        token.isdigit()
+    ):
+        return token
+
+    if (
+        token.endswith(
+            "ies"
+        )
+        and
+        len(token) > 5
+    ):
+        return (
+            token[:-3]
+            +
+            "y"
+        )
+
+    for suffix in (
+        "ing",
+        "ers",
+        "ed",
+        "es",
+        "s"
+    ):
+        if (
+            token.endswith(
+                suffix
+            )
+            and
+            len(token)
+            >
+            len(suffix) + 3
+        ):
+            return token[
+                :-len(suffix)
+            ]
+
+    return token
+
+
+def title_fingerprint(
+    value
+):
+    normalized = normalize_article_title(
+        value
+    )
+
+    tokens = [
+        stem_title_token(
+            token
+        )
+        for token in normalized.split()
+        if (
+            len(token) > 2
+            and
+            token not in TITLE_STOP_WORDS
+        )
+    ]
+
+    return (
+        normalized,
+        tokens
+    )
+
+
+def articles_are_duplicates(
+    first,
+    second
+):
+    first_url = canonical_article_url(
+        first.get(
+            "url",
+            ""
+        )
+    )
+
+    second_url = canonical_article_url(
+        second.get(
+            "url",
+            ""
+        )
+    )
+
+    if (
+        first_url
+        and
+        first_url == second_url
+    ):
+        return True
+
+    first_title, first_tokens = (
+        title_fingerprint(
+            first.get(
                 "title",
                 ""
             )
-            .strip()
-            .lower()
         )
+    )
 
-
-        url = (
-            article.get(
-                "url",
+    second_title, second_tokens = (
+        title_fingerprint(
+            second.get(
+                "title",
                 ""
             )
-            .strip()
-            .lower()
         )
+    )
 
+    if (
+        first_title
+        and
+        first_title == second_title
+    ):
+        return True
 
-        if (
-            url
+    if (
+        len(first_tokens) < 4
+        or
+        len(second_tokens) < 4
+    ):
+        return False
+
+    first_set = set(
+        first_tokens
+    )
+
+    second_set = set(
+        second_tokens
+    )
+
+    shared_count = len(
+        first_set
+        &
+        second_set
+    )
+
+    union_count = len(
+        first_set
+        |
+        second_set
+    )
+
+    smaller_count = min(
+        len(first_set),
+        len(second_set)
+    )
+
+    jaccard_score = (
+        shared_count
+        /
+        union_count
+        if union_count
+        else 0
+    )
+
+    containment_score = (
+        shared_count
+        /
+        smaller_count
+        if smaller_count
+        else 0
+    )
+
+    sequence_score = SequenceMatcher(
+        None,
+        first_title,
+        second_title
+    ).ratio()
+
+    return (
+        sequence_score >= 0.90
+        or
+        jaccard_score >= 0.78
+        or
+        (
+            containment_score >= 0.88
             and
-            url in seen_urls
-        ):
+            max(
+                len(first_set),
+                len(second_set)
+            )
+            <=
+            smaller_count + 3
+        )
+    )
 
+
+def article_quality_score(
+    article
+):
+    title = (
+        article.get(
+            "title",
+            ""
+        )
+        or
+        ""
+    ).strip()
+
+    description = (
+        article.get(
+            "description",
+            ""
+        )
+        or
+        ""
+    ).strip()
+
+    url = (
+        article.get(
+            "url",
+            ""
+        )
+        or
+        ""
+    ).strip()
+
+    return (
+        min(
+            len(description),
+            2000
+        )
+        +
+        min(
+            len(title),
+            200
+        )
+        +
+        (
+            50
+            if url.startswith(
+                "https://"
+            )
+            else 0
+        )
+    )
+
+
+def remove_duplicates(
+    articles
+):
+    unique = []
+
+    for article in articles:
+        duplicate_index = None
+
+        for index, existing in enumerate(
+            unique
+        ):
+            if articles_are_duplicates(
+                article,
+                existing
+            ):
+                duplicate_index = index
+                break
+
+        if duplicate_index is None:
+            unique.append(
+                article
+            )
             continue
 
-
-        if (
-            title
-            and
-            title in seen_titles
-        ):
-
-            continue
-
-
-        if url:
-
-            seen_urls.add(
-                url
-            )
-
-
-        if title:
-
-            seen_titles.add(
-                title
-            )
-
-
-        unique.append(
+        if article_quality_score(
             article
-        )
-
+        ) > article_quality_score(
+            unique[
+                duplicate_index
+            ]
+        ):
+            unique[
+                duplicate_index
+            ] = article
 
     return unique
 
@@ -1741,8 +2117,20 @@ def get_news(
                 )
 
 
+        raw_article_count = len(
+            combined
+        )
+
         combined = remove_duplicates(
             combined
+        )
+
+        duplicates_removed = (
+            raw_article_count
+            -
+            len(
+                combined
+            )
         )
 
 
@@ -1778,6 +2166,9 @@ def get_news(
 
             "source_errors":
                 errors,
+
+            "duplicates_removed":
+                duplicates_removed,
 
             "articles":
                 combined
